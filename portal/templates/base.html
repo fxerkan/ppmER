@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPM Data Stack{% block title %}{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/portal.css" />
+</head>
+<body class="bg-slate-100 h-screen flex flex-col overflow-hidden">
+
+  <!-- Top Nav -->
+  <header class="bg-slate-800 text-white flex items-center px-4 h-14 shrink-0 z-20 shadow-lg">
+    <button id="hamburger" class="mr-4 p-1 rounded hover:bg-slate-700 transition-colors" aria-label="Toggle sidebar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <span class="font-bold text-lg tracking-wide text-blue-400">PPM</span>
+    <span class="font-semibold text-lg ml-1 text-white">Data Stack</span>
+    <div class="ml-auto flex items-center gap-3">
+      <span class="text-sm text-slate-300">{{ user.name }}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full font-semibold
+        {% if user.role == 'admin' %}bg-red-600
+        {% elif user.role == 'developer' %}bg-purple-600
+        {% elif user.role == 'power_user' %}bg-blue-600
+        {% else %}bg-green-600{% endif %}">
+        {{ role_label }}
+      </span>
+      <a href="/logout" class="text-sm text-slate-400 hover:text-white transition-colors ml-2">Logout</a>
+    </div>
+  </header>
+
+  <!-- Body: Sidebar + Content -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar bg-slate-900 text-white flex flex-col overflow-y-auto shrink-0 open">
+      <div class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">PPM Stack</div>
+
+      <a href="/dashboard" class="nav-item {% block active_dashboard %}{% endblock %}">
+        <span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span>
+      </a>
+
+      {% if user.role in ['end_user', 'power_user', 'developer', 'admin'] %}
+      <a href="/embed/metabase" class="nav-item {% block active_metabase %}{% endblock %}">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboards</span>
+      </a>
+      <a href="/embed/upload" class="nav-item {% block active_upload %}{% endblock %}">
+        <span class="nav-icon">📁</span><span class="nav-label">Data Files</span>
+      </a>
+      <a href="/embed/agent" class="nav-item {% block active_agent %}{% endblock %}">
+        <span class="nav-icon">🤖</span><span class="nav-label">AI Assistant</span>
+      </a>
+      {% endif %}
+
+      {% if user.role in ['power_user', 'developer', 'admin'] %}
+      <a href="/embed/dbt_docs" class="nav-item {% block active_dbt %}{% endblock %}">
+        <span class="nav-icon">📐</span><span class="nav-label">Data Dictionary</span>
+      </a>
+      {% endif %}
+
+      {% if user.role in ['developer', 'admin'] %}
+      <a href="/embed/mage" class="nav-item {% block active_mage %}{% endblock %}">
+        <span class="nav-icon">🔄</span><span class="nav-label">Pipelines</span>
+      </a>
+      <a href="/embed/cloudbeaver" class="nav-item {% block active_cb %}{% endblock %}">
+        <span class="nav-icon">🗄️</span><span class="nav-label">Database</span>
+      </a>
+      <a href="/files" class="nav-item {% block active_files %}{% endblock %}">
+        <span class="nav-icon">📂</span><span class="nav-label">Browse Code</span>
+      </a>
+      {% endif %}
+
+      {% if user.role == 'admin' %}
+      <div class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Admin</div>
+      <a href="/admin" class="nav-item {% block active_admin %}{% endblock %}">
+        <span class="nav-icon">⚙️</span><span class="nav-label">System Admin</span>
+      </a>
+      {% endif %}
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  </script>
+</body>
+</html>
