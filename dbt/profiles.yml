@@ -24,7 +24,7 @@ ppm_dbt:
       type: postgres
       host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
       user: "{{ env_var('POSTGRES_USER', 'ppm_user') }}"
-      password: "{{ env_var('POSTGRES_PASSWORD', 'ppm_password') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
       port: "{{ env_var('POSTGRES_EXTERNAL_PORT', '15432') | int }}"
       dbname: "{{ env_var('POSTGRES_DB', 'ppm_datawarehouse') }}"
       schema: core

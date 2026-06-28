@@ -52,7 +52,7 @@ def get_postgres_connection():
     username = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__USERNAME",
                          os.getenv("POSTGRES_USER", "ppm_user"))
     password = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__PASSWORD",
-                         os.getenv("POSTGRES_PASSWORD", "ppm_password"))
+                         os.getenv("POSTGRES_PASSWORD", ""))
 
     return psycopg2.connect(
         host=host,

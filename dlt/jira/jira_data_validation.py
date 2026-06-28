@@ -50,7 +50,7 @@ def get_db_connection():
     port = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__PORT", "5432")
     database = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__DATABASE", "ppm_datawarehouse")
     user = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__USERNAME", "ppm_user")
-    password = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__PASSWORD", "ppm_password")
+    password = os.getenv("DESTINATION__POSTGRES__CREDENTIALS__PASSWORD", "")
 
     return psycopg2.connect(
         host=host,

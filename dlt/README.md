@@ -140,7 +140,7 @@ JIRA_INCREMENTAL_DAYS=30                 # Days to look back for daily loads
 POSTGRES_HOST=postgres
 POSTGRES_DB=ppm_datawarehouse
 POSTGRES_USER=ppm_user
-POSTGRES_PASSWORD=ppm_password
+POSTGRES_PASSWORD=your_password
 POSTGRES_EXTERNAL_PORT=15432
 ```
 
