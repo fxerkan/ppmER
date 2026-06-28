@@ -1,0 +1,362 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2024
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:05:00+00:00
+  status: inactive
+  token: 180812721b994e839551401a6122b169
+  variables:
+    end_date: '2024-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2024-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2023
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:06:00+00:00
+  status: inactive
+  token: 16f7535d58314d528dde05c5c39fd6c4
+  variables:
+    end_date: '2023-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2023-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2022
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:06:00+00:00
+  status: inactive
+  token: 12fc4d86f02b4e8684047795407ccc0e
+  variables:
+    end_date: '2022-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2022-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2021
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:06:00+00:00
+  status: inactive
+  token: 6eefa5620d714997b285eca4a66df2df
+  variables:
+    end_date: '2021-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2021-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:06:00+00:00
+  status: inactive
+  token: cffcc83ca5224df89a9662c99f017f95
+  variables:
+    end_date: '2025-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: 2025-12-10 14:55:50.539731+00:00
+  name: fantastic ranger
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-09 14:55:00+00:00
+  status: inactive
+  token: a82929dc397e4344a1b067eb6899fa97
+  variables:
+    end_date: '2020-01-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2020-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs for issue DG-26
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-16 10:41:00+00:00
+  status: inactive
+  token: d7a2e6d3f09a4a418a26639501a3633c
+  variables:
+    end_date: '2025-12-31'
+    issue_key: DG-26
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2020-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-01
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 12:01:00+00:00
+  status: inactive
+  token: 0a4dd2821c0644aa85e413f1d14e63ee
+  variables:
+    end_date: '2025-02-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-02
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 20:53:00+00:00
+  status: inactive
+  token: f7db81b1052d4eb68252f37c9f648550
+  variables:
+    end_date: '2025-03-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-02-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-03
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 21:11:00+00:00
+  status: inactive
+  token: 9d05e170c8ce4aa3abd1a5ecf6fa62d4
+  variables:
+    end_date: '2025-04-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-03-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-04
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 21:37:00+00:00
+  status: inactive
+  token: 2bc70e4671bf427bb7202916d090bf17
+  variables:
+    end_date: '2025-05-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-04-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-05
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 21:50:00+00:00
+  status: inactive
+  token: aadc01f774464b63b4cb8929b412567a
+  variables:
+    end_date: '2025-06-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-06
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-16 08:41:00+00:00
+  status: inactive
+  token: 0c7bcbddc667421ebc8f0fab79233aa4
+  variables:
+    end_date: '2025-07-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-06-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2025-07
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-16 09:06:00+00:00
+  status: inactive
+  token: 292f4e2e951946fc9d420c1a2ce77209
+  variables:
+    end_date: '2025-08-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-07-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: worklogs 2024-12
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-16 10:11:00+00:00
+  status: inactive
+  token: ba1725469f3d44e89512e5d4e37e3b1f
+  variables:
+    end_date: '2025-01-01'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2024-12-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: happy herbalist
+  pipeline_uuid: jira_worklogs
+  schedule_interval: null
+  schedule_type: null
+  settings: null
+  sla: null
+  start_time: null
+  status: inactive
+  token: 3965b6cd90c7464495107eed29340c44
+  variables: null
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: brilliant glade
+  pipeline_uuid: jira_worklogs
+  schedule_interval: null
+  schedule_type: null
+  settings: null
+  sla: null
+  start_time: null
+  status: inactive
+  token: 6767347ec99f449e94f5f3f0269b270f
+  variables: null
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: zesty breeze
+  pipeline_uuid: jira_worklogs
+  schedule_interval: null
+  schedule_type: null
+  settings: null
+  sla: null
+  start_time: null
+  status: inactive
+  token: 664916797b69445cb598499b67f30c08
+  variables: null
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: charmed night
+  pipeline_uuid: jira_worklogs
+  schedule_interval: null
+  schedule_type: null
+  settings: null
+  sla: null
+  start_time: null
+  status: inactive
+  token: 700ec4344fd24c7c9d8d6b6f1322a5bf
+  variables: null
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issuekey = DG-175
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-18 12:41:00+00:00
+  status: inactive
+  token: 31760d6c37fd448ba2f993653e94f3ff
+  variables:
+    end_date: '2025-03-31'
+    issue_key: DG-175
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issueid = 142206 (issue_key Dg-175)
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-18 13:20:00+00:00
+  status: inactive
+  token: 7d48d17c5bfe47cfb0c474719d01ccc0
+  variables:
+    end_date: '2025-12-31'
+    issue-id: 142206
+    max_workers: 8
+    pipeline_type: daily
+    start_date: '2023-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: initial worklogs 2025-01_12
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-18 21:33:00+00:00
+  status: inactive
+  token: 3d15a1842088407c847a2a0103a580c8
+  variables:
+    end_date: '2025-12-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2025-01-01'

@@ -1,0 +1,81 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: '#2196F3'
+  configuration: {}
+  downstream_blocks:
+  - send_health_report
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Check Pipeline Health
+  retry_config:
+    delay: 10
+    retries: 1
+  status: not_executed
+  timeout: 300
+  type: data_loader
+  upstream_blocks: []
+  uuid: check_pipeline_health
+- all_upstream_blocks_executed: false
+  color: '#28a745'
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Send Health Report
+  retry_config:
+    delay: 5
+    retries: 1
+  status: not_executed
+  timeout: 60
+  type: data_exporter
+  upstream_blocks:
+  - check_pipeline_health
+  uuid: send_health_report
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2025-12-20 00:00:00'
+data_integration: null
+description: "Daily Pipeline Health Monitor\n\nThis pipeline checks the health and\
+  \ status of all active pipelines.\nIt runs daily after the expected completion time\
+  \ of other pipelines.\n\nFeatures:\n  - Scans all active pipeline triggers\n  -\
+  \ Categorizes by schedule type\n  - Sends daily summary email report\n\nConfigure\
+  \ email recipients in custom_notifications below."
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Pipeline Health Monitor
+custom_notifications:
+  email_on_failure:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+  email_on_success:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags:
+- monitoring
+- health-check
+- daily-report
+type: python
+uuid: pipeline_health_monitor
+variables: {}
+variables_dir: /home/src/mage_data/default_repo
+widgets: []

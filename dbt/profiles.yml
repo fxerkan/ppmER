@@ -1,0 +1,33 @@
+ppm_dbt:
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'postgres') }}"
+      user: "{{ env_var('POSTGRES_USER', 'ppm_user') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'ppm_datawarehouse') }}"
+      schema: core
+      threads: 4
+      keepalives_idle: 0
+    prod:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'postgres') }}"
+      user: "{{ env_var('POSTGRES_USER', 'ppm_user') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'ppm_datawarehouse') }}"
+      schema: core
+      threads: 4
+      keepalives_idle: 0
+    local:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
+      user: "{{ env_var('POSTGRES_USER', 'ppm_user') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD', 'ppm_password') }}"
+      port: "{{ env_var('POSTGRES_EXTERNAL_PORT', '15432') | int }}"
+      dbname: "{{ env_var('POSTGRES_DB', 'ppm_datawarehouse') }}"
+      schema: core
+      threads: 4
+      keepalives_idle: 0
+  target: local

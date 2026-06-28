@@ -1,0 +1,67 @@
+{
+  "folders": {},
+  "connections": [
+    {
+      "id": "ppm-postgres-container",
+      "driver": "postgresql",
+      "name": "PPM Data Warehouse (Docker)",
+      "description": "PostgreSQL Docker container for PPM Data Stack",
+      "host": "postgres",
+      "port": 5432,
+      "database": "ppm_datawarehouse",
+      "url": "jdbc:postgresql://postgres:5432/ppm_datawarehouse",
+      "properties": {
+        "user": "ppm_user",
+        "password": "ppm_password"
+      },
+      "providerProperties": {
+        "@dbeaver-show-non-default-db@": "false",
+        "@dbeaver-show-template-db@": "false",
+        "@dbeaver-show-unavailable-db@": "false",
+        "@dbeaver-read-all-data-types-db@": "false",
+        "@dbeaver-use-prepared-statements-db@": "false"
+      },
+      "readOnly": false,
+      "savePassword": true,
+      "template": false,
+      "enabled": true,
+      "autocommit": true,
+      "isolationLevel": "READ_COMMITTED",
+      "defaultActiveObject": "public",
+      "auth": {
+        "type": "native"
+      }
+    },
+    {
+      "id": "ppm-postgres-external",
+      "driver": "postgresql",
+      "name": "PPM Data Warehouse (External)",
+      "description": "External PostgreSQL database instance (PROD)",
+      "host": "10.20.6.19",
+      "port": 5432,
+      "database": "ppm_datawarehouse",
+      "url": "jdbc:postgresql://10.20.6.19:5432/ppm_datawarehouse",
+      "properties": {
+        "user": "ppm_user",
+        "password": "4ever@Docker"
+      },
+      "providerProperties": {
+        "@dbeaver-show-non-default-db@": "false",
+        "@dbeaver-show-template-db@": "false",
+        "@dbeaver-show-unavailable-db@": "false",
+        "@dbeaver-read-all-data-types-db@": "false",
+        "@dbeaver-use-prepared-statements-db@": "false"
+      },
+      "readOnly": false,
+      "savePassword": true,
+      "template": false,
+      "enabled": true,
+      "autocommit": true,
+      "isolationLevel": "READ_COMMITTED",
+      "defaultActiveObject": "public",
+      "auth": {
+        "type": "native"
+      }
+    }
+  ]
+}

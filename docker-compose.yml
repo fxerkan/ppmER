@@ -1,0 +1,195 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ppm-postgres
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_EXTERNAL_PORT:-15432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ppm-network
+
+  dlt:
+    image: python:3.11-slim
+    container_name: ppm-dlt
+    working_dir: /app
+    env_file: .env
+    environment:
+      DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
+      DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
+      DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
+      DESTINATION__POSTGRES__CREDENTIALS__HOST: postgres
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: 5432
+      SOURCES__JIRA__SUBDOMAIN: ${JIRA_SUBDOMAIN}
+      SOURCES__JIRA__EMAIL: ${JIRA_EMAIL}
+      SOURCES__JIRA__API_TOKEN: ${JIRA_API_TOKEN}
+    volumes:
+      - ./dlt:/app
+      - dlt_data:/root/.dlt
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+    command: >
+      sh -c "pip install --no-cache-dir -r /app/requirements.txt -q &&
+             echo '[DLT] Ready.' && tail -f /dev/null"
+
+  mage:
+    image: mageai/mageai:latest
+    container_name: ppm-mage
+    command: >
+      sh -c "pip install --no-cache-dir -r /home/src/requirements.txt -q &&
+             mage start default_repo"
+    env_file: .env
+    environment:
+      USER_CODE_PATH: /home/src
+      MAGE_DATABASE_CONNECTION_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mage_metadata
+      POSTGRES_DBNAME: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
+      DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
+      DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
+      DESTINATION__POSTGRES__CREDENTIALS__HOST: postgres
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: 5432
+      DBT_PROFILES_DIR: /home/src/default_repo/dbt
+      REQUIRE_USER_AUTHENTICATION: 0
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_MAIL_FROM: ${SMTP_MAIL_FROM:-}
+      SMTP_SSL: ${SMTP_SSL:-False}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-True}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-False}
+      STUCK_PIPELINE_MULTIPLIER: ${STUCK_PIPELINE_MULTIPLIER:-3}
+    ports:
+      - "${MAGE_PORT:-6789}:6789"
+    volumes:
+      - ./mage:/home/src
+      - ./dlt:/home/dlt
+      - ./dbt:/home/src/default_repo/dbt
+      - ./dlt:/home/src/default_repo/dlt
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  dbt-docs:
+    image: python:3.11-slim
+    container_name: ppm-dbt-docs
+    working_dir: /dbt
+    env_file: .env
+    command: >
+      bash -c "pip install dbt-postgres -q &&
+               cd /dbt &&
+               if [ -f target/index.html ]; then
+                 python -m http.server 8080 --directory target;
+               else
+                 echo '[DBT-DOCS] Run: dbt docs generate first' && sleep infinity;
+               fi"
+    ports:
+      - "${DBT_DOCS_EXTERNAL_PORT:-8081}:8080"
+    volumes:
+      - ./dbt:/dbt
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:24.2.0
+    container_name: ppm-cloudbeaver
+    environment:
+      CB_SERVER_NAME: "PPM Data Stack"
+      CB_SERVER_URL: "http://localhost:${CLOUDBEAVER_EXTERNAL_PORT:-8978}"
+      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-admin}
+      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-admin}
+    ports:
+      - "${CLOUDBEAVER_EXTERNAL_PORT:-8978}:8978"
+    volumes:
+      - cloudbeaver_data:/opt/cloudbeaver/workspace
+      - ./cloudbeaver/conf/initial-data-sources.conf:/opt/cloudbeaver/conf/initial-data-sources.conf:ro
+      - ./cloudbeaver/conf/initial-data.conf:/opt/cloudbeaver/conf/initial-data.conf:ro
+      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  # ponytail: Metabase replaces PowerBI - open-source, Docker-native, zero config needed
+  metabase:
+    image: metabase/metabase:latest
+    container_name: ppm-metabase
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: postgres
+      MB_DB_PORT: 5432
+      MB_DB_DBNAME: metabase
+      MB_DB_USER: ${POSTGRES_USER}
+      MB_DB_PASS: ${POSTGRES_PASSWORD}
+    ports:
+      - "${METABASE_EXTERNAL_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  # AI Agent Chat UI - works with any OpenAI-compatible API (Claude, GPT, Gemini, Ollama)
+  agent:
+    image: python:3.11-slim
+    container_name: ppm-agent
+    working_dir: /app
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    ports:
+      - "${AGENT_PORT:-7860}:7860"
+    volumes:
+      - ./agent:/app
+      - ./dbt:/dbt:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+    command: >
+      sh -c "pip install -r /app/requirements.txt -q && python /app/chat.py"
+
+volumes:
+  postgres_data:
+  dlt_data:
+  cloudbeaver_data:
+
+networks:
+  ppm-network:
+    driver: bridge

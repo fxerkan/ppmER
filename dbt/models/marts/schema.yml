@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: fact_distributed_efforts_adjustment
+    description: >
+      Financial Adjustment Fact Model.
+      Provides period-based manual adjustments for projects that override calculated distributed efforts.
+      Used in financial dashboard to apply manual corrections to effort distributions.
+    columns:
+      - name: period
+        description: Period in YYYY-MM format (e.g., 2025-01)
+        tests:
+          - not_null
+      - name: project_id
+        description: Jira project ID (string)
+        tests:
+          - not_null
+      - name: project_name
+        description: Project name for reference
+      - name: month_num
+        description: Month number (1-12)
+      - name: month_name
+        description: Month name (January, February, etc.)
+      - name: adjustment_amount
+        description: Manual adjustment value to override calculated efforts
+      - name: etl_date
+        description: ETL load timestamp
+      - name: dlt_load_id
+        description: DLT load ID for tracking
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - period
+            - project_id
+
+  

@@ -1,0 +1,59 @@
+name: 'ppm_dbt'
+version: '1.0.0'
+config-version: 2
+
+profile: 'ppm_dbt'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configurations
+models:
+  ppm_dbt:
+    # Staging layer - views for data cleaning
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags:
+        - staging
+      jira:
+        +tags:
+          - jira
+          - staging
+
+    # Core layer - tables and incremental models
+    core:
+      +materialized: table
+      +schema: core
+      +tags:
+        - core
+      jira:
+        +tags:
+          - jira
+          - core
+
+    # Marts layer - business-ready tables
+    marts:
+      +materialized: table
+      +schema: mart
+      +tags:
+        - mart
+        - datamart
+
+# Vars for configuration
+vars:
+  # Date range for dim_date generation
+  dim_date_start: '2020-01-01'
+  dim_date_end: '2030-12-31'
+
+  # Person day calculation (hours per day)
+  hours_per_person_day: 8

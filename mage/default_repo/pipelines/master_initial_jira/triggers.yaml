@@ -1,0 +1,16 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2026-01-26 04:41:48.024297+00:00
+  name: jira initial load
+  pipeline_uuid: master_initial_jira
+  schedule_interval: '@once'
+  schedule_type: time
+  settings:
+    timeout: '3600'
+  sla: null
+  start_time: 2025-01-01 00:00:00+00:00
+  status: inactive
+  token: bc4dc2c191204f92aa149c07729b063c
+  variables:
+    pipeline_type: initial

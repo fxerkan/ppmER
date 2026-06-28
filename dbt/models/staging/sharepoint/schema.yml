@@ -1,0 +1,250 @@
+version: 2
+
+models:
+  - name: stg_shrp__projects
+    description: >
+      Staging model for SharePoint Projects list.
+      Master project registry mapping Jira project IDs to SharePoint project metadata.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: project_title
+        description: Project title/name
+      - name: jira_project_id
+        description: Jira project ID mapping
+      - name: project_id_numeric
+        description: Numeric project identifier
+      - name: project_type
+        description: Project type category (e.g., Maintenance & CRs)
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__proje_inv
+    description: >
+      Staging model for SharePoint Project Inventory list.
+      Detailed project tracking with status, timeline, scope, and risk information.
+      This is the main project status tracking table used for executive reporting.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: project_code
+        description: Project code (e.g., M0072)
+      - name: project_name
+        description: Project internal name
+      - name: customer_name
+        description: Customer/brand name
+      - name: product_family
+        description: Product family (e.g., PF & POS, Core Banking)
+      - name: product_category
+        description: Product category
+      - name: product_subcategory
+        description: Product subcategory
+      - name: hosting_type
+        description: Hosting type (HostingCustomer, HostingFirmaX)
+      - name: business_model
+        description: Business model (B2B, B2B2C)
+      - name: project_code_ref
+        description: Project code reference
+      - name: project_phase
+        description: Project phase/status (Pilot, In Progress, Closed)
+      - name: jira_project_id
+        description: Related Jira project ID
+      - name: tracking_status
+        description: Project tracking status (On Track, Delayed)
+      - name: progress_notes
+        description: Current progress description and notes
+      - name: timeline_notes
+        description: Timeline milestones and dates
+      - name: scope_notes
+        description: Scope definition
+      - name: project_category
+        description: Category classification (Customer, Internal)
+      - name: is_executive_dashboard
+        description: Flag for executive dashboard visibility
+      - name: is_strategic_portfolio
+        description: Strategic portfolio flag
+      - name: risk_notes
+        description: Current risks and problems description
+      - name: scope_risk_status
+        description: Scope risk status (On Track, Risky)
+      - name: escalation_count
+        description: Escalation count/level
+      - name: customer_responsibility
+        description: Customer responsibility indicator
+      - name: has_risk_flag
+        description: Risk exists flag
+      - name: project_manager_lookup_id
+        description: Project manager lookup reference
+      - name: portfolio_manager_lookup_id
+        description: Portfolio manager lookup reference
+      - name: it_tribe_lead_lookup_id
+        description: IT tribe lead lookup reference
+      - name: updated_at
+        description: Update timestamp
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__proje_risks
+    description: >
+      Staging model for SharePoint Project Risks list.
+      Risk tracking entries linked to projects in the Project Inventory list.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: project_code
+        description: Project code reference
+      - name: risk_description
+        description: Risk description
+      - name: risk_status
+        description: Risk status (Risk Giderildi, Active, etc.)
+      - name: proje_inv_lookup_id
+        description: Link to project in proje_inv list
+      - name: project_names_lookup_id
+        description: Project names lookup reference
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__issue_type
+    description: >
+      Staging model for SharePoint Issue Type list.
+      Master data for Jira issue type classifications.
+      Maps issue types to expense categories (Expensed vs Capitalized) for financial reporting.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: issue_type_name
+        description: Issue type name (e.g., Analysis, Development, Testing)
+      - name: expense_classification
+        description: Expense classification (Expensed, Capitalized)
+      - name: jira_issue_type_id
+        description: Jira issue type ID
+      - name: issue_type_category
+        description: Category (SDLC Tasks, Infrastructure & Technical Works, etc.)
+      - name: is_active
+        description: Active status flag
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__issue_type_inventory
+    description: >
+      Staging model for SharePoint Issue Type Inventory list.
+      Task type definitions with detailed descriptions.
+      Used for categorizing and describing different types of work.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: task_type_title
+        description: Task type title
+      - name: task_type_category
+        description: Task type category (General Tasks, SDLC Tasks, etc.)
+      - name: task_type_description
+        description: Task type description
+      - name: expense_classification
+        description: Expense classification (Expensed, Capitalized)
+      - name: task_description
+        description: Full description of the task type
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__pbi_info
+    description: >
+      Staging model for SharePoint PBI Info list.
+      Power BI project/team mapping information.
+      Maps Jira project IDs to team names for Power BI reporting.
+    columns:
+      - name: item_id
+        description: SharePoint item ID (unique within list)
+        tests:
+          - unique
+          - not_null
+      - name: jira_project_id
+        description: Jira project ID
+      - name: team_name
+        description: Team/project name mapping for Power BI
+      - name: modified_at
+        description: Last modification timestamp
+      - name: created_at
+        description: Creation timestamp
+
+  - name: stg_shrp__capex_opex_adjustment
+    description: >
+      Staging model for SharePoint CAPEX/OPEX Adjustment Excel file.
+      Unpivots monthly CAPEX and OPEX ratio columns into a long format with one row per project per month.
+      Each row contains both CAPEX and OPEX ratios for a given project and month.
+    columns:
+      - name: year
+        description: Year for the adjustments
+      - name: project_id
+        description: Project ID (Jira project ID)
+      - name: project
+        description: Project name
+      - name: period
+        description: Period in YYYY-MM format
+      - name: month_num
+        description: Month number (1-12)
+      - name: month_name
+        description: Month name (January, February, etc.)
+      - name: ratio_capex
+        description: CAPEX ratio for the month
+      - name: ratio_opex
+        description: OPEX ratio for the month
+      - name: _etl_date
+        description: ETL load timestamp
+      - name: _dlt_load_id
+        description: DLT load identifier
+      - name: _dlt_id
+        description: DLT record identifier
+
+  - name: stg_shrp__operation_efforts
+    description: >
+      Staging model for SharePoint Operation Efforts Excel file.
+      Unpivots monthly planned and actual effort hours into long format with one row per project per month.
+      Each row contains both planned and actual effort values for comparison and variance analysis.
+    columns:
+      - name: year
+        description: Year for the operation efforts
+      - name: project_id
+        description: Project ID (Jira project ID)
+      - name: project_name
+        description: Project name
+      - name: period
+        description: Period in YYYY-MM format (e.g., 2025-01)
+      - name: month_num
+        description: Month number (1-12)
+      - name: month_name
+        description: Month name (January, February, etc.)
+      - name: planned_effort
+        description: Planned effort hours for the month
+      - name: actual_effort
+        description: Actual effort hours logged for the month
+      - name: _etl_date
+        description: ETL load timestamp
+      - name: _dlt_load_id
+        description: DLT load ID for tracking
+      - name: _dlt_id
+        description: DLT unique record ID

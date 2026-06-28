@@ -1,0 +1,321 @@
+version: 2
+
+sources:
+  - name: raw_sharepoint
+    description: Raw SharePoint data loaded via dlt from SharePoint Online lists
+    database: ppm_datawarehouse
+    schema: raw_sharepoint
+    tables:
+      - name: projects
+        description: SharePoint Projects list - master project registry mapping Jira project IDs to project metadata - https://example.sharepoint.com/sites/ppm/Lists/Projects/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Project title/name
+          - name: id_project
+            description: Jira project ID mapping
+          - name: field_0
+            description: Numeric project identifier
+          - name: field_3
+            description: Project type category (e.g., Maintenance & CRs)
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: proje_inv
+        description: Project Inventory - detailed project tracking with status, timeline, and risk information - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Proje%20Inv/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Project code (e.g., M0072)
+          - name: field_1
+            description: Project internal name
+          - name: field_2
+            description: Customer/brand name
+          - name: field_4
+            description: Product family (e.g., PF & POS, Core Banking)
+          - name: field_5
+            description: Product category
+          - name: field_7
+            description: Product subcategory
+          - name: field_8
+            description: Hosting type (HostingCustomer, HostingFirmaX)
+          - name: field_9
+            description: Business model (B2B, B2B2C)
+          - name: field_11
+            description: Project code reference
+          - name: field_12
+            description: Project phase/status
+          - name: field_13
+            description: Related Jira project ID
+          - name: on_track_x002f_delayed
+            description: Project tracking status (On Track, Delayed)
+          - name: status_progress
+            description: Current progress description and notes
+          - name: project_timeline
+            description: Timeline milestones and dates
+          - name: project_scope
+            description: Scope definition
+          - name: project_category
+            description: Category classification (Customer, Internal)
+          - name: executive_dashboard
+            description: Flag for executive dashboard visibility (1/0)
+          - name: is_strategic_portfolio_x003fx
+            description: Strategic portfolio flag (1/0)
+          - name: risk_x002f_problem
+            description: Current risks and problems description
+          - name: scope_risk
+            description: Scope risk status (On Track, Risky)
+          - name: escalation
+            description: Escalation count/level
+          - name: customer_light
+            description: Customer responsibility indicator
+          - name: risk_var_m_x0131__x003fx
+            description: Risk exists flag
+          - name: project_manager_lookup_id
+            description: Project manager lookup reference
+          - name: portfolio_manager_lookup_id
+            description: Portfolio manager lookup reference
+          - name: it_tribe_lead_lookup_id
+            description: IT tribe lead lookup reference
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: proje_risks
+        description: Project Risks - risk tracking for projects - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Proje%20Risks/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Project code reference
+          - name: risk
+            description: Risk description
+          - name: risk_durumu
+            description: Risk status (Risk Giderildi, Active, etc.)
+          - name: project_information_lookup_id
+            description: Link to project in proje_inv list
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: issue_type
+        description: Issue Type master data - Jira issue type classifications - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Issue%20Type/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Issue type name (e.g., Analysis, Development, Testing)
+          - name: field_1
+            description: Expense classification (Expensed, Capitalized)
+          - name: field_2
+            description: Jira issue type ID
+          - name: category
+            description: Category (SDLC Tasks, Infrastructure & Technical Works, General Tasks, Old Tasks)
+          - name: active
+            description: Active status (Evet/Hayir)
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: issue_type_inventory
+        description: Issue Type Inventory - task type definitions with descriptions - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Issue%20Type%20Inventory/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Task type title
+          - name: task_type
+            description: Task type category (General Tasks, SDLC Tasks, etc.)
+          - name: task_type_description
+            description: Detailed task type description
+          - name: expensed_x002f_capitalized
+            description: Expense classification (Expensed, Capitalized)
+          - name: description
+            description: Full description of the task type
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: pbi_info
+        description: PBI Info - Power BI project/team mapping information - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/PBI%20Info/AllItems.aspx
+        columns:
+          - name: id
+            description: SharePoint item ID (unique within list)
+          - name: title
+            description: Jira project ID
+          - name: field_1
+            description: Team/project name mapping for Power BI
+          - name: modified
+            description: Last modification timestamp
+          - name: created
+            description: Creation timestamp
+
+      - name: financial_adjustment
+        description: Financial Adjustment - Monthly financial adjustments per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/financial_adjustment.xlsx
+        columns:
+          - name: year
+            description: Year for the financial adjustments
+          - name: project_id
+            description: Project ID (Jira project ID)
+          - name: project_name
+            description: Project name
+          - name: jan_uary_adjusted
+            description: January adjustment amount
+          - name: february_adjusted
+            description: February adjustment amount
+          - name: march_adjusted
+            description: March adjustment amount
+          - name: april_adjusted
+            description: April adjustment amount
+          - name: may_adjusted
+            description: May adjustment amount
+          - name: june_adjusted
+            description: June adjustment amount
+          - name: july_adjusted
+            description: July adjustment amount
+          - name: august_adjusted
+            description: August adjustment amount
+          - name: september_adjusted
+            description: September adjustment amount
+          - name: october_adjusted
+            description: October adjustment amount
+          - name: november_adjusted
+            description: November adjustment amount
+          - name: _etl_date
+            description: ETL load timestamp
+
+      - name: capex_opex_adjustment
+        description: CAPEX/OPEX Adjustment - Monthly CAPEX/OPEX ratio adjustments per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/capex_opex_adjustment.xlsx
+        columns:
+          - name: project
+            description: Project name
+          - name: project_id
+            description: Project ID (Jira project ID)
+          - name: year
+            description: Year for the CAPEX/OPEX adjustments
+          - name: ratio_jan_capex
+            description: January CAPEX ratio
+          - name: ratio_jan_opex
+            description: January OPEX ratio
+          - name: ratio_feb_capex
+            description: February CAPEX ratio
+          - name: ratio_feb_opex
+            description: February OPEX ratio
+          - name: ratio_mar_capex
+            description: March CAPEX ratio
+          - name: ratio_mar_opex
+            description: March OPEX ratio
+          - name: ratio_apr_capex
+            description: April CAPEX ratio
+          - name: ratio_apr_opex
+            description: April OPEX ratio
+          - name: ratio_may_capex
+            description: May CAPEX ratio
+          - name: ratio_may_opex
+            description: May OPEX ratio
+          - name: ratio_jun_capex
+            description: June CAPEX ratio
+          - name: ratio_jun_opex
+            description: June OPEX ratio
+          - name: ratio_jul_capex
+            description: July CAPEX ratio
+          - name: ratio_jul_opex
+            description: July OPEX ratio
+          - name: ratio_aug_capex
+            description: August CAPEX ratio
+          - name: ratio_aug_opex
+            description: August OPEX ratio
+          - name: ratio_sep_capex
+            description: September CAPEX ratio
+          - name: ratio_sep_opex
+            description: September OPEX ratio
+          - name: ratio_oct_capex
+            description: October CAPEX ratio
+          - name: ratio_oct_opex
+            description: October OPEX ratio
+          - name: ratio_nov_capex
+            description: November CAPEX ratio
+          - name: ratio_nov_opex
+            description: November OPEX ratio
+          - name: ratio_dec_capex
+            description: December CAPEX ratio
+          - name: ratio_dec_opex
+            description: December OPEX ratio
+          - name: _etl_date
+            description: ETL load timestamp
+            
+      - name: operation_efforts
+        description: Operation Efforts - Monthly planned and actual effort hours per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/operation_efforts.xlsx
+        columns:
+          - name: year
+            description: Year for the operation efforts
+          - name: project_id
+            description: Project ID (Jira project ID)
+          - name: project_name
+            description: Project name
+          - name: jan_planned
+            description: January planned effort hours
+          - name: jan_actual
+            description: January actual effort hours
+          - name: feb_planned
+            description: February planned effort hours
+          - name: feb_actual
+            description: February actual effort hours
+          - name: mar_planned
+            description: March planned effort hours
+          - name: mar_actual
+            description: March actual effort hours
+          - name: apr_planned
+            description: April planned effort hours
+          - name: apr_actual
+            description: April actual effort hours
+          - name: may_planned
+            description: May planned effort hours
+          - name: may_actual
+            description: May actual effort hours
+          - name: jun_planned
+            description: June planned effort hours
+          - name: jun_actual
+            description: June actual effort hours
+          - name: jul_planned
+            description: July planned effort hours
+          - name: jul_actual
+            description: July actual effort hours
+          - name: aug_planned
+            description: August planned effort hours
+          - name: aug_actual
+            description: August actual effort hours
+          - name: sep_planned
+            description: September planned effort hours
+          - name: sep_actual
+            description: September actual effort hours
+          - name: oct_planned
+            description: October planned effort hours
+          - name: oct_actual
+            description: October actual effort hours
+          - name: nov_planned
+            description: November planned effort hours
+          - name: nov_actual
+            description: November actual effort hours
+          - name: dec_planned
+            description: December planned effort hours
+          - name: dec_actual
+            description: December actual effort hours
+          - name: _etl_date
+            description: ETL load timestamp
+
+      - name: calculation_period
+        columns:
+          - name: field_0
+          - name: field_2
+          - name: field_3
+          - name: title
+          - name: id

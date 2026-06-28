@@ -1,0 +1,14 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2025-12-15 16:32:20.982793+00:00
+  name: monitor_stuck_pipelines
+  pipeline_uuid: pipeline_monitor
+  schedule_interval: '*/10 * * * *'
+  schedule_type: time
+  settings: {}
+  sla: null
+  start_time: 2025-12-15 00:00:00+00:00
+  status: inactive
+  token: 482f0c3d0311481195de83a8a96512e9
+  variables: {}

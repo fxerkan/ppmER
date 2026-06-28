@@ -1,0 +1,271 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Projects (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_projects
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Proje Inv (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_proje_inv
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Proje Risks (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_proje_risks
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Issue Type (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_issue_type
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Issue Type Inventory (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_issue_type_inventory
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint PBI Info (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_pbi_info
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: daily
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load SharePoint Calculation Period (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_calculation_period
+- all_upstream_blocks_executed: false
+  color: '#43A047'
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT SharePoint Staging Models
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: transformer
+  upstream_blocks:
+  - dlt_load_shrp_proje_risks
+  - dlt_load_shrp_issue_type
+  - dlt_load_shrp_issue_type_inventory
+  - dlt_load_shrp_pbi_info
+  - dlt_load_shrp_calculation_period
+  - dlt_load_shrp_proje_inv
+  - dlt_load_shrp_projects
+  - dlt_load_shrp_operation_efforts
+  uuid: dbt_run_staging_models_sharepoint
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_loaders/dlt_load_shrp_financial_adjustment.py
+  downstream_blocks:
+  - dlt_load_shrp_operation_efforts
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: dlt_load_shrp_financial_adjustment
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_shrp_capex_opex_adjustment
+  uuid: dlt_load_shrp_financial_adjustment
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_loaders/dlt_load_shrp_capex_opex_adjustment.py
+  downstream_blocks:
+  - dlt_load_shrp_financial_adjustment
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: dlt_load_shrp_capex_opex_adjustment
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_shrp_capex_opex_adjustment
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_loaders/dlt_load_shrp_operation_efforts.py
+  downstream_blocks:
+  - dbt_run_staging_models_sharepoint
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: dlt_load_shrp_operation_efforts
+  retry_config: null
+  status: not_executed
+  timeout: null
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_shrp_financial_adjustment
+  uuid: dlt_load_shrp_operation_efforts
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2025-12-16 00:00:00'
+data_integration: null
+description: 'Master SharePoint Data Load Pipeline
+
+
+  Orchestrates data extraction from SharePoint Online lists and dbt transformations.
+
+  Can run independently or be triggered within master_daily_jira pipeline.
+
+
+  Target Schemas:
+
+  - raw_sharepoint: Raw data from DLT (merge mode)'
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Master SharePoint Load
+custom_notifications:
+  email_on_failure:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+  email_on_success:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+remote_variables_dir: null
+retry_config:
+  delay: 60
+  exponential_backoff: true
+  retries: 3
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags:
+- sharepoint
+- daily-load
+- master-pipeline
+- dlt
+- dbt
+type: python
+uuid: master_sharepoint
+variables:
+  pipeline_type: daily
+variables_dir: /home/src/mage_data/default_repo
+widgets: []

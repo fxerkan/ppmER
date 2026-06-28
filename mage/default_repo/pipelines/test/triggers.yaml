@@ -1,0 +1,14 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2025-12-04 06:50:41.129625+00:00
+  name: inspiring core
+  pipeline_uuid: test
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-03 06:50:00+00:00
+  status: inactive
+  token: 45e3f0f285bd4aefb75a1fef68be7b14
+  variables: {}

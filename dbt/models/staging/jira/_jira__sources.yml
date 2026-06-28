@@ -1,0 +1,221 @@
+version: 2
+
+sources:
+  - name: raw_jira
+    description: Raw Jira data loaded via dlt from Jira Cloud API
+    database: ppm_datawarehouse
+    schema: raw_jira
+    tables:
+      - name: projects
+        description: All Jira projects
+        columns:
+          - name: id
+            description: Unique project ID
+          - name: key
+            description: Project key (e.g., SD, DEV)
+          - name: name
+            description: Project name
+
+      - name: issues
+        description: Flattened Jira issues with core fields
+        columns:
+          - name: id
+            description: Unique issue ID
+          - name: key
+            description: Issue key (e.g., SD-1234)
+          - name: summary
+            description: Issue title/summary
+          - name: created
+            description: Issue creation timestamp
+          - name: updated
+            description: Last update timestamp
+          - name: status_name
+            description: Current status name
+          - name: status_category
+            description: Status category (To Do, In Progress, Done)
+          - name: assignee_id
+            description: Assignee account ID
+          - name: assignee_name
+            description: Assignee display name
+          - name: reporter_id
+            description: Reporter account ID
+          - name: reporter_name
+            description: Reporter display name
+          - name: issuetype_name
+            description: Issue type (Story, Bug, Task, etc.)
+          - name: priority_name
+            description: Priority level
+          - name: project_key
+            description: Parent project key
+          - name: project_name
+            description: Parent project name
+          - name: parent_key
+            description: Parent issue key (if subtask)
+          - name: is_subtask
+            description: Boolean flag indicating if this is a subtask
+          - name: subtasks_count
+            description: Number of subtasks
+          - name: issue_links_count
+            description: Number of linked issues
+
+      - name: issue_links
+        description: Issue relationships (blocks, duplicates, relates to, etc.)
+        columns:
+          - name: source_issue_key
+            description: Source issue key
+          - name: link_type_name
+            description: Relationship type name
+          - name: direction
+            description: Link direction (inward/outward)
+          - name: target_issue_key
+            description: Target issue key
+          - name: target_summary
+            description: Target issue summary
+
+      - name: issue_subtasks
+        description: Parent-child subtask relationships
+        columns:
+          - name: parent_key
+            description: Parent issue key
+          - name: subtask_key
+            description: Subtask issue key
+          - name: subtask_summary
+            description: Subtask summary
+          - name: subtask_status
+            description: Subtask status name
+
+      - name: issue_custom_fields
+        description: Top 20 most-used custom field values
+        columns:
+          - name: issue_key
+            description: Issue key
+          - name: field_id
+            description: Custom field ID (e.g., customfield_10037)
+          - name: field_value
+            description: Field value (JSON string for complex types)
+
+      - name: users
+        description: All Jira users
+        columns:
+          - name: accountId
+            description: Unique account ID
+          - name: displayName
+            description: User display name
+          - name: emailAddress
+            description: User email
+          - name: active
+            description: Whether user is active
+
+      - name: worklogs
+        description: Time tracking worklogs
+        columns:
+          - name: id
+            description: Worklog ID
+          - name: issue_key
+            description: Associated issue key
+          - name: author
+            description: Worklog author (JSON)
+          - name: created
+            description: Worklog creation timestamp
+          - name: started
+            description: Work start timestamp
+          - name: timeSpent
+            description: Time spent (human readable, e.g., "2h 30m")
+          - name: timeSpentSeconds
+            description: Time spent in seconds
+
+      - name: hr_users
+        description: HR user data from Jira "Insan Kaynaklari" project
+        columns:
+          - name: issue_id
+            description: Unique issue ID
+          - name: issue_key
+            description: Issue key (e.g., HR-123)
+          - name: created_at
+            description: Record creation timestamp
+          - name: user_account_id
+            description: Jira account ID of the creator
+          - name: user_name
+            description: User name from custom field
+          - name: manager_director
+            description: Manager/Director name
+          - name: manager_deputy_gm
+            description: Deputy GM Manager
+          - name: name_surname
+            description: Full name
+          - name: active_inactive_status
+            description: Employment status (Active/Inactive)
+          - name: start_time
+            description: Employment start date
+          - name: unit
+            description: Organizational unit
+          - name: manages_team
+            description: Team management status
+          - name: deputy_gm_upper_unit
+            description: Deputy GM upper unit
+          - name: outsource_inhouse
+            description: Outsource or In-house flag
+          - name: team
+            description: Team name
+          - name: company_info
+            description: Company information
+
+      - name: pbb_issues
+        description: PBB (Proje Butce Bilgileri) issues with budget information
+        columns:
+          - name: id
+            description: Unique issue ID
+          - name: key
+            description: Issue key (e.g., PBB-123)
+          - name: summary
+            description: Issue summary
+          - name: created
+            description: Creation timestamp
+          - name: updated
+            description: Last update timestamp
+          - name: status_name
+            description: Current status name
+          - name: status_category
+            description: Status category
+          - name: assignee_id
+            description: Assignee account ID
+          - name: assignee_name
+            description: Assignee display name
+          - name: reporter_id
+            description: Reporter account ID
+          - name: reporter_name
+            description: Reporter display name
+          - name: creator_id
+            description: Creator account ID
+          - name: creator_name
+            description: Creator display name
+          - name: issuetype_name
+            description: Issue type name
+          - name: priority_name
+            description: Priority level
+          - name: project_id
+            description: Project ID
+          - name: project_key
+            description: Project key
+          - name: project_name
+            description: Project name
+          - name: budget_person_days
+            description: Budget in person days
+          - name: project_choice
+            description: Project choice selection
+          - name: budgeting_year
+            description: Budgeting year
+
+      - name: project_properties
+        description: Jira project properties (custom metadata per project)
+        columns:
+          - name: id
+            description: Composite key (project_id + property_key)
+          - name: project_id
+            description: Project ID
+          - name: project_key
+            description: Project key (e.g., AB, DEV)
+          - name: property_key
+            description: Property name (e.g., pp-Business Line, pp-Tribe)
+          - name: value
+            description: Property value (may be JSON, boolean, None, or plain text)

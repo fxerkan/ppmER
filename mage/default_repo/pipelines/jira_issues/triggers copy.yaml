@@ -1,0 +1,33 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 202001-202012
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 15:18:00+00:00
+  status: inactive
+  token: 189b6606869b436a9754fa1f24a28b4c
+  variables:
+    end_date: '2020-12-31'
+    pipeline_type: initial
+    start_date: '2020-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2021
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 17:27:00+00:00
+  status: inactive
+  token: 29daaa21be384db3b9a87f36b7b7adc1
+  variables:
+    end_date: '2021-12-31'
+    pipeline_type: initial
+    start_date: '2021-01-01'

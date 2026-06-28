@@ -1,0 +1,73 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: '#FFA726'
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Check Stuck Pipelines
+  retry_config:
+    delay: 30
+    retries: 1
+  status: not_executed
+  timeout: 120
+  type: sensor
+  upstream_blocks: []
+  uuid: check_stuck_pipelines
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2025-12-15 00:00:00'
+data_integration: null
+description: 'Pipeline Monitor - Stuck Pipeline Detection
+
+
+  This sensor pipeline runs periodically to check for stuck pipelines.
+
+  If a pipeline is running for more than 2x its expected duration,
+
+  an email notification is sent.
+
+
+  Monitored pipelines:
+
+  - jira_issues
+
+  - jira_worklogs
+
+  - master_daily_jira
+
+  - master_initial_jira
+
+
+  Configuration via environment variables:
+
+  - STUCK_PIPELINE_MULTIPLIER: Threshold multiplier (default: 2)
+
+  - NOTIFY_<PIPELINE>_TO/CC/BCC: Email recipients per pipeline
+
+  '
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Pipeline Monitor
+notification_config: {}
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags:
+- monitor
+- alerts
+- system
+type: python
+uuid: pipeline_monitor
+variables: {}
+variables_dir: /home/src/mage_data/default_repo
+widgets: []

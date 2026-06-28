@@ -1,0 +1,387 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dlt_load_jira_project_properties
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Projects (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_jira_projects
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Users (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_jira_users
+- all_upstream_blocks_executed: true
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dlt_load_jira_issue_links
+  - dlt_load_jira_pbb_issues
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Issues (DLT - ASYNC)
+  retry_config:
+    delay: 60
+    retries: 2
+  status: executed
+  timeout: 7200
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_users
+  - dlt_load_jira_project_properties
+  - dlt_load_jira_hr_users
+  uuid: dlt_load_jira_issues_async
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_loaders/dlt_load_jira_project_properties.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: dlt_load_jira_project_properties
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_projects
+  uuid: dlt_load_jira_project_properties
+- all_upstream_blocks_executed: false
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dlt_load_jira_issue_subtasks
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Issue Links (DLT)
+  retry_config:
+    delay: 60
+    retries: 2
+  status: executed
+  timeout: 3600
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_pbb_issues
+  uuid: dlt_load_jira_issue_links
+- all_upstream_blocks_executed: false
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dlt_load_jira_issue_custom_fields
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Issue Subtasks (DLT)
+  retry_config:
+    delay: 60
+    retries: 2
+  status: executed
+  timeout: 3600
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_issue_links
+  uuid: dlt_load_jira_issue_subtasks
+- all_upstream_blocks_executed: false
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Issue Custom Fields (DLT)
+  retry_config:
+    delay: 60
+    retries: 2
+  status: executed
+  timeout: 3600
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_issue_subtasks
+  uuid: dlt_load_jira_issue_custom_fields
+- all_upstream_blocks_executed: false
+  color: '#1E88E5'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dbt_deps
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Worklogs (DLT - ASYNC)
+  retry_config:
+    delay: 60
+    retries: 2
+  status: updated
+  timeout: 7200
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_issue_custom_fields
+  uuid: dlt_load_jira_worklogs_async
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira HR Users (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: executed
+  timeout: 600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_jira_hr_users
+- all_upstream_blocks_executed: true
+  color: '#9C27B0'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - dlt_load_jira_issue_links
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira PBB Issues (DLT)
+  retry_config:
+    delay: 30
+    retries: 2
+  status: failed
+  timeout: 600
+  type: data_loader
+  upstream_blocks:
+  - dlt_load_jira_issues_async
+  uuid: dlt_load_jira_pbb_issues
+- all_upstream_blocks_executed: false
+  color: '#43A047'
+  configuration: {}
+  downstream_blocks:
+  - dbt_run_staging_models
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Install Dependencies
+  retry_config:
+    delay: 10
+    retries: 1
+  status: not_executed
+  timeout: 300
+  type: transformer
+  upstream_blocks:
+  - dlt_load_jira_worklogs_async
+  uuid: dbt_deps
+- all_upstream_blocks_executed: false
+  color: '#43A047'
+  configuration: {}
+  downstream_blocks:
+  - dbt_run_core_models
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Staging Models
+  retry_config:
+    delay: 30
+    retries: 2
+  status: updated
+  timeout: 600
+  type: transformer
+  upstream_blocks:
+  - dbt_deps
+  uuid: dbt_run_staging_models
+- all_upstream_blocks_executed: false
+  color: '#FB8C00'
+  configuration: {}
+  downstream_blocks:
+  - dbt_run_mart_models
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Core Models
+  retry_config:
+    delay: 30
+    retries: 2
+  status: updated
+  timeout: 600
+  type: transformer
+  upstream_blocks:
+  - dbt_run_staging_models
+  uuid: dbt_run_core_models
+- all_upstream_blocks_executed: false
+  color: '#FB8C00'
+  configuration: {}
+  downstream_blocks:
+  - dbt_test
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Mart Facts and Dimensions
+  retry_config:
+    delay: 30
+    retries: 2
+  status: not_executed
+  timeout: 600
+  type: transformer
+  upstream_blocks:
+  - dbt_run_core_models
+  uuid: dbt_run_mart_models
+- all_upstream_blocks_executed: false
+  color: '#7B1FA2'
+  configuration: {}
+  downstream_blocks:
+  - dbt_docs_generate
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Data Tests
+  retry_config:
+    delay: 10
+    retries: 1
+  status: not_executed
+  timeout: 600
+  type: transformer
+  upstream_blocks:
+  - dbt_run_mart_models
+  uuid: dbt_test
+- all_upstream_blocks_executed: false
+  color: '#7B1FA2'
+  configuration: {}
+  downstream_blocks:
+  - send_success_notification
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: DBT Generate Documentation
+  retry_config:
+    delay: 10
+    retries: 1
+  status: not_executed
+  timeout: 300
+  type: transformer
+  upstream_blocks:
+  - dbt_test
+  uuid: dbt_docs_generate
+- all_upstream_blocks_executed: false
+  color: '#28a745'
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Send Success Notification
+  retry_config:
+    delay: 5
+    retries: 1
+  status: not_executed
+  timeout: 60
+  type: data_exporter
+  upstream_blocks:
+  - dbt_docs_generate
+  uuid: send_success_notification
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2025-11-22 00:00:00'
+data_integration: null
+description: 'Master Initial Jira Load Pipeline
+
+
+  Orchestrates complete INITIAL data load from Jira followed by dbt transformations.
+
+
+  Target Schemas:
+
+  - raw_jira: Raw data from DLT (replace mode)
+
+  - staging: Cleaned views
+
+  - core: Intermediate tables
+
+  - mart: Business-ready tables
+
+  '
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Master Initial Jira Load
+custom_notifications:
+  email_on_failure:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+  email_on_success:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags:
+- jira
+- initial-load
+- master-pipeline
+- dlt
+- dbt
+type: python
+uuid: master_initial_jira
+variables:
+  pipeline_type: initial
+variables_dir: /home/src/mage_data/default_repo
+widgets: []

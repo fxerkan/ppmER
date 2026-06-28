@@ -1,0 +1,89 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: '#FF6B35'
+  configuration:
+    pipeline_type: initial
+  downstream_blocks:
+  - send_success_notification
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Load Jira Worklogs (Parametric)
+  retry_config:
+    delay: 60
+    retries: 1
+  status: not_executed
+  timeout: 3600
+  type: data_loader
+  upstream_blocks: []
+  uuid: dlt_load_jira_worklogs_parametric
+- all_upstream_blocks_executed: false
+  color: '#28a745'
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Send Success Notification
+  retry_config:
+    delay: 5
+    retries: 1
+  status: not_executed
+  timeout: 60
+  type: data_exporter
+  upstream_blocks:
+  - dlt_load_jira_worklogs_parametric
+  uuid: send_success_notification
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2025-12-10 00:00:00'
+data_integration: null
+description: "Jira Worklogs (Parametric) Pipeline\n\nStandalone pipeline for extracting\
+  \ Jira worklogs with configurable date range.\nUse this to migrate historical data\
+  \ in chunks (e.g., month by month).\n\nRuntime Variables (set before running):\n\
+  \  - start_date: Start date '2020-01-01'\n  - end_date: End date '2020-03-31'\n\
+  \  - pipeline_type: 'initial' or 'daily' (default: initial)\n  - max_workers: Parallel\
+  \ workers (default: 8)"
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: Jira Worklogs (Parametric)
+custom_notifications:
+  email_on_failure:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+  email_on_success:
+    to:
+      - erkan.ciftci@nexteralabs.com
+      - ilhan.yigit@firmaxit.com
+    cc: []
+    bcc: []
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags:
+- jira
+- worklogs
+- parametric
+- historical-load
+- dlt
+type: python
+uuid: jira_worklogs
+variables:
+  end_date: '2020-03-31'
+  max_workers: 8
+  pipeline_type: initial
+  start_date: '2020-01-01'
+variables_dir: /home/src/mage_data/default_repo
+widgets: []

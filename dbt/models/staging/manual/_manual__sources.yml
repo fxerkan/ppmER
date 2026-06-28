@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: raw_manual
+    description: MANUAL data uploaded or loaded
+    database: ppm_datawarehouse
+    schema: raw_manual
+    tables:
+      - name: calc_period
+        description: Calculation periods for Jira data processing
+        columns:
+          - name: period
+            description: Start timestamp of the calculation period
+          - name: period_name
+            description: Period description
+          - name: is_locked
+            description: Boolean indicating if the period is locked
+          - name: locked_date
+            description: Timestamp when the period was locked

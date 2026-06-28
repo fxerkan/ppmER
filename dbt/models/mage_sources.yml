@@ -1,0 +1,20 @@
+sources:
+- description: Dataframes Mage upstream blocks
+  loader: mage
+  name: mage_dbt
+  schema: core
+  tables:
+  - description: Dataframe for block `load_jira_worklogs` of the `master_initial_jira`
+      mage pipeline.
+    identifier: mage_master_initial_jira_load_jira_worklogs
+    meta:
+      block_uuid: load_jira_worklogs
+      pipeline_uuid: master_initial_jira
+    name: master_initial_jira_load_jira_worklogs
+  - description: Dataframe for block `dlt_load_jira_projects` of the `test` mage pipeline.
+    identifier: mage_test_dlt_load_jira_projects
+    meta:
+      block_uuid: dlt_load_jira_projects
+      pipeline_uuid: test
+    name: test_dlt_load_jira_projects
+version: 2

@@ -1,0 +1,35 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2025-12-10 14:55:50.539731+00:00
+  name: fantastic ranger
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-09 14:55:00+00:00
+  status: active
+  token: a82929dc397e4344a1b067eb6899fa97
+  variables:
+    end_date: '2020-01-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2020-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: 202401-202403
+  pipeline_uuid: jira_worklogs
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 15:06:00+00:00
+  status: inactive
+  token: cdc08aa595c5466f8196df2ab1640de2
+  variables:
+    end_date: '2024-03-31'
+    max_workers: 8
+    pipeline_type: initial
+    start_date: '2024-01-01'

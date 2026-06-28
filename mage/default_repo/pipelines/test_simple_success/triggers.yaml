@@ -1,0 +1,16 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: test success email
+  pipeline_uuid: test_simple_success
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-20 18:34:00+00:00
+  status: inactive
+  token: bbf95e81845e4fc586210478b53b94c3
+  variables:
+    execution_type: manual
+    test_mode: true

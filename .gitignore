@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+ENV/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/.user.yml
+dbt/edr_target/
+
+# Secrets - NEVER commit these
+.env
+dlt/.dlt/secrets.toml
+*.key
+*.pem
+
+# Volumes
+volumes/
+DATA_Volumes/
+mage/mage_data/
+
+# Logs
+*.log
+dlt/logs/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code
+.claude/
+.serena/
+
+# Notebook checkpoints
+.ipynb_checkpoints/

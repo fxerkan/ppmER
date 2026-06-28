@@ -1,0 +1,191 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2024
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 17:41:00+00:00
+  status: inactive
+  token: ebcc3804214a44d9a80c353c223731cd
+  variables:
+    end_date: '2024-12-31'
+    pipeline_type: initial
+    start_date: '2024-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2023
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:03:00+00:00
+  status: inactive
+  token: 238ba164d2024c769a3601de60779d55
+  variables:
+    end_date: '2023-12-31'
+    pipeline_type: initial
+    start_date: '2023-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2022
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:03:00+00:00
+  status: inactive
+  token: 2d381822946a490593916ec52857ce76
+  variables:
+    end_date: '2022-12-31'
+    pipeline_type: initial
+    start_date: '2022-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2021
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:03:00+00:00
+  status: inactive
+  token: 9adbcf42a0d747e2b3bd3b15f69340c9
+  variables:
+    end_date: '2021-12-31'
+    pipeline_type: initial
+    start_date: '2021-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2020
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 18:04:00+00:00
+  status: inactive
+  token: eb7ea72f5b654b34acc3720266ed1820
+  variables:
+    end_date: '2020-12-31'
+    pipeline_type: initial
+    start_date: '2020-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2025
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 19:51:00+00:00
+  status: inactive
+  token: c2e4d771cd524d1da3c38de4f6201cf3
+  variables:
+    end_date: '2025-12-31'
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 202501-202506
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 21:01:00+00:00
+  status: inactive
+  token: ad347e260362411e95bb6bc89cfc0f6a
+  variables:
+    end_date: '2025-06-30'
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 202507-202512
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-10 21:02:00+00:00
+  status: inactive
+  token: 1003a40caec9421293eed268a429fa06
+  variables:
+    end_date: '2025-12-31'
+    pipeline_type: initial
+    start_date: '2025-07-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2025-01
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings:
+    timeout_status: failed
+  sla: null
+  start_time: 2025-12-15 19:31:00+00:00
+  status: inactive
+  token: c9226809f0214c9f9ed7861c5df8df46
+  variables:
+    end_date: '2025-02-01'
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: profound aspen
+  pipeline_uuid: jira_issues
+  schedule_interval: null
+  schedule_type: null
+  settings: null
+  sla: null
+  start_time: null
+  status: inactive
+  token: d08323e6a4d144beaa309ba6d3e4e55c
+  variables: null
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 2025-01
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-15 11:43:00+00:00
+  status: inactive
+  token: 1236b7e4b96a4c76b6c3baddcc118297
+  variables:
+    end_date: '2025-01-31'
+    pipeline_type: initial
+    start_date: '2025-01-01'
+- description: null
+  envs: []
+  last_enabled_at: null
+  name: issues 1900-2025
+  pipeline_uuid: jira_issues
+  schedule_interval: '@once'
+  schedule_type: time
+  settings: null
+  sla: null
+  start_time: 2025-12-16 12:07:00+00:00
+  status: inactive
+  token: d44a0daa60a04cbabeb4b81c9b2462ed
+  variables:
+    end_date: '2025-12-31'
+    pipeline_type: initial
+    start_date: '1900-01-01'

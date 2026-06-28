@@ -1,0 +1,644 @@
+version: 2
+
+models:
+  # ============================================
+  # DIMENSION MODELS
+  # ============================================
+  - name: dim_hr
+    description: |
+      **HR dimension table** for human resources information.
+
+      Pure HR data providing organizational hierarchy, employment status,
+      and team structure without Jira user mapping.
+
+      Use this table for:
+      - HR reporting and analytics
+      - Organizational structure analysis
+      - Employee roster management
+      - Team composition analysis
+    config:
+      tags: ['jira', 'core', 'dim']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [user_name]
+    columns:
+      - name: user_account_id
+        description: "Primary key - Unique user account ID"
+      - name: user_name
+        description: "User's name"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: user_display_name
+        description: "User's display name"
+      - name: unit_name
+        description: "Organizational unit name"
+      - name: team_name
+        description: "Team name"
+      - name: manager_name
+        description: "Manager's name"
+      - name: deputy_gm_name
+        description: "Deputy General Manager's name"
+      - name: deputy_gm_upper_unit
+        description: "Deputy GM's upper organizational unit"
+      - name: is_active
+        description: "Employment active status"
+      - name: is_manages_team
+        description: "Whether user manages a team"
+      - name: is_outsource_inhouse
+        description: "Employment type (outsource/inhouse)"
+      - name: employment_start_date
+        description: "Employment start date"
+      - name: company_info
+        description: "Company information"
+      - name: issue_id
+        description: "Related Jira issue ID (if applicable)"
+      - name: issue_key
+        description: "Related Jira issue key (if applicable)"
+      - name: created_date
+        description: "Record creation date"
+      - name: _dlt_load_id
+        description: "DLT load ID for lineage tracking"
+      - name: _dlt_id
+        description: "DLT record ID"
+      - name: _etl_date
+        description: "ETL processing timestamp"
+
+  - name: dim_users
+    description: |
+      **User dimension table** with HR enrichment and productivity metrics.
+
+      Combines Jira users with HR data to create a comprehensive
+      user dimension including organizational hierarchy, employment details,
+      and basic productivity metrics.
+
+      Use this table for:
+      - User profile lookups
+      - Team and organizational analysis
+      - User productivity dashboards
+      - Workload balancing
+    config:
+      tags: ['jira', 'core', 'dim']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [user_id]
+    columns:
+      - name: user_id
+        description: "Primary key - Unique user account ID"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: display_name
+        description: "User's display name from Jira"
+      - name: email
+        description: "User's email address"
+      - name: full_name
+        description: "Full name from HR data or display_name"
+      - name: is_active
+        description: "Combined active status from Jira and HR"
+      - name: unit
+        description: "Organizational unit from HR"
+      - name: team
+        description: "Team name from HR"
+      - name: total_assigned_issues
+        description: "Total issues currently assigned to user"
+      - name: completed_issues
+        description: "Number of completed issues"
+      - name: completion_rate_pct
+        description: "Percentage of assigned issues completed"
+      - name: total_hours_logged
+        description: "Total hours logged in worklogs"
+
+  - name: dim_projects
+    description: |
+      **Project dimension table** with portfolio properties and metrics.
+
+      Combines Jira projects with portfolio properties and aggregated metrics
+      to create a comprehensive project dimension for analytics.
+
+      Use this table for:
+      - Project portfolio management
+      - Business line analysis
+      - Project performance tracking
+    config:
+      tags: ['jira', 'core', 'dim']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [project_id]
+    columns:
+      - name: project_id
+        description: "Primary key - Unique project identifier"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: project_key
+        description: "Project key (e.g., SD, DEV)"
+        constraints:
+          - type: unique
+      - name: project_name
+        description: "Project name"
+      - name: business_line
+        description: "Portfolio property - Business Line"
+      - name: customer
+        description: "Portfolio property - Customer"
+      - name: product
+        description: "Portfolio property - Product"
+      - name: tribe
+        description: "Portfolio property - Tribe"
+      - name: total_issues
+        description: "Total issues in the project"
+      - name: completion_pct
+        description: "Issue completion percentage"
+      - name: total_hours_logged
+        description: "Total hours logged in worklogs"
+
+  - name: dim_issues
+    description: |
+      **Issue dimension table** with relationship and time metrics.
+
+      Comprehensive issue dimension with relationship metrics,
+      subtask progress, and time-based calculations.
+
+      Use this table for:
+      - Issue detail lookups
+      - Relationship network analysis
+      - Issue aging analysis
+    config:
+      tags: ['jira', 'core', 'dim']
+      contract:
+        enforced: false  # Set to true to enforce constraints at build time
+    constraints:
+      - type: primary_key
+        columns: [issue_id]
+      - type: foreign_key
+        columns: [project_id]
+        to: ref('dim_projects')
+        to_columns: [project_id]
+      - type: foreign_key
+        columns: [assignee_id]
+        to: ref('dim_users')
+        to_columns: [user_id]
+      - type: foreign_key
+        columns: [reporter_id]
+        to: ref('dim_users')
+        to_columns: [user_id]
+    columns:
+      - name: issue_id
+        description: "Primary key - Unique issue identifier"
+        data_type: varchar
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Issue key (e.g., SD-1234)"
+        data_type: varchar
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: issue_summary
+        description: "Issue title/summary"
+      - name: issue_type
+        description: "Type of issue"
+      - name: status_category
+        description: "Status category (To Do, In Progress, Done)"
+      - name: project_id
+        description: "Foreign key to dim_projects"
+      - name: project_key
+        description: "Project key"
+      - name: assignee_id
+        description: "Foreign key to dim_users (assignee)"
+      - name: reporter_id
+        description: "Foreign key to dim_users (reporter)"
+      - name: total_issue_links
+        description: "Total number of issue links"
+      - name: total_subtasks
+        description: "Total number of subtasks"
+      - name: age_days
+        description: "Days since issue creation"
+      - name: is_overdue
+        description: "Whether issue is past due date"
+
+  - name: dim_calendar
+    description: |
+      **Calendar Date dimension table** for date-based analysis.
+
+      Reference table providing date attributes, period calculations,
+      and closure flags for snapshot management.
+
+      Use this table for:
+      - Date-based joins and analysis
+      - Period closure determination
+      - Fiscal period calculations
+    config:
+      tags: ['jira', 'core', 'dim', 'reference']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [calendar_date]
+    columns:
+      - name: calendar_date
+        description: "Full date value"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        description: "YYYYMMDD format"
+        constraints:
+          - type: unique
+      - name: year_month
+        description: "Year-month string (YYYY-MM)"
+      - name: is_month_closed
+        description: "Whether the month is closed (before current month)"
+      - name: is_quarter_closed
+        description: "Whether the quarter is closed"
+      - name: is_year_closed
+        description: "Whether the year is closed"
+
+  # ============================================
+  # FACT MODELS
+  # ============================================
+
+  - name: fact_issues
+    description: |
+      **Issue fact table** (incremental) with denormalized context.
+
+      Stores issues as facts with project context, relationship metrics,
+      and time calculations for efficient querying.
+
+      Use this table for:
+      - Issue-level reporting
+      - Project portfolio analysis
+      - Trend analysis over time
+    config:
+      tags: ['jira', 'core', 'fact', 'incremental']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [issue_id]
+      - type: foreign_key
+        columns: [project_key]
+        to: ref('dim_projects')
+        to_columns: [project_key]
+    columns:
+      - name: issue_id
+        description: "Primary key - Unique issue identifier"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Issue key (e.g., SD-1234)"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: project_key
+        description: "Foreign key to dim_projects"
+      - name: business_line
+        description: "Denormalized business line"
+      - name: status_category
+        description: "Status category"
+      - name: created_date
+        description: "Issue creation timestamp"
+      - name: created_year_month
+        description: "Creation year-month for analysis"
+      - name: total_hours_logged
+        description: "Total hours logged on this issue"
+      - name: is_done
+        description: "Whether issue is completed"
+      - name: is_overdue
+        description: "Whether issue is overdue"
+
+  - name: fact_worklogs
+    description: |
+      **Worklog fact table** (incremental) with denormalized context.
+
+      Stores time tracking entries with issue and user context
+      for efficient time-based analysis.
+
+      Use this table for:
+      - Time tracking reports
+      - Resource utilization analysis
+      - Project effort tracking
+    config:
+      tags: ['jira', 'core', 'fact', 'incremental']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [worklog_id]
+      - type: foreign_key
+        columns: [issue_key]
+        to: ref('dim_issues')
+        to_columns: [issue_key]
+      - type: foreign_key
+        columns: [author_id]
+        to: ref('dim_users')
+        to_columns: [user_id]
+      - type: foreign_key
+        columns: [project_key]
+        to: ref('dim_projects')
+        to_columns: [project_key]
+    columns:
+      - name: worklog_id
+        description: "Primary key - Unique worklog identifier"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Foreign key to dim_issues"
+      - name: project_key
+        description: "Foreign key to dim_projects"
+      - name: author_id
+        description: "Foreign key to dim_users (author)"
+      - name: author_name
+        description: "Worklog author name"
+      - name: work_started_date
+        description: "When the work started"
+      - name: time_spent_seconds
+        description: "Time spent in seconds"
+      - name: time_spent_hours
+        description: "Time spent in hours"
+      - name: time_spent_person_days
+        description: "Time spent in person days (8h = 1 day)"
+      - name: work_year_month
+        description: "Year-month of work for analysis"
+
+  - name: fact_project_budget
+    description: |
+      **Project budget fact table** from PBB issues.
+
+      Budget information from PBB (Proje Butce Bilgileri) issues
+      linked to projects for budget tracking and analysis.
+
+      Use this table for:
+      - Budget tracking
+      - Budget vs actual analysis
+      - Resource planning
+    config:
+      tags: ['jira', 'core', 'fact']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [issue_id]
+      - type: foreign_key
+        columns: [linked_project_key]
+        to: ref('dim_projects')
+        to_columns: [project_key]
+    columns:
+      - name: issue_id
+        description: "Primary key - PBB issue ID"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "PBB issue key"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: budget_description
+        description: "Budget item description"
+      - name: budget_person_days
+        description: "Budget in person days"
+      - name: budgeting_year
+        description: "Budgeting year"
+      - name: project_choice
+        description: "Selected project"
+      - name: linked_project_key
+        description: "Foreign key to dim_projects"
+      - name: budget_status
+        description: "Budget status (Completed, Active, Pending)"
+
+  - name: fact_worklogs_snapshot
+    description: |
+      **Worklog snapshot fact table** for closed periods.
+
+      Stores aggregated worklog data for closed periods (year-month).
+      Only includes data from periods marked as closed in dim_date.
+      Provides historical snapshots that won't change.
+
+      Use this table for:
+      - Historical reporting
+      - Period-over-period comparisons
+      - Budget vs actual for closed periods
+    config:
+      tags: ['jira', 'core', 'fact', 'snapshot', 'incremental']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [snapshot_key]
+      - type: foreign_key
+        columns: [project_key]
+        to: ref('dim_projects')
+        to_columns: [project_key]
+      - type: foreign_key
+        columns: [author_id]
+        to: ref('dim_users')
+        to_columns: [user_id]
+    columns:
+      - name: snapshot_key
+        description: "Primary key - Composite of period, project, user, issue type"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: snapshot_period
+        description: "Year-month of the snapshot (YYYY-MM)"
+      - name: period_start_date
+        description: "First day of the period"
+      - name: period_end_date
+        description: "Last day of the period"
+      - name: project_key
+        description: "Foreign key to dim_projects"
+      - name: author_id
+        description: "Foreign key to dim_users"
+      - name: issue_type
+        description: "Issue type"
+      - name: worklog_count
+        description: "Number of worklogs in period"
+      - name: total_hours_logged
+        description: "Total hours logged in period"
+      - name: total_person_days
+        description: "Total person days in period"
+      - name: is_period_closed
+        description: "Always true (only closed periods)"
+
+  - name: fact_operation_efforts
+    description: >
+      Operation Efforts Fact Model.
+      Provides period-based planned and actual effort hours for projects with variance analysis.
+      Used for operational tracking, resource planning, and performance monitoring.
+    columns:
+      - name: period
+        description: Period in YYYY-MM format (e.g., 2025-01)
+      - name: project_id
+        description: Jira project ID (string)
+      - name: project_name
+        description: Project name for reference
+      - name: month_num
+        description: Month number (1-12)
+      - name: month_name
+        description: Month name (January, February, etc.)
+      - name: planned_effort
+        description: Planned effort hours for the month
+      - name: actual_effort
+        description: Actual effort hours logged for the month
+      - name: variance_hours
+        description: Effort variance in hours (actual - planned). Positive means overrun, negative means under budget.
+      - name: variance_percent
+        description: Effort variance as percentage ((actual - planned) / planned * 100)
+      - name: performance_indicator
+        description: >
+          Performance category based on variance:
+          - On Track: actual <= planned
+          - Slight Overrun: 0-10% over planned
+          - Moderate Overrun: 10-20% over planned
+          - Significant Overrun: >20% over planned
+          - Incomplete Data: missing planned or actual
+      - name: etl_date
+        description: Original ETL load timestamp from staging
+      - name: dlt_load_id
+        description: DLT load ID for tracking
+      - name: _etl_date
+        description: Mart layer ETL timestamp
+
+  # ============================================
+  # BRIDGE/MAP MODELS
+  # ============================================
+
+  - name: map_issue_links
+    description: |
+      **Issue links bridge table** for many-to-many relationships.
+
+      Stores issue relationships (Blocks, Duplicates, Relates To, etc.)
+      with enriched context from both source and target issues.
+
+      Use this table for:
+      - Dependency analysis
+      - Blocker identification
+      - Cross-project relationship analysis
+    config:
+      tags: ['jira', 'core', 'map', 'bridge']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [link_id]
+      - type: foreign_key
+        columns: [source_issue_key]
+        to: ref('dim_issues')
+        to_columns: [issue_key]
+      - type: foreign_key
+        columns: [target_issue_key]
+        to: ref('dim_issues')
+        to_columns: [issue_key]
+    columns:
+      - name: link_id
+        description: "Primary key - DLT record ID"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: source_issue_key
+        description: "Foreign key to dim_issues (source)"
+      - name: target_issue_key
+        description: "Foreign key to dim_issues (target)"
+      - name: relationship_type
+        description: "Type of relationship"
+      - name: link_direction
+        description: "Link direction (inward/outward)"
+      - name: is_cross_project_link
+        description: "Whether link crosses projects"
+      - name: is_active_blocker
+        description: "Whether this is an active blocking relationship"
+
+  - name: map_issue_subtasks
+    description: |
+      **Issue subtasks bridge table** for parent-child relationships.
+
+      Connects parent issues with their subtasks with
+      enriched context from both sides.
+
+      Use this table for:
+      - Subtask progress tracking
+      - Parent issue completion analysis
+      - Work breakdown analysis
+    config:
+      tags: ['jira', 'core', 'map', 'bridge']
+      contract:
+        enforced: false
+    constraints:
+      - type: primary_key
+        columns: [subtask_link_id]
+      - type: foreign_key
+        columns: [parent_key]
+        to: ref('dim_issues')
+        to_columns: [issue_key]
+      - type: foreign_key
+        columns: [subtask_key]
+        to: ref('dim_issues')
+        to_columns: [issue_key]
+    columns:
+      - name: subtask_link_id
+        description: "Primary key - DLT record ID"
+        constraints:
+          - type: not_null
+          - type: unique
+        tests:
+          - unique
+          - not_null
+      - name: parent_key
+        description: "Foreign key to dim_issues (parent)"
+      - name: subtask_key
+        description: "Foreign key to dim_issues (subtask)"
+      - name: subtask_status
+        description: "Current subtask status"
+      - name: is_subtask_done
+        description: "Whether subtask is completed"
+      - name: subtask_resolution_days
+        description: "Days to resolve subtask"

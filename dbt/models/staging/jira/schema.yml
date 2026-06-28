@@ -1,0 +1,372 @@
+version: 2
+
+models:
+  - name: stg_jira__projects
+    description: "Staging view for Jira projects with standardized column names and portfolio properties"
+    config:
+      tags: ['jira', 'staging', 'dim']
+    columns:
+      - name: project_id
+        description: "Primary key - Unique project identifier from Jira"
+        tests:
+          - unique
+          - not_null
+      - name: project_key
+        description: "Project key (e.g., SD, DEV, PM)"
+      - name: project_name
+        description: "Human-readable project name"
+      - name: project_description
+        description: "Project category description"
+      - name: project_type
+        description: "Type of project (software, business, service_desk)"
+      - name: is_private
+        description: "Whether the project is private"
+      - name: business_line
+        description: "Portfolio property - Business Line"
+      - name: customer
+        description: "Portfolio property - Customer"
+      - name: hosting
+        description: "Portfolio property - Hosting type"
+      - name: portfolio_id
+        description: "Portfolio property - Portfolio ID"
+      - name: it_domain
+        description: "Portfolio property - IT Domain"
+      - name: product
+        description: "Portfolio property - Product"
+      - name: product_group
+        description: "Portfolio property - Product Group"
+      - name: tribe
+        description: "Portfolio property - Tribe"
+      - name: open_closed
+        description: "Portfolio property - Open/Closed status"
+
+  - name: stg_jira__issues
+    description: "Staging view for Jira issues with type casting and renaming"
+    config:
+      tags: ['jira', 'staging', 'fact']
+    columns:
+      - name: issue_id
+        description: "Primary key - Unique issue identifier from Jira"
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Issue key (e.g., SD-1234)"
+        tests:
+          - unique
+          - not_null
+      - name: issue_summary
+        description: "Issue title/summary"
+      - name: issue_type
+        description: "Type of issue (Bug, Story, Task, Epic, etc.)"
+      - name: priority
+        description: "Issue priority (Highest, High, Medium, Low, Lowest)"
+      - name: status_name
+        description: "Current status name"
+      - name: status_category
+        description: "Status category (To Do, In Progress, Done)"
+      - name: project_id
+        description: "Project ID this issue belongs to"
+      - name: project_key
+        description: "Project key this issue belongs to"
+      - name: project_name
+        description: "Project name this issue belongs to"
+      - name: assignee_id
+        description: "User ID of assignee"
+      - name: assignee_name
+        description: "Display name of assignee"
+      - name: reporter_id
+        description: "User ID of reporter"
+      - name: reporter_name
+        description: "Display name of reporter"
+      - name: creator_id
+        description: "User ID of creator"
+      - name: creator_name
+        description: "Display name of creator"
+      - name: parent_id
+        description: "Parent issue ID (for subtasks)"
+      - name: parent_key
+        description: "Parent issue key (for subtasks)"
+      - name: is_subtask
+        description: "Boolean flag indicating if this is a subtask"
+      - name: created_date
+        description: "Issue creation timestamp"
+      - name: updated_date
+        description: "Last update timestamp"
+      - name: resolution
+        description: "Resolution status"
+      - name: resolution_date
+        description: "Resolution timestamp"
+      - name: due_date
+        description: "Due date"
+      - name: description
+        description: "Parsed plain text description extracted from Atlassian Document Format JSON"
+      - name: labels
+        description: "Parsed comma-separated labels string"
+
+  - name: stg_jira__issue_links
+    description: "Staging view for issue relationships (blocks, duplicates, relates to, etc.)"
+    config:
+      tags: ['jira', 'staging', 'map']
+    columns:
+      - name: source_issue_key
+        description: "Source issue in the relationship"
+      - name: target_issue_key
+        description: "Target issue in the relationship"
+      - name: relationship_type
+        description: "Type of relationship (Blocks, Duplicate, Relates, etc.)"
+      - name: link_direction
+        description: "Direction of link (inward/outward)"
+      - name: _dlt_id
+        description: "DLT record identifier (unique key)"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_jira__issue_subtasks
+    description: "Staging view for parent-child subtask relationships"
+    config:
+      tags: ['jira', 'staging', 'map']
+    columns:
+      - name: parent_key
+        description: "Parent issue key"
+      - name: subtask_key
+        description: "Subtask issue key"
+      - name: subtask_summary
+        description: "Subtask title"
+      - name: subtask_status
+        description: "Current status of subtask"
+      - name: _dlt_id
+        description: "DLT record identifier (unique key)"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_jira__issue_custom_fields
+    description: "Staging view for custom field values parsed from JSON storage - one row per field per issue"
+    config:
+      tags: ['jira', 'staging', 'fact']
+    columns:
+      - name: custom_field_id
+        description: "Primary key - Composite ID (issue_key + field_id)"
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Issue this custom field belongs to"
+      - name: field_id
+        description: "Custom field ID (e.g., customfield_10037)"
+      - name: field_name
+        description: "Human-readable field name (e.g., Story Points, Epic Link)"
+      - name: field_type
+        description: "Field type (numeric, text, document, user, array, other)"
+      - name: raw_value
+        description: "Original raw value from JSON"
+      - name: field_value_parsed
+        description: "Parsed field value with JSON extraction applied"
+      - name: is_json_value
+        description: "Flag indicating if value is a JSON object or array"
+      - name: is_null_value
+        description: "Flag indicating if value is null or empty"
+
+  - name: stg_jira__users
+    description: "Staging view for Jira users enriched with HR data"
+    config:
+      tags: ['jira', 'staging', 'dim']
+    columns:
+      - name: user_id
+        description: "Primary key - Unique user account ID"
+        tests:
+          - unique
+          - not_null
+      - name: display_name
+        description: "User's display name"
+      - name: email
+        description: "User's email address"
+      - name: full_name
+        description: "Full name from HR data or display_name"
+      - name: is_active
+        description: "Combined active status from Jira and HR"
+      - name: is_jira_active
+        description: "Jira account active status"
+      - name: hr_status
+        description: "HR system status"
+      - name: account_type
+        description: "Type of account (atlassian, app, customer)"
+      - name: unit
+        description: "Organizational unit from HR"
+      - name: team
+        description: "Team name from HR"
+      - name: manager_director
+        description: "Manager/Director from HR"
+      - name: manager_deputy_gm
+        description: "Deputy GM Manager from HR"
+      - name: deputy_gm_upper_unit
+        description: "Deputy GM upper unit from HR"
+      - name: manages_team
+        description: "Team management status from HR"
+      - name: outsource_inhouse
+        description: "Outsource or In-house flag from HR"
+      - name: company_info
+        description: "Company information from HR"
+      - name: employment_start_date
+        description: "Employment start date from HR"
+      - name: has_hr_data
+        description: "Flag indicating if HR data exists for this user"
+
+  - name: stg_jira__worklogs
+    description: "Staging view for time tracking worklogs"
+    config:
+      tags: ['jira', 'staging', 'fact']
+    columns:
+      - name: worklog_id
+        description: "Primary key - Unique worklog identifier"
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "Issue this worklog is logged against"
+      - name: issue_id
+        description: "Issue ID this worklog is logged against"
+      - name: author_id
+        description: "User ID of worklog author"
+      - name: author_name
+        description: "Display name of worklog author"
+      - name: work_started_date
+        description: "When the work started"
+      - name: time_spent_display
+        description: "Human-readable time spent (e.g., '2h 30m')"
+      - name: time_spent_seconds
+        description: "Time spent in seconds"
+      - name: created_date
+        description: "Worklog creation timestamp"
+      - name: updated_date
+        description: "Last update timestamp"
+
+  - name: stg_jira__hr_users
+    description: "Staging view for HR user data from Jira HR project"
+    config:
+      tags: ['jira', 'staging', 'dim']
+    columns:
+      - name: user_account_id
+        description: "Jira account ID of the user"
+      - name: user_name
+        description: "User name from custom field"
+      - name: user_display_name
+        description: "Full name (name_surname)"
+      - name: team_name
+        description: "Team name"
+      - name: unit_name
+        description: "Organizational unit"
+      - name: manager_name
+        description: "Manager/Director name"
+      - name: deputy_gm_name
+        description: "Deputy GM Manager"
+      - name: deputy_gm_upper_unit
+        description: "Deputy GM upper unit"
+      - name: is_active
+        description: "Employment status (Active/Inactive)"
+      - name: is_manages_team
+        description: "Team management status"
+      - name: is_outsource_inhouse
+        description: "Outsource or In-house flag"
+      - name: start_date
+        description: "Employment start date"
+      - name: company_info
+        description: "Company information"
+      - name: issue_id
+        description: "HR issue ID"
+      - name: issue_key
+        description: "Primary key - HR issue key"
+        tests:
+          - unique
+          - not_null
+      - name: created_date
+        description: "Record creation timestamp"
+
+  - name: stg_jira__pbb_issues
+    description: "Staging view for PBB (Project Budget) issues from Jira"
+    config:
+      tags: ['jira', 'staging', 'fact']
+    columns:
+      - name: issue_id
+        description: "Primary key - Unique PBB issue ID"
+        tests:
+          - unique
+          - not_null
+      - name: issue_key
+        description: "PBB issue key"
+        tests:
+          - unique
+          - not_null
+      - name: issue_summary
+        description: "Issue title/summary"
+      - name: budget_person_days
+        description: "Budget in person days"
+      - name: project_choice
+        description: "Project choice selection"
+      - name: budgeting_year
+        description: "Budgeting year"
+      - name: status_name
+        description: "Current status"
+      - name: status_category
+        description: "Status category"
+      - name: assignee_id
+        description: "Assignee account ID"
+      - name: assignee_name
+        description: "Assigned person"
+      - name: reporter_id
+        description: "Reporter account ID"
+      - name: reporter_name
+        description: "Reporter name"
+      - name: creator_id
+        description: "Creator account ID"
+      - name: creator_name
+        description: "Creator name"
+      - name: issue_type
+        description: "Issue type"
+      - name: priority
+        description: "Priority level"
+      - name: resolution
+        description: "Resolution status"
+      - name: resolution_date
+        description: "Resolution timestamp"
+      - name: created_date
+        description: "Creation timestamp"
+      - name: updated_date
+        description: "Last update timestamp"
+      - name: description
+        description: "Parsed plain text description extracted from Atlassian Document Format JSON"
+
+  - name: stg_jira__project_properties
+    description: "Staging view for Jira project properties with parsed values"
+    config:
+      tags: ['jira', 'staging', 'dim']
+    columns:
+      - name: property_id
+        description: "Primary key - Composite ID (project_id + property_key)"
+        tests:
+          - unique
+          - not_null
+      - name: project_id
+        description: "Project ID"
+      - name: project_key
+        description: "Project key"
+      - name: property_key
+        description: "Original property key"
+      - name: property_name_clean
+        description: "Standardized property name"
+      - name: property_category
+        description: "Property category (portfolio, jira_integration, etc.)"
+      - name: raw_value
+        description: "Original value"
+      - name: cleaned_value
+        description: "Cleaned value with JSON conversion"
+      - name: parsed_value
+        description: "Final parsed value"
+      - name: is_json_value
+        description: "Flag for JSON values"
+      - name: is_null_value
+        description: "Flag for null values"
+      - name: is_boolean_value
+        description: "Flag for boolean values"
