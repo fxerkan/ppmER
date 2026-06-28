@@ -13,6 +13,20 @@
       Open in new tab ↗
     </a>
   </div>
+  {% if can_embed %}
   <iframe src="{{ service_url }}" class="flex-1 w-full border-0"></iframe>
+  {% else %}
+  <div class="flex-1 flex flex-col items-center justify-center gap-6 bg-slate-50">
+    <div class="text-6xl">📊</div>
+    <div class="text-center">
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">{{ service_name }}</h2>
+      <p class="text-slate-500 mb-6">This tool opens in its own window for the best experience.</p>
+      <a href="{{ service_url }}" target="_blank"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-lg">
+        Launch {{ service_name }} ↗
+      </a>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

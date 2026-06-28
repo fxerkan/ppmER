@@ -18,17 +18,17 @@ ROLE_LABELS = {
 SECRET_KEY = os.getenv("PORTAL_SECRET_KEY", "ppm-portal-secret-change-in-prod")
 
 DB_DSN = (
-    f"host={os.getenv('POSTGRES_HOST', 'localhost')} "
-    f"port={os.getenv('POSTGRES_PORT', '5432')} "
-    f"dbname={os.getenv('POSTGRES_DB', 'jira_ppm')} "
-    f"user={os.getenv('POSTGRES_USER', 'postgres')} "
-    f"password={os.getenv('POSTGRES_PASSWORD', 'postgres')}"
+    f"host={os.getenv('DB_HOST', 'postgres')} "
+    f"port={os.getenv('DB_PORT', '5432')} "
+    f"dbname={os.getenv('DB_NAME', 'ppm_datawarehouse')} "
+    f"user={os.getenv('DB_USER', 'ppm_user')} "
+    f"password={os.getenv('DB_PASSWORD', '')}"
 )
 
 
 def get_service_url(key: str) -> str:
     port_map = {
-        "mage": int(os.getenv("MAGE_PORT", 6789)),
+        "mage": int(os.getenv("MAGE_EXTERNAL_PORT", 6789)),
         "dbt_docs": int(os.getenv("DBT_DOCS_EXTERNAL_PORT", 8081)),
         "metabase": int(os.getenv("METABASE_EXTERNAL_PORT", 3000)),
         "cloudbeaver": int(os.getenv("CLOUDBEAVER_EXTERNAL_PORT", 8978)),
@@ -40,12 +40,13 @@ def get_service_url(key: str) -> str:
 
 
 SERVICES = {
-    "mage": {"name": "Mage AI", "icon": "🔄", "roles": ["admin", "developer"]},
-    "dbt_docs": {"name": "dbt Docs", "icon": "📐", "roles": ["admin", "developer", "power_user"]},
-    "metabase": {"name": "Metabase", "icon": "📊", "roles": ["admin", "developer", "power_user", "end_user"]},
-    "cloudbeaver": {"name": "CloudBeaver", "icon": "🗄️", "roles": ["admin", "developer"]},
-    "upload": {"name": "Data Files", "icon": "📁", "roles": ["admin", "developer", "power_user", "end_user"]},
-    "agent": {"name": "AI Agent", "icon": "🤖", "roles": ["admin", "developer", "power_user", "end_user"]},
+    "mage": {"name": "Mage AI", "icon": "🔄", "roles": ["admin", "developer"], "embed": True},
+    "dbt_docs": {"name": "dbt Docs", "icon": "📐", "roles": ["admin", "developer", "power_user"], "embed": True},
+    # ponytail: metabase full-app iframe requires Pro; show launch page instead
+    "metabase": {"name": "Metabase", "icon": "📊", "roles": ["admin", "developer", "power_user", "end_user"], "embed": False},
+    "cloudbeaver": {"name": "CloudBeaver", "icon": "🗄️", "roles": ["admin", "developer"], "embed": True},
+    "upload": {"name": "Data Files", "icon": "📁", "roles": ["admin", "developer", "power_user", "end_user"], "embed": True},
+    "agent": {"name": "AI Agent", "icon": "🤖", "roles": ["admin", "developer", "power_user", "end_user"], "embed": True},
 }
 
 

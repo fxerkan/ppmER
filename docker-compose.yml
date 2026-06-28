@@ -212,23 +212,23 @@ services:
   portal:
     build: ./portal
     container_name: ppm-portal
-    env_file: .env
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MAGE_PORT: ${MAGE_PORT:-6789}
+      MAGE_EXTERNAL_PORT: ${MAGE_EXTERNAL_PORT:-6789}
       DBT_DOCS_EXTERNAL_PORT: ${DBT_DOCS_EXTERNAL_PORT:-8081}
       METABASE_EXTERNAL_PORT: ${METABASE_EXTERNAL_PORT:-3000}
       CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
       UPLOAD_EXTERNAL_PORT: ${UPLOAD_EXTERNAL_PORT:-8085}
       AGENT_PORT: ${AGENT_PORT:-7860}
-      PORTAL_ADMIN_PASS: ${PORTAL_ADMIN_PASS:-admin123}
-      PORTAL_DEV_PASS: ${PORTAL_DEV_PASS:-dev123}
-      PORTAL_ANALYST_PASS: ${PORTAL_ANALYST_PASS:-analyst123}
-      PORTAL_USER_PASS: ${PORTAL_USER_PASS:-user123}
+      # Override these in .env to change portal passwords
+      PORTAL_ADMIN_PASS: admin123
+      PORTAL_DEV_PASS: dev123
+      PORTAL_ANALYST_PASS: analyst123
+      PORTAL_USER_PASS: user123
     ports:
       - "${PORTAL_EXTERNAL_PORT:-9000}:9000"
     volumes:

@@ -83,9 +83,10 @@ async def embed_service(request: Request, service: str):
     if not svc_meta or user["role"] not in svc_meta["roles"]:
         return HTMLResponse("<h1>Access Denied</h1>", status_code=403)
     url = config.get_service_url(service)
+    can_embed = svc_meta.get("embed", True)
     return templates.TemplateResponse(
         "embed.html",
-        {"request": request, "user": user, "service_name": svc_meta["name"], "service_url": url},
+        {"request": request, "user": user, "service_name": svc_meta["name"], "service_url": url, "can_embed": can_embed},
     )
 
 
