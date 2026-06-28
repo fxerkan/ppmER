@@ -12,7 +12,7 @@
       "url": "jdbc:postgresql://postgres:5432/ppm_datawarehouse",
       "properties": {
         "user": "ppm_user",
-        "password": "change_me_strong_password"
+        "password": "ppm_password"
       },
       "providerProperties": {
         "@dbeaver-show-non-default-db@": "false",

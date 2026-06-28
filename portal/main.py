@@ -1,6 +1,7 @@
 import subprocess
 import json
 import os
+import httpx
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Form
@@ -86,7 +87,79 @@ async def embed_service(request: Request, service: str):
     can_embed = svc_meta.get("embed", True)
     return templates.TemplateResponse(
         "embed.html",
-        {"request": request, "user": user, "service_name": svc_meta["name"], "service_url": url, "can_embed": can_embed},
+        {"request": request, "user": user, "service_name": svc_meta["name"], "service_url": url, "can_embed": can_embed, "service_icon": svc_meta.get("icon", "📊")},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Metabase Dashboards
+# ---------------------------------------------------------------------------
+METABASE_URL = os.getenv("METABASE_URL", "http://metabase:3000")
+
+
+def metabase_session() -> str | None:
+    try:
+        resp = httpx.post(
+            f"{METABASE_URL}/api/session",
+            json={
+                "username": os.getenv("MB_ADMIN_EMAIL", "admin@ppm.local"),
+                "password": os.getenv("MB_ADMIN_PASSWORD", "admin123"),
+            },
+            timeout=10,
+        )
+        return resp.json().get("id") if resp.status_code == 200 else None
+    except Exception:
+        return None
+
+
+@app.get("/api/metabase-dashboards")
+async def api_metabase_dashboards(request: Request):
+    get_current_user(request)
+    token = metabase_session()
+    if not token:
+        return JSONResponse({"dashboards": [], "error": "Metabase connection failed"})
+    try:
+        resp = httpx.get(
+            f"{METABASE_URL}/api/dashboard",
+            headers={"X-Metabase-Session": token},
+            timeout=10,
+        )
+        if resp.status_code != 200:
+            return JSONResponse({"dashboards": [], "error": "Failed to fetch dashboards"})
+        dashboards = []
+        for d in resp.json():
+            uuid = d.get("public_uuid")
+            if not uuid:
+                try:
+                    pub = httpx.post(
+                        f"{METABASE_URL}/api/dashboard/{d['id']}/public_link",
+                        headers={"X-Metabase-Session": token},
+                        timeout=10,
+                    )
+                    if pub.status_code == 200:
+                        uuid = pub.json().get("uuid")
+                except Exception:
+                    pass
+            dashboards.append({
+                "id": d["id"],
+                "name": d.get("name", "Unnamed"),
+                "description": d.get("description", ""),
+                "public_uuid": uuid,
+                "collection_id": d.get("collection_id"),
+            })
+        return JSONResponse({"dashboards": dashboards})
+    except Exception as e:
+        return JSONResponse({"dashboards": [], "error": str(e)})
+
+
+@app.get("/dashboards", response_class=HTMLResponse)
+async def dashboards_page(request: Request):
+    user = get_current_user(request)
+    services = config.get_user_services(user["role"])
+    role_label = config.ROLE_LABELS.get(user["role"], user["role"])
+    return templates.TemplateResponse(
+        "dashboards.html",
+        {"request": request, "user": user, "services": services, "role_label": role_label},
     )
 
 

@@ -4,11 +4,21 @@ import gradio as gr
 import psycopg2
 from openai import OpenAI
 
+API_KEY = os.getenv("OPENAI_API_KEY", "") or ""
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY", "sk-placeholder"),
-    base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+    api_key=API_KEY if API_KEY else "no-key",
+    base_url=os.getenv("OPENAI_BASE_URL", "https://api.deepseek.com"),
 )
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+MODEL = os.getenv("OPENAI_MODEL", "deepseek-chat")
+MISSING_KEY_MSG = (
+    "⚠️ **AI Assistant is not configured.**\n\n"
+    "To use this assistant, set `OPENAI_API_KEY` in your `.env` file.\n\n"
+    "Get a free API key from:\n"
+    "- [DeepSeek](https://platform.deepseek.com/) — generous free tier\n"
+    "- [OpenAI](https://platform.openai.com/) — paid\n"
+    "- Or run a local model with [Ollama](https://ollama.com/)\n\n"
+    "Then restart the agent container: `docker restart ppm-agent`"
+)
 
 def get_db():
     return psycopg2.connect(
@@ -105,6 +115,8 @@ def call_tool(name: str, args: dict) -> str:
     return f"Unknown tool: {name}"
 
 def chat(message: str, history: list) -> str:
+    if not API_KEY:
+        return MISSING_KEY_MSG
     messages = [{"role": "system", "content": """You are a PPM Data Stack assistant. You help Project & Portfolio Management teams analyze their Jira data.
 
 You have access to:
@@ -120,9 +132,12 @@ The data warehouse contains:
 Always use list_schemas first if you're unsure what tables exist. Write clean SQL."""}]
 
     for h in history:
-        messages.append({"role": "user", "content": h[0]})
-        if h[1]:
-            messages.append({"role": "assistant", "content": h[1]})
+        if isinstance(h, dict):
+            messages.append({"role": h["role"], "content": h["content"]})
+        else:
+            messages.append({"role": "user", "content": h[0]})
+            if h[1]:
+                messages.append({"role": "assistant", "content": h[1]})
     messages.append({"role": "user", "content": message})
 
     # Agentic loop with tool calling
@@ -144,7 +159,7 @@ Always use list_schemas first if you're unsure what tables exist. Write clean SQ
 
     return "Max tool calls reached."
 
-with gr.Blocks(title="PPM Data Stack Agent", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="PPM Data Stack Agent") as demo:
     gr.Markdown("# PPM Data Stack AI Agent\nChat with your Jira project data. Ask questions in natural language.")
     with gr.Row():
         with gr.Column(scale=1):
@@ -160,7 +175,7 @@ with gr.Blocks(title="PPM Data Stack Agent", theme=gr.themes.Soft()) as demo:
 - List all epic names and their status
 """)
         with gr.Column(scale=3):
-            gr.ChatInterface(chat, type="tuples")
+            gr.ChatInterface(chat)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    demo.launch(server_name="0.0.0.0", server_port=7860, theme=gr.themes.Soft())

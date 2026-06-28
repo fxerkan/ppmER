@@ -37,7 +37,7 @@
 
     {% if 'metabase' in services %}
     <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/metabase', 'Metabase Dashboards')">
+         onclick="window.location='/dashboards'">
       <div class="text-3xl mb-3">📊</div>
       <h4 class="font-semibold text-slate-800">Dashboards</h4>
       <p class="text-sm text-slate-500 mt-1">View reports and analytics in Metabase</p>
@@ -73,10 +73,10 @@
 
     {% if 'mage' in services %}
     <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/mage', 'Mage AI Pipelines')">
-      <div class="text-3xl mb-3">🔄</div>
-      <h4 class="font-semibold text-slate-800">Pipelines</h4>
-      <p class="text-sm text-slate-500 mt-1">Manage data pipelines in Mage AI</p>
+         onclick="openTool('/embed/mage', 'Orchestration')">
+       <div class="text-3xl mb-3">🔄</div>
+       <h4 class="font-semibold text-slate-800">Orchestration</h4>
+       <p class="text-sm text-slate-500 mt-1">Manage data pipelines in Mage AI</p>
     </div>
     {% endif %}
 
@@ -111,15 +111,7 @@
 </div>
 
 <!-- Iframe Panel (hidden initially) -->
-<div id="iframe-view" class="hidden flex-col h-full" style="height: calc(100vh - 3.5rem);">
-  <div class="flex items-center px-4 py-2 bg-white border-b border-slate-200 gap-3 shrink-0">
-    <button onclick="closeTool()"
-      class="flex items-center gap-1 text-sm text-slate-600 hover:text-blue-600 transition-colors font-medium">
-      ← Back
-    </button>
-    <span class="text-slate-300">|</span>
-    <span id="iframe-title" class="text-sm font-semibold text-slate-700"></span>
-  </div>
+<div id="iframe-view" class="hidden flex-col" style="height: calc(100vh - 3.5rem);">
   <iframe id="tool-iframe" src="" class="flex-1 w-full border-0" style="height: 100%;"></iframe>
 </div>
 
@@ -140,7 +132,6 @@
     const iv = document.getElementById('iframe-view');
     iv.classList.remove('hidden');
     iv.classList.add('flex');
-    document.getElementById('iframe-title').textContent = name;
     document.getElementById('tool-iframe').src = url;
   }
 

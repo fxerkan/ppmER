@@ -1,13 +1,12 @@
 # Metabase Dashboard Setup
 
-After starting the stack and running the first data load, follow these steps to create your PPM dashboards.
+Metabase auto-configures on first start via the `ppm-metabase-setup` container:
+- Admin user `admin@ppm.local` / `PpmAdmin123!` is auto-created (skips setup wizard)
+- The `PPM Data Warehouse` database connection is pre-configured
 
-## First-Time Setup
+Change credentials in `.env` (`MB_ADMIN_EMAIL`, `MB_ADMIN_PASSWORD`) before production.
 
-1. Open Metabase: http://localhost:3000
-2. Complete the setup wizard
-3. Add your database: **PostgreSQL** at `postgres:5432`, database `ppm_datawarehouse`, user `ppm_user`
-4. Create the 5 dashboards below as "Saved Questions" then add them to a dashboard
+After the stack is up, open http://localhost:3000 and log in with the admin credentials above.
 
 ---
 

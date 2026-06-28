@@ -38,43 +38,43 @@
     <nav id="sidebar" class="sidebar bg-slate-900 text-white flex flex-col overflow-y-auto shrink-0 open">
       <div class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">PPM Stack</div>
 
-      <a href="/dashboard" class="nav-item {% block active_dashboard %}{% endblock %}">
-        <span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span>
+      <a href="/dashboard" class="nav-item {% block active_dashboard %}{% endblock %}" data-url="/dashboard" data-name="Home">
+        <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
       </a>
 
       {% if user.role in ['end_user', 'power_user', 'developer', 'admin'] %}
-      <a href="/embed/metabase" class="nav-item {% block active_metabase %}{% endblock %}">
+      <a href="/dashboards" class="nav-item {% block active_metabase %}{% endblock %}" data-url="/dashboards" data-name="Dashboards">
         <span class="nav-icon">📊</span><span class="nav-label">Dashboards</span>
       </a>
-      <a href="/embed/upload" class="nav-item {% block active_upload %}{% endblock %}">
+      <a href="/embed/upload" class="nav-item {% block active_upload %}{% endblock %}" data-url="/embed/upload" data-name="Data Files">
         <span class="nav-icon">📁</span><span class="nav-label">Data Files</span>
       </a>
-      <a href="/embed/agent" class="nav-item {% block active_agent %}{% endblock %}">
+      <a href="/embed/agent" class="nav-item {% block active_agent %}{% endblock %}" data-url="/embed/agent" data-name="AI Assistant">
         <span class="nav-icon">🤖</span><span class="nav-label">AI Assistant</span>
       </a>
       {% endif %}
 
       {% if user.role in ['power_user', 'developer', 'admin'] %}
-      <a href="/embed/dbt_docs" class="nav-item {% block active_dbt %}{% endblock %}">
+      <a href="/embed/dbt_docs" class="nav-item {% block active_dbt %}{% endblock %}" data-url="/embed/dbt_docs" data-name="Data Dictionary">
         <span class="nav-icon">📐</span><span class="nav-label">Data Dictionary</span>
       </a>
       {% endif %}
 
       {% if user.role in ['developer', 'admin'] %}
-      <a href="/embed/mage" class="nav-item {% block active_mage %}{% endblock %}">
-        <span class="nav-icon">🔄</span><span class="nav-label">Pipelines</span>
+      <a href="/embed/mage" class="nav-item {% block active_mage %}{% endblock %}" data-url="/embed/mage" data-name="Orchestration">
+        <span class="nav-icon">🔄</span><span class="nav-label">Orchestration</span>
       </a>
-      <a href="/embed/cloudbeaver" class="nav-item {% block active_cb %}{% endblock %}">
+      <a href="/embed/cloudbeaver" class="nav-item {% block active_cb %}{% endblock %}" data-url="/embed/cloudbeaver" data-name="Database">
         <span class="nav-icon">🗄️</span><span class="nav-label">Database</span>
       </a>
-      <a href="/files" class="nav-item {% block active_files %}{% endblock %}">
+      <a href="/files" class="nav-item {% block active_files %}{% endblock %}" data-url="/files" data-name="Browse Code">
         <span class="nav-icon">📂</span><span class="nav-label">Browse Code</span>
       </a>
       {% endif %}
 
       {% if user.role == 'admin' %}
       <div class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Admin</div>
-      <a href="/admin" class="nav-item {% block active_admin %}{% endblock %}">
+      <a href="/admin" class="nav-item {% block active_admin %}{% endblock %}" data-url="/admin" data-name="System Admin">
         <span class="nav-icon">⚙️</span><span class="nav-label">System Admin</span>
       </a>
       {% endif %}
@@ -88,9 +88,18 @@
   </div>
 
   <script>
+    // Sidebar toggle
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.getElementById('hamburger');
     hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+    // Right-click open in new tab for nav items
+    document.querySelectorAll('.nav-item[data-url]').forEach(el => {
+      el.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        window.open(el.getAttribute('data-url'), '_blank');
+      });
+    });
   </script>
 </body>
 </html>

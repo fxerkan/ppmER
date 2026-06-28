@@ -146,6 +146,8 @@ services:
       MB_DB_DBNAME: metabase
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
+      MB_ENABLE_EMBEDDING: "true"
+      MB_EMBEDDING_SAMEORIGIN: "false"
     ports:
       - "${METABASE_EXTERNAL_PORT:-3000}:3000"
     depends_on:
@@ -154,6 +156,29 @@ services:
     networks:
       - ppm-network
     restart: unless-stopped
+
+  metabase-setup:
+    image: alpine:3.19
+    container_name: ppm-metabase-setup
+    environment:
+      MB_ADMIN_EMAIL: ${MB_ADMIN_EMAIL}
+      MB_ADMIN_PASSWORD: ${MB_ADMIN_PASSWORD}
+      MB_ADMIN_NAME: ${MB_ADMIN_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      sh -c "
+        apk add --no-cache curl jq >/dev/null 2>&1 &&
+        sh /setup/setup.sh
+      "
+    volumes:
+      - ./metabase:/setup:ro
+    depends_on:
+      metabase:
+        condition: service_started
+    networks:
+      - ppm-network
+    restart: no
 
   # AI Agent Chat UI - works with any OpenAI-compatible API (Claude, GPT, Gemini, Ollama)
   agent:
@@ -168,8 +193,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.deepseek.com}
+      OPENAI_MODEL: ${OPENAI_MODEL:-deepseek-chat}
     ports:
       - "${AGENT_PORT:-7860}:7860"
     volumes:
@@ -224,6 +249,9 @@ services:
       CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
       UPLOAD_EXTERNAL_PORT: ${UPLOAD_EXTERNAL_PORT:-8085}
       AGENT_PORT: ${AGENT_PORT:-7860}
+      METABASE_URL: http://metabase:3000
+      MB_ADMIN_EMAIL: ${MB_ADMIN_EMAIL}
+      MB_ADMIN_PASSWORD: ${MB_ADMIN_PASSWORD}
       # Override these in .env to change portal passwords
       PORTAL_ADMIN_PASS: admin123
       PORTAL_DEV_PASS: dev123

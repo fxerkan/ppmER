@@ -40,7 +40,7 @@ def get_service_url(key: str) -> str:
 
 
 SERVICES = {
-    "mage": {"name": "Mage AI", "icon": "🔄", "roles": ["admin", "developer"], "embed": True},
+    "mage": {"name": "Orchestration", "icon": "🔄", "roles": ["admin", "developer"], "embed": True},
     "dbt_docs": {"name": "dbt Docs", "icon": "📐", "roles": ["admin", "developer", "power_user"], "embed": True},
     # ponytail: metabase full-app iframe requires Pro; show launch page instead
     "metabase": {"name": "Metabase", "icon": "📊", "roles": ["admin", "developer", "power_user", "end_user"], "embed": False},
