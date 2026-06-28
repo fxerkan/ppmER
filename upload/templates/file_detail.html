@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}{{ file.display_name }} — Data File Manager{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="/" class="text-indigo-600 hover:underline text-sm">← All Files</a>
+</div>
+
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">{{ file.display_name }}</h1>
+      <p class="text-gray-400 font-mono text-sm mt-1">uploads.{{ file.name }}</p>
+      {% if file.description %}
+      <p class="text-gray-600 mt-2">{{ file.description }}</p>
+      {% endif %}
+      <p class="text-gray-400 text-xs mt-2">Created by {{ file.created_by }} · {{ file.created_at }}</p>
+    </div>
+    <button onclick="document.getElementById('new-version-form').classList.toggle('hidden')"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow ml-4">
+      + New Version
+    </button>
+  </div>
+</div>
+
+<!-- New version form (hidden by default) -->
+<div id="new-version-form" class="hidden bg-white rounded-xl shadow p-6 mb-6 border-2 border-indigo-200">
+  <h2 class="text-lg font-bold text-gray-800 mb-4">Upload New Version</h2>
+  <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
+    <input type="hidden" name="name" value="{{ file.name }}"/>
+    <input type="hidden" name="display_name" value="{{ file.display_name }}"/>
+    <input type="hidden" name="description" value="{{ file.description or '' }}"/>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">File <span class="text-red-500">*</span></label>
+        <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"/>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+        <input type="text" name="uploader_name" placeholder="Jane Doe"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"/>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Notes for this version</label>
+      <input type="text" name="notes" placeholder="What changed in this version?"
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"/>
+    </div>
+    <div class="flex gap-3">
+      <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-sm font-medium">
+        Upload & Activate
+      </button>
+      <button type="button" onclick="document.getElementById('new-version-form').classList.add('hidden')"
+              class="border border-gray-300 text-gray-600 px-6 py-2 rounded-lg text-sm hover:bg-gray-50">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Version History -->
+<div class="bg-white rounded-xl shadow mb-6">
+  <div class="px-6 py-4 border-b">
+    <h2 class="font-bold text-gray-800">Version History</h2>
+  </div>
+  {% if versions %}
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b">
+      <tr>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Version</th>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Filename</th>
+        <th class="text-right px-4 py-3 text-gray-600 font-medium">Rows</th>
+        <th class="text-right px-4 py-3 text-gray-600 font-medium">Cols</th>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Uploaded By</th>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Date</th>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Status</th>
+        <th class="text-left px-4 py-3 text-gray-600 font-medium">Notes</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y">
+      {% for v in versions %}
+      <tr class="hover:bg-gray-50 {% if v.status == 'active' %}bg-green-50{% endif %}">
+        <td class="px-4 py-3">
+          <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-mono text-xs">v{{ v.version }}</span>
+        </td>
+        <td class="px-4 py-3 text-gray-600 font-mono text-xs">{{ v.original_filename }}</td>
+        <td class="px-4 py-3 text-right text-gray-600">{{ v.row_count or "—" }}</td>
+        <td class="px-4 py-3 text-right text-gray-600">{{ v.column_count or "—" }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ v.uploaded_by }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ v.uploaded_at }}</td>
+        <td class="px-4 py-3">
+          {% if v.status == 'active' %}
+            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-medium">active</span>
+          {% else %}
+            <span class="bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-xs">archived</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-gray-400 text-xs">{{ v.notes or "" }}</td>
+        <td class="px-4 py-3">
+          {% if v.status != 'active' %}
+          <form action="/activate/{{ v.id }}" method="post">
+            <button type="submit" class="text-xs text-indigo-600 hover:underline border border-indigo-300 px-2 py-1 rounded">
+              Activate
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="px-6 py-4 text-gray-400 text-sm">No versions yet.</p>
+  {% endif %}
+</div>
+
+<!-- Data Preview -->
+{% if preview_cols %}
+<div class="bg-white rounded-xl shadow">
+  <div class="px-6 py-4 border-b flex items-center justify-between">
+    <h2 class="font-bold text-gray-800">Data Preview <span class="text-gray-400 font-normal text-sm">(first 20 rows, active version)</span></h2>
+    <span class="text-xs text-gray-400 font-mono">uploads.{{ file.name }}</span>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-xs">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          {% for col in preview_cols %}
+          <th class="text-left px-3 py-2 text-gray-600 font-medium whitespace-nowrap">{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        {% for row in preview_rows %}
+        <tr class="hover:bg-gray-50">
+          {% for cell in row %}
+          <td class="px-3 py-2 text-gray-700 whitespace-nowrap max-w-xs truncate">{{ cell if cell is not none else "" }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
