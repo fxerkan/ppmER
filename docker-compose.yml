@@ -185,10 +185,68 @@ services:
     command: >
       sh -c "pip install -r /app/requirements.txt -q && python /app/chat.py"
 
+  # Excel/CSV file upload with version management for business users
+  upload:
+    build: ./upload
+    container_name: ppm-upload
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${UPLOAD_EXTERNAL_PORT:-8085}:8080"
+    volumes:
+      - ./upload:/app
+      - upload_files:/app/uploaded_files
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  # Central portal - unified UI with role-based access for all services
+  portal:
+    build: ./portal
+    container_name: ppm-portal
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      MAGE_PORT: ${MAGE_PORT:-6789}
+      DBT_DOCS_EXTERNAL_PORT: ${DBT_DOCS_EXTERNAL_PORT:-8081}
+      METABASE_EXTERNAL_PORT: ${METABASE_EXTERNAL_PORT:-3000}
+      CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
+      UPLOAD_EXTERNAL_PORT: ${UPLOAD_EXTERNAL_PORT:-8085}
+      AGENT_PORT: ${AGENT_PORT:-7860}
+      PORTAL_ADMIN_PASS: ${PORTAL_ADMIN_PASS:-admin123}
+      PORTAL_DEV_PASS: ${PORTAL_DEV_PASS:-dev123}
+      PORTAL_ANALYST_PASS: ${PORTAL_ANALYST_PASS:-analyst123}
+      PORTAL_USER_PASS: ${PORTAL_USER_PASS:-user123}
+    ports:
+      - "${PORTAL_EXTERNAL_PORT:-9000}:9000"
+    volumes:
+      - ./portal:/app
+      - ./dbt/models:/dbt/models:ro
+      - ./dlt:/dlt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   dlt_data:
   cloudbeaver_data:
+  upload_files:
 
 networks:
   ppm-network:
