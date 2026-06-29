@@ -19,6 +19,9 @@ clean-targets:
 # Model configurations
 models:
   ppm_dbt:
+    +persist_docs:
+      relation: true
+      columns: true
     # Staging layer - views for data cleaning
     staging:
       +materialized: view

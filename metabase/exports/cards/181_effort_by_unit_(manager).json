@@ -1,0 +1,233 @@
+{
+  "cache_invalidated_at": null,
+  "description": null,
+  "archived": false,
+  "view_count": 13,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "varchar",
+      "semantic_type": null,
+      "lib/deduplicated-name": "deputy_gm_upper_unit",
+      "lib/original-name": "deputy_gm_upper_unit",
+      "name": "deputy_gm_upper_unit",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "deputy_gm_upper_unit",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "deputy_gm_upper_unit",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "deputy_gm_upper_unit",
+      "display_name": "deputy_gm_upper_unit",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.0,
+            "average-length": 36.42857142857143,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "effort",
+      "lib/original-name": "effort",
+      "name": "effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "effort",
+      "display_name": "effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 1.7499961206950798,
+            "min": 0.0,
+            "q1": 31.1,
+            "q3": 1153.8,
+            "excess-kurtosis": 3.1031616281187446,
+            "zero-fraction": 0.1428571428571429,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855,
+            "max": 2786.6,
+            "sd": 1006.9122667130154,
+            "avg": 729.1571428571428
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 28,
+  "query_type": "native",
+  "name": "Effort by Unit (Manager)",
+  "last_query_start": "2026-06-29T12:19:39.700132Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T12:19:39.734429Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 76.46153846153847,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:38:27.756713Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "template-tags": {
+          "date_range": {
+            "dimension": [
+              "field",
+              {
+                "base-type": "type/Date",
+                "lib/uuid": "a1231240-c81f-4c1a-93e9-33f7114f1814",
+                "effective-type": "type/Date"
+              },
+              1105
+            ],
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "date_range",
+            "display-name": "Date Range",
+            "type": "dimension",
+            "widget-type": "date/all-options"
+          },
+          "team": {
+            "type": "text",
+            "id": "33333333-7465616d-1111-1111-111111111111",
+            "name": "team",
+            "display-name": "Team",
+            "required": false
+          }
+        },
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT deputy_gm_upper_unit, ROUND(SUM(total_actual_effort_day)::numeric,1) AS effort\nFROM mart.rpt_missing_effort\nWHERE deputy_gm_upper_unit IS NOT NULL [[AND {{date_range}}]]\n  [[AND author_team = {{team}}]]\nGROUP BY deputy_gm_upper_unit ORDER BY effort DESC"
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 181,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "bar",
+  "archived_directly": false,
+  "entity_id": "d1zMKo4w_AgutB8ko8ili",
+  "param_fields": {
+    "11111111-1111-1111-1111-111111111111": [
+      {
+        "semantic_type": null,
+        "table_id": 38,
+        "name": "trx_date",
+        "has_field_values": "none",
+        "fk_target_field_id": null,
+        "dimensions": [],
+        "id": 1105,
+        "target": null,
+        "display_name": "Trx Date",
+        "name_field": null,
+        "base_type": "type/Date"
+      }
+    ]
+  },
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:38:27.76788Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "deputy_gm_upper_unit"
+    ],
+    "graph.metrics": [
+      "effort"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "timesheet",
+    "archive_operation_id": null,
+    "name": "Timesheet",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 28,
+    "archived_directly": null,
+    "entity_id": "4Xd5hPnDUHOVWdhbaksgR",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:15.113769Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:27.756713Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

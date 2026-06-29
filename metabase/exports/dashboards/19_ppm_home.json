@@ -1,0 +1,348 @@
+{
+  "description": "PPM Insights - Ana Sayfa. Tum PPM dashboard'larina erisim noktasi.",
+  "archived": false,
+  "view_count": 6,
+  "collection_position": null,
+  "dashcards": [
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 8,
+      "id": 248,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "_Oarxp9g4BBNvxkBMXUOs",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Master Data\n\nReferans veriler: projeler, calisanlar\n\n[Ac](/dashboard/27)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 11
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 0,
+      "id": 247,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "lFr-k36MHtAqZ6dyMbulg",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Data Quality and Pipeline\n\nVeri kalitesi ve ETL durumu\n\n[Ac](/dashboard/26)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 11
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 16,
+      "id": 246,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "wvnN1Accs1WX3EdOvwmUR",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Strategic Portfolio\n\nProje durumu ve tamamlanma metrikleri\n\n[Ac](/dashboard/25)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 7
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 8,
+      "id": 245,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "8pNgjUQk8Fts6IPPowqF8",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Distribution Steps\n\nDagitim adimlari metodolojisi\n\n[Ac](/dashboard/24)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 7
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 0,
+      "id": 244,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "vo5bW43Ked8aVfHNNaxP9",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Distributed Effort\n\nMusteri/urun bazinda dagitilmis mesai\n\n[Ac](/dashboard/23)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 7
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 16,
+      "id": 243,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "TEIOa642x1RO00zLSTaK7",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Missing Effort\n\nEksik timesheet analizi\n\n[Ac](/dashboard/22)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 3
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 8,
+      "id": 242,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "kRwVhoFgdlZQw2AHHFHXb",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Timesheet\n\nGercek vs beklenen mesai takibi\n\n[Ac](/dashboard/21)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 3
+    },
+    {
+      "size_x": 8,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 0,
+      "id": 241,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "sYDkh7wVhn8-kLguGAr4E",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "### Executive Overview\n\nPortfolyo ozeti, KPI'lar ve finansal ozet\n\n[Ac](/dashboard/20)"
+      },
+      "size_y": 4,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 3
+    },
+    {
+      "size_x": 24,
+      "dashboard_tab_id": 79,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "query_average_duration": null,
+        "download_perms": "none"
+      },
+      "updated_at": "2026-06-29T11:38:48.377154Z",
+      "col": 0,
+      "id": 240,
+      "parameter_mappings": [],
+      "card_id": null,
+      "entity_id": "Tzy9cWYIvTZse0oyCXfdP",
+      "visualization_settings": {
+        "virtual_card": {
+          "display": "text",
+          "dataset_query": {},
+          "visualization_settings": {}
+        },
+        "text": "# PPM Insights\n\nProje ve Portfolyo Yonetimi veri platformuna hos geldiniz.\n\nAsagidaki kartlardan ilgili dashboard'a gidin."
+      },
+      "size_y": 3,
+      "dashboard_id": 19,
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "row": 0
+    }
+  ],
+  "embedding_type": null,
+  "initially_published_at": null,
+  "can_write": true,
+  "can_set_cache_policy": true,
+  "tabs": [
+    {
+      "id": 79,
+      "dashboard_id": 19,
+      "name": "Home",
+      "position": 0,
+      "entity_id": "RR8tdXfQpWn95nmUc0fXN",
+      "created_at": "2026-06-29T11:38:48.377154Z",
+      "updated_at": "2026-06-29T11:38:48.377154Z"
+    }
+  ],
+  "enable_embedding": false,
+  "collection_id": 25,
+  "show_in_getting_started": false,
+  "name": "PPM Home",
+  "is_remote_synced": false,
+  "width": "fixed",
+  "caveats": null,
+  "collection_authority_level": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T12:13:19.498294Z",
+  "made_public_by_id": 1,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "last_used_param_values": {},
+  "id": 19,
+  "last_viewed_at": "2026-06-29T11:38:18.292133Z",
+  "position": null,
+  "archived_directly": false,
+  "entity_id": "45rgZr50HW3h3fCiU51E3",
+  "param_fields": {},
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:38:48.408876Z"
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "ppm_insights",
+    "archive_operation_id": null,
+    "name": "PPM Insights",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "effective_location": "/",
+    "id": 25,
+    "archived_directly": null,
+    "entity_id": "aTzf_3V7THs5iuzu2rO4C",
+    "location": "/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:14.279067Z"
+  },
+  "parameters": [],
+  "auto_apply_filters": true,
+  "created_at": "2026-06-29T11:38:18.292133Z",
+  "public_uuid": "206306ac-7bc1-45bc-bb55-e1097fd5793b",
+  "points_of_interest": null,
+  "can_delete": false
+}

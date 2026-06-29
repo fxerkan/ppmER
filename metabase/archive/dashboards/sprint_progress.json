@@ -1,0 +1,325 @@
+{
+    "description": "Sprint progress showing issue status breakdown and epic completion percentages",
+    "archived": false,
+    "view_count": 3,
+    "collection_position": null,
+    "dashcards": [
+        {
+            "size_x": 24,
+            "dashboard_tab_id": null,
+            "series": [],
+            "inline_parameters": [],
+            "action_id": null,
+            "collection_authority_level": null,
+            "card": {
+                "cache_invalidated_at": "2026-06-28T22:40:23.974731Z",
+                "description": "Issue status breakdown per project",
+                "archived": false,
+                "view_count": 1,
+                "collection_position": null,
+                "source_card_id": null,
+                "table_id": null,
+                "result_metadata": [
+                    {
+                        "name": "project_key",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "project_key",
+                        "field_ref": [
+                            "field",
+                            "project_key",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "status_category",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "status_category",
+                        "field_ref": [
+                            "field",
+                            "status_category",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "status_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "status_name",
+                        "field_ref": [
+                            "field",
+                            "status_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "issue_count",
+                        "database_type": "int8",
+                        "base_type": "type/BigInteger",
+                        "display_name": "issue_count",
+                        "semantic_type": "type/Quantity",
+                        "field_ref": [
+                            "field",
+                            "issue_count",
+                            {
+                                "base-type": "type/BigInteger"
+                            }
+                        ]
+                    }
+                ],
+                "embedding_type": null,
+                "initially_published_at": null,
+                "can_write": true,
+                "card_schema": 23,
+                "database_id": 2,
+                "enable_embedding": false,
+                "collection_id": null,
+                "query_type": "native",
+                "download_perms": "full",
+                "name": "Sprint: Issues by Status",
+                "document_id": null,
+                "last_used_at": "2026-06-28T22:37:32.54121Z",
+                "type": "question",
+                "dimensions": null,
+                "query_average_duration": null,
+                "creator_id": 2,
+                "moderation_reviews": [],
+                "updated_at": "2026-06-28T22:40:23.972062Z",
+                "made_public_by_id": null,
+                "embedding_params": null,
+                "cache_ttl": null,
+                "dataset_query": {
+                    "lib/type": "mbql/query",
+                    "database": 2,
+                    "stages": [
+                        {
+                            "lib/type": "mbql.stage/native",
+                            "native": "SELECT\n    i.project_key,\n    i.status_category,\n    i.status_name,\n    COUNT(*) AS issue_count\nFROM core.dim_issues i\nWHERE i.is_subtask = false\nGROUP BY i.project_key, i.status_category, i.status_name\nORDER BY i.project_key, i.status_category"
+                        }
+                    ]
+                },
+                "dimension_mappings": null,
+                "id": 46,
+                "legacy_query": null,
+                "parameter_mappings": [],
+                "display": "table",
+                "archived_directly": false,
+                "entity_id": "dwSJ1e2nNaXEYuQ7CK0X6",
+                "collection_preview": true,
+                "visualization_settings": {},
+                "metabase_version": "v0.62.3.3 (686cac9)",
+                "parameters": [],
+                "dashboard_id": null,
+                "created_at": "2026-06-28T22:37:32.54121Z",
+                "public_uuid": null
+            },
+            "updated_at": "2026-06-28T22:40:28.308391Z",
+            "col": 0,
+            "id": 52,
+            "parameter_mappings": [],
+            "card_id": 46,
+            "entity_id": "cr7VHL7S8oinI7n0agWaH",
+            "visualization_settings": {},
+            "size_y": 8,
+            "dashboard_id": 7,
+            "created_at": "2026-06-28T22:40:28.308391Z",
+            "row": 0
+        },
+        {
+            "size_x": 24,
+            "dashboard_tab_id": null,
+            "series": [],
+            "inline_parameters": [],
+            "action_id": null,
+            "collection_authority_level": null,
+            "card": {
+                "cache_invalidated_at": "2026-06-28T22:40:24.389402Z",
+                "description": "Epic completion percentage",
+                "archived": false,
+                "view_count": 1,
+                "collection_position": null,
+                "source_card_id": null,
+                "table_id": null,
+                "result_metadata": [
+                    {
+                        "name": "project_key",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "project_key",
+                        "field_ref": [
+                            "field",
+                            "project_key",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "epic_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "epic_name",
+                        "field_ref": [
+                            "field",
+                            "epic_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "total_issues",
+                        "database_type": "int8",
+                        "base_type": "type/BigInteger",
+                        "display_name": "total_issues",
+                        "field_ref": [
+                            "field",
+                            "total_issues",
+                            {
+                                "base-type": "type/BigInteger"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "done_issues",
+                        "database_type": "int8",
+                        "base_type": "type/BigInteger",
+                        "display_name": "done_issues",
+                        "field_ref": [
+                            "field",
+                            "done_issues",
+                            {
+                                "base-type": "type/BigInteger"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "completion_pct",
+                        "database_type": "numeric",
+                        "base_type": "type/Decimal",
+                        "display_name": "completion_pct",
+                        "field_ref": [
+                            "field",
+                            "completion_pct",
+                            {
+                                "base-type": "type/Decimal"
+                            }
+                        ]
+                    }
+                ],
+                "embedding_type": null,
+                "initially_published_at": null,
+                "can_write": true,
+                "card_schema": 23,
+                "database_id": 2,
+                "enable_embedding": false,
+                "collection_id": null,
+                "query_type": "native",
+                "download_perms": "full",
+                "name": "Sprint: Epic Progress",
+                "document_id": null,
+                "last_used_at": "2026-06-28T22:37:33.10451Z",
+                "type": "question",
+                "dimensions": null,
+                "query_average_duration": null,
+                "creator_id": 2,
+                "moderation_reviews": [],
+                "updated_at": "2026-06-28T22:40:24.387113Z",
+                "made_public_by_id": null,
+                "embedding_params": null,
+                "cache_ttl": null,
+                "dataset_query": {
+                    "lib/type": "mbql/query",
+                    "database": 2,
+                    "stages": [
+                        {
+                            "lib/type": "mbql.stage/native",
+                            "native": "SELECT\n    i.project_key,\n    i.epic_name,\n    COUNT(*) AS total_issues,\n    COUNT(CASE WHEN i.status_category = 'Done' THEN 1 END) AS done_issues,\n    ROUND(\n        100.0 * COUNT(CASE WHEN i.status_category = 'Done' THEN 1 END) / NULLIF(COUNT(*), 0),\n        1\n    ) AS completion_pct\nFROM core.dim_issues i\nWHERE i.epic_name IS NOT NULL\n  AND i.is_subtask = false\nGROUP BY i.project_key, i.epic_name\nORDER BY completion_pct ASC"
+                        }
+                    ]
+                },
+                "dimension_mappings": null,
+                "id": 47,
+                "legacy_query": null,
+                "parameter_mappings": [],
+                "display": "bar",
+                "archived_directly": false,
+                "entity_id": "lOONF_JxuhwOhjEmwNnIl",
+                "collection_preview": true,
+                "visualization_settings": {},
+                "metabase_version": "v0.62.3.3 (686cac9)",
+                "parameters": [],
+                "dashboard_id": null,
+                "created_at": "2026-06-28T22:37:33.10451Z",
+                "public_uuid": null
+            },
+            "updated_at": "2026-06-28T22:40:28.308391Z",
+            "col": 0,
+            "id": 53,
+            "parameter_mappings": [],
+            "card_id": 47,
+            "entity_id": "trYo6f6hQNXK65Wfb_MYF",
+            "visualization_settings": {},
+            "size_y": 8,
+            "dashboard_id": 7,
+            "created_at": "2026-06-28T22:40:28.308391Z",
+            "row": 8
+        }
+    ],
+    "embedding_type": null,
+    "initially_published_at": null,
+    "can_write": true,
+    "can_set_cache_policy": true,
+    "tabs": [],
+    "enable_embedding": false,
+    "collection_id": null,
+    "show_in_getting_started": false,
+    "name": "Sprint Progress",
+    "is_remote_synced": false,
+    "width": "full",
+    "caveats": null,
+    "collection_authority_level": null,
+    "creator_id": 2,
+    "can_restore": false,
+    "moderation_reviews": [],
+    "updated_at": "2026-06-28T22:39:25.381525Z",
+    "made_public_by_id": 2,
+    "embedding_params": null,
+    "cache_ttl": null,
+    "last_used_param_values": {},
+    "id": 7,
+    "last_viewed_at": "2026-06-28T22:39:42.236785Z",
+    "position": null,
+    "archived_directly": false,
+    "entity_id": "Urqhfk8eBB5WAIEIf6lM_",
+    "param_fields": {},
+    "last-edit-info": {
+        "id": 2,
+        "email": "admin@jppm.local",
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "timestamp": "2026-06-28T22:40:28.426749Z"
+    },
+    "collection": {
+        "metabase.collections.models.collection.root/is-root?": true,
+        "authority_level": null,
+        "name": "Our analytics",
+        "is_personal": false,
+        "id": "root",
+        "is_remote_synced": false,
+        "can_write": true
+    },
+    "parameters": [],
+    "auto_apply_filters": true,
+    "created_at": "2026-06-28T22:37:40.0467Z",
+    "public_uuid": "09b72294-72b1-4805-9028-718131689e5d",
+    "points_of_interest": null,
+    "can_delete": false
+}

@@ -1,0 +1,21 @@
+{
+  "collections": {
+    "PPM Insights": 25
+  },
+  "models": {
+    "portfolio": 158,
+    "worklog": 159,
+    "data_quality": 160
+  },
+  "dashboards": {
+    "home": 19,
+    "overview": 20,
+    "timesheet": 21,
+    "missing_effort": 22,
+    "distributed": 23,
+    "distribution_steps": 24,
+    "portfolio": 25,
+    "data_quality": 26,
+    "master_data": 27
+  }
+}

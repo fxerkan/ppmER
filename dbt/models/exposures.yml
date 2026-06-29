@@ -1,0 +1,125 @@
+version: 2
+
+exposures:
+
+  - name: ppm_home
+    label: "PPM Home"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/19"
+    description: >
+      PPM Insights homepage with links to all dashboards
+    depends_on:
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_executive_overview
+    label: "PPM - Executive - Overview"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/20"
+    description: >
+      Executive overview: KPIs, effort trends, capex/opex, top projects
+    depends_on:
+      - ref('fact_financial_dashboard_2026')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_timesheet
+    label: "PPM - HR - Timesheet"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/21"
+    description: >
+      Timesheet compliance: actual vs expected effort by employee and team
+    depends_on:
+      - ref('rpt_missing_effort')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_missing_effort
+    label: "PPM - HR - Missing Effort"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/22"
+    description: >
+      Missing effort analysis with employee and manager drill-downs
+    depends_on:
+      - ref('rpt_missing_effort')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_distributed_effort
+    label: "PPM - Finance - Distributed Effort"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/23"
+    description: >
+      Distributed effort by customer, product, and tribe
+    depends_on:
+      - ref('fact_distributed_efforts_2025_01_06')
+      - ref('fact_distributed_efforts_2025_07_12')
+      - ref('fact_distributed_efforts_2026')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_distribution_steps
+    label: "PPM - Finance - Distribution Steps"
+    type: dashboard
+    maturity: medium
+    url: "http://localhost:3000/dashboard/24"
+    description: >
+      Step-by-step effort distribution methodology
+    depends_on:
+      - ref('fact_financial_dashboard_2026')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_strategic_portfolio
+    label: "PPM - Leadership - Strategic Portfolio"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/25"
+    description: >
+      Strategic portfolio overview with project status and completion metrics
+    depends_on:
+      - ref('dim_projects')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_data_quality
+    label: "PPM - Ops - Data Quality and Pipeline"
+    type: dashboard
+    maturity: medium
+    url: "http://localhost:3000/dashboard/26"
+    description: >
+      Data quality checks: missing metadata, ETL freshness
+    depends_on:
+      - ref('dim_projects')
+      - ref('dim_users')
+      - ref('fact_worklogs')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local
+
+  - name: ppm_master_data
+    label: "PPM - Ops - Master Data"
+    type: dashboard
+    maturity: high
+    url: "http://localhost:3000/dashboard/27"
+    description: >
+      Reference data: all projects, employees, issue types
+    depends_on:
+      - ref('dim_projects')
+      - ref('dim_users')
+      - ref('fact_worklogs')
+    owner:
+      name: PPM Team
+      email: admin@jppm.local

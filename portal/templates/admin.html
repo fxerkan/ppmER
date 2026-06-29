@@ -1,108 +1,533 @@
 {% extends "base.html" %}
-{% block title %} — Admin{% endblock %}
+{% block title %} — Settings{% endblock %}
 {% block active_admin %}active{% endblock %}
 
 {% block content %}
-<div class="p-6 space-y-8">
-  <div>
-    <h2 class="text-2xl font-bold text-slate-800">System Admin</h2>
-    <p class="text-slate-500 text-sm mt-1">Docker containers, environment configuration</p>
+<div class="p-6 max-w-screen-xl mx-auto">
+
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">System Settings</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Manage services, environment variables, and service connections</p>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full
+        {% if docker_available %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400
+        {% else %}bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400{% endif %}">
+        <span class="w-1.5 h-1.5 rounded-full {% if docker_available %}bg-emerald-500{% else %}bg-red-500{% endif %}"></span>
+        Docker Socket {% if docker_available %}Connected{% else %}Not Available{% endif %}
+      </span>
+      <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full
+        {% if env_file_available %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400
+        {% else %}bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400{% endif %}">
+        <span class="w-1.5 h-1.5 rounded-full {% if env_file_available %}bg-emerald-500{% else %}bg-amber-500{% endif %}"></span>
+        .env File {% if env_file_available %}Mounted{% else %}Read-only{% endif %}
+      </span>
+    </div>
   </div>
 
-  <!-- Docker Status -->
-  <section>
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-semibold text-slate-700">🐳 Docker Containers</h3>
-      <button onclick="loadDockerStatus()"
-        class="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+  <!-- Tab Bar -->
+  <div class="flex gap-1 mb-6 border-b border-slate-200 dark:border-slate-800">
+    <button onclick="switchTab('services')" id="tab-services"
+      class="tab-btn active px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors">
+      🐳 Services
+    </button>
+    <button onclick="switchTab('environment')" id="tab-environment"
+      class="tab-btn px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors">
+      ⚙️ Environment
+    </button>
+    <button onclick="switchTab('connections')" id="tab-connections"
+      class="tab-btn px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors">
+      🔗 Connections
+    </button>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Tab: Services -->
+  <!-- ================================================================== -->
+  <div id="panel-services">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-slate-500 dark:text-slate-400">PPM DataStack containers — restart or stop individual services, view live logs.</p>
+      <button onclick="loadServices()" class="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
         Refresh
       </button>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-      <div id="docker-loading" class="p-6 text-center text-slate-400 text-sm">Loading...</div>
-      <table id="docker-table" class="hidden w-full text-sm">
-        <thead class="bg-slate-50 border-b border-slate-100">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Container</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Ports</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Image</th>
-          </tr>
-        </thead>
-        <tbody id="docker-tbody" class="divide-y divide-slate-50"></tbody>
-      </table>
-      <div id="docker-empty" class="hidden p-6 text-center text-slate-400 text-sm">No containers found or Docker unavailable.</div>
+    <div id="services-loading" class="flex items-center justify-center py-16 text-slate-400 dark:text-slate-600">
+      <svg class="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+      Loading containers...
     </div>
-  </section>
+    <div id="services-grid" class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+    <div id="services-error" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400 text-sm"></div>
+  </div>
 
-  <!-- Environment Variables -->
-  <section>
-    <h3 class="text-lg font-semibold text-slate-700 mb-3">🔧 Environment Variables</h3>
-    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-      {% if env_vars %}
+  <!-- ================================================================== -->
+  <!-- Tab: Environment -->
+  <!-- ================================================================== -->
+  <div id="panel-environment" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Edit environment variables. Click <strong>Save Group</strong> to write changes to the mounted .env file.
+        Services must be restarted to pick up new values.
+      </p>
+      <div class="flex gap-2">
+        <button onclick="loadEnvironment(true)" class="text-xs px-3 py-1.5 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          Reload
+        </button>
+      </div>
+    </div>
+    <div id="env-loading" class="flex items-center justify-center py-16 text-slate-400 dark:text-slate-600">
+      <svg class="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+      Loading environment...
+    </div>
+    <div id="env-groups" class="hidden space-y-4"></div>
+    <div id="env-save-banner" class="hidden fixed bottom-6 right-6 z-40 bg-emerald-600 text-white text-sm px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <span id="env-save-msg">Saved successfully</span>
+    </div>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Tab: Connections -->
+  <!-- ================================================================== -->
+  <div id="panel-connections" class="hidden">
+    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+      Integrated service endpoints. External URLs use host-mapped ports (accessed from browser).
+      Internal URLs are used for inter-container communication.
+    </p>
+    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
       <table class="w-full text-sm">
-        <thead class="bg-slate-50 border-b border-slate-100">
+        <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-700">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase w-1/2">Variable</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase w-1/2">Value</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Service</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Internal URL</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">External URL</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Open</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-50">
-          {% for k, v in env_vars.items()|sort %}
-          <tr>
-            <td class="px-4 py-2.5 font-mono text-xs text-slate-700">{{ k }}</td>
-            <td class="px-4 py-2.5 font-mono text-xs text-slate-500">{{ v }}</td>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for key, svc in services_config.items() %}
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <span class="text-base">{{ svc.icon }}</span>
+                <div>
+                  <div class="font-medium text-slate-800 dark:text-slate-200">{{ svc.name }}</div>
+                  <div class="text-xs text-slate-400 dark:text-slate-500">{{ key }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+              {{ svc.internal }}
+            </td>
+            <td class="px-4 py-3 font-mono text-xs text-blue-600 dark:text-blue-400">
+              {{ svc.url }}
+            </td>
+            <td class="px-4 py-3">
+              <a href="{{ svc.url }}" target="_blank"
+                class="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                Open
+              </a>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      {% else %}
-      <p class="p-6 text-center text-slate-400 text-sm">No relevant environment variables found.</p>
-      {% endif %}
     </div>
-  </section>
+  </div>
+
 </div>
 
-<script>
-  function loadDockerStatus() {
-    document.getElementById('docker-loading').classList.remove('hidden');
-    document.getElementById('docker-table').classList.add('hidden');
-    document.getElementById('docker-empty').classList.add('hidden');
+<!-- ================================================================== -->
+<!-- Log Viewer Modal -->
+<!-- ================================================================== -->
+<div id="log-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col" style="max-height: 80vh;">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+      <div>
+        <h3 class="font-semibold text-slate-800 dark:text-slate-100 text-sm" id="log-modal-title">Container Logs</h3>
+        <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5" id="log-modal-id"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="log-tail" class="text-xs border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+          <option value="50">Last 50 lines</option>
+          <option value="100">Last 100 lines</option>
+          <option value="200" selected>Last 200 lines</option>
+          <option value="500">Last 500 lines</option>
+        </select>
+        <button onclick="refreshLogs()" class="text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">Refresh</button>
+        <button onclick="document.getElementById('log-modal').classList.add('hidden')"
+          class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="log-content" class="flex-1 overflow-y-auto p-4 font-mono text-xs bg-slate-950 text-slate-200 rounded-b-2xl">
+      <div class="text-slate-500">Loading logs...</div>
+    </div>
+  </div>
+</div>
 
-    fetch('/api/docker-status')
-      .then(r => r.json())
-      .then(data => {
-        document.getElementById('docker-loading').classList.add('hidden');
-        if (!Array.isArray(data) || data.length === 0) {
-          document.getElementById('docker-empty').classList.remove('hidden');
-          return;
-        }
-        const tbody = document.getElementById('docker-tbody');
-        tbody.innerHTML = '';
-        data.forEach(c => {
-          const running = (c.Status || '').toLowerCase().includes('up');
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td class="px-4 py-2.5 font-mono text-xs text-slate-800">${c.Names || c.Name || '—'}</td>
-            <td class="px-4 py-2.5">
-              <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium
-                ${running ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                ${running ? '● Running' : '● Stopped'}
-              </span>
-            </td>
-            <td class="px-4 py-2.5 font-mono text-xs text-slate-500">${c.Ports || '—'}</td>
-            <td class="px-4 py-2.5 font-mono text-xs text-slate-500 truncate max-w-xs">${c.Image || '—'}</td>
-          `;
-          tbody.appendChild(row);
-        });
-        document.getElementById('docker-table').classList.remove('hidden');
-      })
-      .catch(() => {
-        document.getElementById('docker-loading').classList.add('hidden');
-        document.getElementById('docker-empty').classList.remove('hidden');
-      });
+<style>
+  .tab-btn {
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
   }
+  .tab-btn:hover { color: #3b82f6; background: rgba(59,130,246,0.05); }
+  .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.05); }
+  .dark .tab-btn { color: #94a3b8; }
+  .dark .tab-btn:hover { color: #60a5fa; }
+  .dark .tab-btn.active { color: #60a5fa; border-bottom-color: #60a5fa; }
 
-  loadDockerStatus();
+  .env-input {
+    width: 100%;
+    padding: 0.375rem 0.625rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: white;
+    color: #1e293b;
+    transition: border-color 0.15s;
+  }
+  .env-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+  .dark .env-input { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+  .dark .env-input:focus { border-color: #60a5fa; }
+
+  .log-line-stdout { color: #e2e8f0; }
+  .log-line-stderr { color: #fca5a5; }
+  .log-line-ts { color: #475569; margin-right: 0.5rem; }
+</style>
+
+<script>
+// ─── Tab management ───────────────────────────────────────────────────────────
+const TABS = ['services', 'environment', 'connections'];
+let initialized = {};
+
+function switchTab(tab) {
+  TABS.forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== tab);
+  });
+  if (!initialized[tab]) {
+    initialized[tab] = true;
+    if (tab === 'services') loadServices();
+    if (tab === 'environment') loadEnvironment();
+  }
+}
+
+// ─── Services tab ─────────────────────────────────────────────────────────────
+let currentContainerId = null;
+
+function loadServices() {
+  document.getElementById('services-loading').classList.remove('hidden');
+  document.getElementById('services-grid').classList.add('hidden');
+  document.getElementById('services-error').classList.add('hidden');
+
+  fetch('/api/services')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('services-loading').classList.add('hidden');
+      if (!Array.isArray(data)) {
+        document.getElementById('services-error').textContent = data.error || data.message || 'Unexpected response from Docker API';
+        document.getElementById('services-error').classList.remove('hidden');
+        return;
+      }
+      const grid = document.getElementById('services-grid');
+      grid.innerHTML = '';
+      data.forEach(c => renderContainer(c, grid));
+      grid.classList.remove('hidden');
+    })
+    .catch(e => {
+      document.getElementById('services-loading').classList.add('hidden');
+      document.getElementById('services-error').textContent = 'Failed to load containers: ' + e.message;
+      document.getElementById('services-error').classList.remove('hidden');
+    });
+}
+
+function renderContainer(c, grid) {
+  const id = c.Id;
+  const name = (c.Names && c.Names[0] || c.Name || '—').replace(/^\//, '');
+  const status = c.Status || c.State || '—';
+  const state = (c.State || status).toLowerCase();
+  const running = state === 'running' || status.toLowerCase().startsWith('up');
+  const ports = c.Ports ? c.Ports.map(p => p.PublicPort ? `${p.PublicPort}→${p.PrivatePort}` : '').filter(Boolean).join(', ') : (c.Ports || '');
+  const image = (c.Image || '—').split('/').pop();
+
+  const card = document.createElement('div');
+  card.className = 'bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 flex flex-col gap-3';
+  card.innerHTML = `
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0">
+        <div class="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">${escHtml(name)}</div>
+        <div class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate font-mono">${escHtml(image)}</div>
+      </div>
+      <span class="shrink-0 inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium
+        ${running ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'}">
+        <span class="w-1.5 h-1.5 rounded-full ${running ? 'bg-emerald-500' : 'bg-red-500'} ${running ? 'animate-pulse' : ''}"></span>
+        ${running ? 'Running' : 'Stopped'}
+      </span>
+    </div>
+    <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+      <div class="flex gap-2"><span class="text-slate-400">Status</span><span>${escHtml(status)}</span></div>
+      ${ports ? `<div class="flex gap-2"><span class="text-slate-400">Ports</span><span class="font-mono">${escHtml(ports)}</span></div>` : ''}
+    </div>
+    <div class="flex gap-2 mt-1">
+      ${running
+        ? `<button onclick="containerAction('${escHtml(id)}', 'stop', this)" class="action-btn flex-1 text-xs py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-colors">■ Stop</button>`
+        : `<button onclick="containerAction('${escHtml(id)}', 'start', this)" class="action-btn flex-1 text-xs py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors">▶ Start</button>`
+      }
+      <button onclick="containerAction('${escHtml(id)}', 'restart', this)" class="action-btn flex-1 text-xs py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-800 transition-colors">↻ Restart</button>
+      <button onclick="openLogs('${escHtml(id)}', '${escHtml(name)}')" class="action-btn text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">≡ Logs</button>
+    </div>
+  `;
+  grid.appendChild(card);
+}
+
+function containerAction(id, action, btn) {
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '...';
+  fetch(`/api/services/${encodeURIComponent(id)}/action/${action}`, { method: 'POST' })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) setTimeout(loadServices, 1500);
+      else { btn.disabled = false; btn.innerHTML = original; alert('Error: ' + (d.error || 'Unknown')); }
+    })
+    .catch(() => { btn.disabled = false; btn.innerHTML = original; });
+}
+
+function openLogs(id, name) {
+  currentContainerId = id;
+  document.getElementById('log-modal-title').textContent = name + ' — Logs';
+  document.getElementById('log-modal-id').textContent = id.substring(0, 12);
+  document.getElementById('log-modal').classList.remove('hidden');
+  refreshLogs();
+}
+
+function refreshLogs() {
+  if (!currentContainerId) return;
+  const tail = document.getElementById('log-tail').value;
+  const content = document.getElementById('log-content');
+  content.innerHTML = '<div class="text-slate-500">Loading...</div>';
+  fetch(`/api/services/${encodeURIComponent(currentContainerId)}/logs?tail=${tail}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) { content.innerHTML = `<div class="text-red-400">${escHtml(d.error)}</div>`; return; }
+      if (!d.logs || d.logs.length === 0) { content.innerHTML = '<div class="text-slate-500">No logs found.</div>'; return; }
+      content.innerHTML = d.logs.map(line => {
+        // Split timestamp from message (2024-01-01T... message)
+        const m = line.match(/^(\d{4}-\d{2}-\d{2}T[\d:.]+Z)\s(.*)$/s);
+        if (m) {
+          return `<div class="mb-0.5"><span class="log-line-ts">${escHtml(m[1])}</span><span>${escHtml(m[2])}</span></div>`;
+        }
+        return `<div class="mb-0.5">${escHtml(line)}</div>`;
+      }).join('');
+      content.scrollTop = content.scrollHeight;
+    })
+    .catch(e => { content.innerHTML = `<div class="text-red-400">Error: ${escHtml(e.message)}</div>`; });
+}
+
+// Close modal on backdrop click
+document.getElementById('log-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.add('hidden');
+});
+
+// ─── Environment tab ──────────────────────────────────────────────────────────
+// prefix-based: any key starting with a group's prefix goes to that group
+const ENV_GROUPS = [
+  { id: 'postgresql', label: 'PostgreSQL Database', icon: '🐘', prefixes: ['POSTGRES_'] },
+  { id: 'portal',     label: 'Portal',              icon: '🌐', prefixes: ['PORTAL_'] },
+  { id: 'datasources',label: 'Datasources',         icon: '📡', prefixes: ['JIRA_', 'SHAREPOINT_', 'SHAREPOINT__'] },
+  { id: 'dbt',        label: 'dbt',                 icon: '📐', prefixes: ['DBT_'] },
+  { id: 'mage',       label: 'Mage AI',             icon: '🔄', prefixes: ['MAGE_'] },
+  { id: 'metabase',   label: 'Metabase BI',         icon: '📊', prefixes: ['METABASE_', 'MB_'] },
+  { id: 'cloudbeaver',label: 'CloudBeaver',         icon: '🗄️', prefixes: ['CLOUDBEAVER_', 'CB_'] },
+  { id: 'agent',      label: 'AI Agent',            icon: '🤖', prefixes: ['AGENT_', 'OPENAI_', 'DEEPSEEK_', 'ANTHROPIC_', 'GEMINI_', 'OLLAMA_'] },
+  { id: 'upload',     label: 'File Upload',         icon: '📁', prefixes: ['UPLOAD_'] },
+  { id: 'smtp',       label: 'Email (SMTP)',         icon: '📧', prefixes: ['SMTP_'] },
+  { id: 'pipeline',   label: 'Pipeline',            icon: '⚙️', prefixes: ['STUCK_', 'VOLUME_'] },
+];
+
+const SENSITIVE = ['PASSWORD','PASS','SECRET','KEY','TOKEN'];
+function isSensitive(k) { return SENSITIVE.some(s => k.toUpperCase().includes(s)); }
+
+function groupForKey(key) {
+  for (const g of ENV_GROUPS) {
+    if (g.prefixes.some(p => key.startsWith(p))) return g.id;
+  }
+  return 'other';
+}
+
+let envData = {};
+
+function loadEnvironment(force = false) {
+  if (!force && Object.keys(envData).length > 0) { renderEnvGroups(); return; }
+  document.getElementById('env-loading').classList.remove('hidden');
+  document.getElementById('env-groups').classList.add('hidden');
+  fetch('/api/env/all')
+    .then(r => r.json())
+    .then(data => {
+      envData = data;
+      document.getElementById('env-loading').classList.add('hidden');
+      renderEnvGroups();
+    })
+    .catch(e => {
+      document.getElementById('env-loading').innerHTML = `<div class="text-red-500">Error: ${escHtml(e.message)}</div>`;
+    });
+}
+
+function renderEnvGroups() {
+  const container = document.getElementById('env-groups');
+  container.innerHTML = '';
+
+  // Assign every env key to a group by prefix
+  const grouped = {};
+  for (const g of ENV_GROUPS) grouped[g.id] = [];
+  grouped['other'] = [];
+  for (const key of Object.keys(envData).sort()) grouped[groupForKey(key)].push(key);
+
+  const allGroups = [...ENV_GROUPS];
+  if (grouped['other'].length > 0) allGroups.push({ id: 'other', label: 'Other', icon: '🔧', prefixes: [] });
+
+  allGroups.forEach(group => {
+    const keys = grouped[group.id] || [];
+    if (keys.length === 0) return;
+
+    const el = document.createElement('div');
+    el.className = 'bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden';
+    el.innerHTML = `
+      <div class="flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" onclick="toggleGroup('${group.id}')">
+        <div class="flex items-center gap-2.5">
+          <span class="text-lg">${group.icon}</span>
+          <span class="font-medium text-slate-800 dark:text-slate-200 text-sm">${group.label}</span>
+          <span class="text-xs text-slate-400 dark:text-slate-500">${keys.length} var${keys.length !== 1 ? 's' : ''}</span>
+        </div>
+        <svg id="chevron-${group.id}" class="w-4 h-4 text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+      <div id="group-body-${group.id}" class="hidden border-t border-slate-100 dark:border-slate-800">
+        <div class="p-4 space-y-2.5" id="group-fields-${group.id}"></div>
+        <div class="px-4 pb-4 flex items-center gap-3">
+          <button onclick="saveGroup('${group.id}')" class="text-xs px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            Save Group
+          </button>
+          <span id="group-status-${group.id}" class="text-xs text-slate-400 dark:text-slate-500"></span>
+        </div>
+      </div>
+    `;
+    container.appendChild(el);
+
+    // Render fields
+    const fieldsEl = el.querySelector(`#group-fields-${group.id}`);
+    keys.forEach(k => {
+      const val = envData[k] || '';
+      const sensitive = isSensitive(k);
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-5 gap-3 items-center';
+      row.innerHTML = `
+        <label class="col-span-2 text-xs font-mono text-slate-600 dark:text-slate-400 truncate" title="${escHtml(k)}">${escHtml(k)}</label>
+        <div class="col-span-3 flex gap-1">
+          <input type="${sensitive ? 'password' : 'text'}"
+            id="env-input-${escHtml(k)}"
+            data-key="${escHtml(k)}"
+            data-group="${group.id}"
+            value="${escHtml(val)}"
+            placeholder="${val ? '' : 'not set'}"
+            class="env-input flex-1 ${!val ? 'italic text-slate-400' : ''}">
+          ${sensitive ? `<button type="button" onclick="togglePwd('env-input-${escHtml(k)}', this)" class="px-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs">👁</button>` : ''}
+        </div>
+      `;
+      fieldsEl.appendChild(row);
+    });
+  });
+
+  container.classList.remove('hidden');
+}
+
+function toggleGroup(id) {
+  const body = document.getElementById(`group-body-${id}`);
+  const chev = document.getElementById(`chevron-${id}`);
+  body.classList.toggle('hidden');
+  chev.style.transform = body.classList.contains('hidden') ? '' : 'rotate(180deg)';
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function saveGroup(groupId) {
+  const inputs = document.querySelectorAll(`[data-group="${groupId}"]`);
+  const vars = {};
+  inputs.forEach(inp => {
+    const k = inp.dataset.key;
+    // Don't send empty values back if the original was already empty (don't add blank keys)
+    if (inp.value !== '') vars[k] = inp.value;
+    else if (envData[k] !== undefined && envData[k] !== '') vars[k] = '';
+  });
+
+  const statusEl = document.getElementById(`group-status-${groupId}`);
+  statusEl.textContent = 'Saving...';
+  statusEl.className = 'text-xs text-blue-500';
+
+  fetch('/api/env/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ vars })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      statusEl.textContent = `✓ Saved ${d.updated.length} variable${d.updated.length !== 1 ? 's' : ''}`;
+      statusEl.className = 'text-xs text-emerald-600 dark:text-emerald-400';
+      // Update local cache
+      Object.assign(envData, vars);
+      showSaveBanner(`Saved: ${d.updated.join(', ') || 'no changes'}`);
+    } else {
+      statusEl.textContent = '✗ ' + (d.error || 'Save failed');
+      statusEl.className = 'text-xs text-red-500';
+    }
+  })
+  .catch(e => {
+    statusEl.textContent = '✗ ' + e.message;
+    statusEl.className = 'text-xs text-red-500';
+  });
+}
+
+function showSaveBanner(msg) {
+  const el = document.getElementById('env-save-banner');
+  document.getElementById('env-save-msg').textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3500);
+}
+
+// ─── Utilities ─────────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+initialized['services'] = true;
+loadServices();
 </script>
 {% endblock %}

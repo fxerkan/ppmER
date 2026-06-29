@@ -1,0 +1,347 @@
+{
+  "cache_invalidated_at": "2026-06-29T12:19:30.633066Z",
+  "description": null,
+  "archived": false,
+  "view_count": 14,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "date",
+      "semantic_type": null,
+      "lib/deduplicated-name": "trx_date",
+      "lib/original-name": "trx_date",
+      "name": "trx_date",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "trx_date",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "trx_date",
+        {
+          "base-type": "type/Date"
+        }
+      ],
+      "effective_type": "type/Date",
+      "lib/desired-column-alias": "trx_date",
+      "display_name": "trx_date",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 79,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/DateTime": {
+            "earliest": "2026-03-02",
+            "latest": "2026-06-26",
+            "mode-fraction": 0.012658227848101266,
+            "top-3-fraction": 0.0379746835443038
+          }
+        }
+      },
+      "base_type": "type/Date"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "actual_effort",
+      "lib/original-name": "actual_effort",
+      "name": "actual_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "actual_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "actual_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "actual_effort",
+      "display_name": "actual_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 67,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 4.994152103852979,
+            "min": 0.0,
+            "q1": 3.56,
+            "q3": 6.28,
+            "excess-kurtosis": 29.217763015648483,
+            "zero-fraction": 0.02531645569620253,
+            "mode-fraction": 0.05063291139240506,
+            "top-3-fraction": 0.10126582278481013,
+            "max": 41.63,
+            "sd": 5.430047776724788,
+            "avg": 5.686962025316458
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "expected_effort",
+      "lib/original-name": "expected_effort",
+      "name": "expected_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "expected_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "expected_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "expected_effort",
+      "display_name": "expected_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 30,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": -2.2569519275160883,
+            "min": 82.0,
+            "q1": 150.0,
+            "q3": 163.0,
+            "excess-kurtosis": 5.621407979522527,
+            "zero-fraction": 0.0,
+            "mode-fraction": 0.08860759493670886,
+            "top-3-fraction": 0.22784810126582278,
+            "max": 182.0,
+            "sd": 19.49210469414053,
+            "avg": 153.5126582278481
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 28,
+  "query_type": "native",
+  "name": "Effort Trend",
+  "last_query_start": "2026-06-29T12:19:39.632545Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T12:19:39.734429Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 149.93333333333334,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T12:19:30.625645Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "template-tags": {
+          "date_range": {
+            "widget-type": "date/all-options",
+            "dimension": [
+              "field",
+              {
+                "base-type": "type/Date",
+                "lib/uuid": "10ca1c34-ca03-497b-be5b-71b6cef5883b"
+              },
+              1105
+            ],
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "date_range",
+            "default": "past3months~",
+            "display-name": "Period",
+            "type": "dimension",
+            "required": true
+          },
+          "project_key": {
+            "id": "40f271c7-3f86-4c8d-8127-d96b72641007",
+            "type": "text",
+            "name": "project_key",
+            "display-name": "Projects"
+          },
+          "team": {
+            "name": "team",
+            "display-name": "Teams",
+            "type": "text",
+            "id": "33333333-7465616d-1111-1111-111111111111",
+            "required": false
+          },
+          "user_name": {
+            "id": "b1d26836-c6cd-4ef5-b590-9746ea0a6805",
+            "type": "text",
+            "name": "user_name",
+            "display-name": "Users"
+          }
+        },
+        "native": "\nSELECT trx_date,\n  ROUND(SUM(total_actual_effort_day)::numeric,2) AS actual_effort,\n  ROUND(SUM(expected_effort_person_days)::numeric,2) AS expected_effort\nFROM mart.rpt_missing_effort\nWHERE 1=1\n--and is_weekend = false \n  [[AND {{date_range}}]]\n  [[AND project_key IN ({{project_key}}) ]]\n  [[AND author_team IN ({{team}}) ]] \n  [[AND author_name IN ({{user_name}}) ]]\nGROUP BY trx_date ORDER BY trx_date\n"
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 179,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "area",
+  "archived_directly": false,
+  "entity_id": "vsFmUH65vGYUejFv0IRHn",
+  "param_fields": {
+    "11111111-1111-1111-1111-111111111111": [
+      {
+        "semantic_type": null,
+        "table_id": 38,
+        "name": "trx_date",
+        "has_field_values": "none",
+        "fk_target_field_id": null,
+        "dimensions": [],
+        "id": 1105,
+        "target": null,
+        "display_name": "Trx Date",
+        "name_field": null,
+        "base_type": "type/Date"
+      }
+    ]
+  },
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T12:19:30.698259Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "trx_date"
+    ],
+    "graph.x_axis.scale": "timeseries",
+    "graph.metrics": [
+      "actual_effort",
+      "expected_effort"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "timesheet",
+    "archive_operation_id": null,
+    "name": "Timesheet",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 28,
+    "archived_directly": null,
+    "entity_id": "4Xd5hPnDUHOVWdhbaksgR",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:15.113769Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "type": "date/all-options",
+      "target": [
+        "dimension",
+        [
+          "template-tag",
+          "date_range"
+        ]
+      ],
+      "name": "Period",
+      "slug": "date_range",
+      "default": "past3months~",
+      "required": true,
+      "isMultiSelect": true
+    },
+    {
+      "id": "40f271c7-3f86-4c8d-8127-d96b72641007",
+      "type": "string/=",
+      "target": [
+        "variable",
+        [
+          "template-tag",
+          "project_key"
+        ]
+      ],
+      "name": "Projects",
+      "slug": "project_key",
+      "isMultiSelect": false
+    },
+    {
+      "id": "33333333-7465616d-1111-1111-111111111111",
+      "type": "string/=",
+      "target": [
+        "variable",
+        [
+          "template-tag",
+          "team"
+        ]
+      ],
+      "name": "Teams",
+      "slug": "team",
+      "required": false,
+      "isMultiSelect": true,
+      "values_query_type": "none"
+    },
+    {
+      "id": "b1d26836-c6cd-4ef5-b590-9746ea0a6805",
+      "type": "string/=",
+      "target": [
+        "variable",
+        [
+          "template-tag",
+          "user_name"
+        ]
+      ],
+      "name": "Users",
+      "slug": "user_name",
+      "isMultiSelect": false
+    }
+  ],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:27.118038Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

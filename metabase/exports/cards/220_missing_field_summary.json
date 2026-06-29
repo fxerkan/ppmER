@@ -1,0 +1,168 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:52:39.070583Z",
+  "description": null,
+  "archived": false,
+  "view_count": 0,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "name": "check_name",
+      "database_type": "text",
+      "base_type": "type/Text",
+      "display_name": "check_name",
+      "field_ref": [
+        "field",
+        "check_name",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "count",
+      "database_type": "int8",
+      "base_type": "type/BigInteger",
+      "display_name": "count",
+      "semantic_type": "type/Quantity",
+      "field_ref": [
+        "field",
+        "count",
+        {
+          "base-type": "type/BigInteger"
+        }
+      ]
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 33,
+  "query_type": "native",
+  "name": "Missing Field Summary",
+  "last_query_start": null,
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:45.536427Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:52:39.06888Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT 'Projects without Customer' AS check_name, COUNT(*) AS count\nFROM core.dim_projects WHERE customer IS NULL OR customer = ''\nUNION ALL\nSELECT 'Projects without IT Domain', COUNT(*)\nFROM core.dim_projects WHERE it_domain IS NULL OR it_domain = ''\nUNION ALL\nSELECT 'Projects without Financial Code', COUNT(*)\nFROM core.dim_projects WHERE financial_code IS NULL OR financial_code = ''\nUNION ALL\nSELECT 'Users without Team', COUNT(*)\nFROM core.dim_users WHERE team IS NULL OR team = ''\nUNION ALL\nSELECT 'Users without Manager', COUNT(*)\nFROM core.dim_users WHERE manager_director IS NULL OR manager_director = ''\nUNION ALL\nSELECT 'Worklogs without Capex/Opex', COUNT(*)\nFROM core.fact_worklogs WHERE capex_opex IS NULL\n\n  [[AND team = {{team}}]]\n\n  [[AND project_key = {{project_key}}]]\n\n  [[AND display_name = {{user_name}}]]\n\n  [[AND issue_type_name = {{issue_type}}]]\nORDER BY count DESC",
+        "template-tags": {
+          "team": {
+            "name": "team",
+            "display-name": "Team",
+            "type": "text",
+            "id": "55555555-5555-5555-5555-555555555555",
+            "required": false
+          },
+          "project_key": {
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "name": "project_key",
+            "required": false
+          },
+          "user_name": {
+            "display-name": "User",
+            "type": "text",
+            "id": "66666666-6666-6666-6666-666666666666",
+            "name": "user_name",
+            "required": false
+          },
+          "issue_type": {
+            "display-name": "Issue Type",
+            "type": "text",
+            "id": "77777777-7777-7777-7777-777777777777",
+            "name": "issue_type",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 220,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "bar",
+  "archived_directly": false,
+  "entity_id": "gGWTaIKy4brF39YMa1W6r",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:39.099162Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "check_name"
+    ],
+    "graph.metrics": [
+      "count"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "data_quality",
+    "archive_operation_id": null,
+    "name": "Data Quality",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 33,
+    "archived_directly": null,
+    "entity_id": "vd0K8TSaUht-lfTIAPGJp",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:16.707529Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:45.536427Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

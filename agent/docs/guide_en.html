@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPM Data Assistant — User Guide</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:860px;margin:40px auto;padding:0 24px 60px;color:#111827;line-height:1.7}
+  h1{color:#4f46e5;font-size:1.8rem;margin-bottom:4px}
+  h2{color:#1f2937;font-size:1.15rem;margin-top:36px;margin-bottom:8px;border-bottom:2px solid #e5e7eb;padding-bottom:4px}
+  h3{color:#374151;font-size:.98rem;margin-top:20px;margin-bottom:4px}
+  .subtitle{color:#6b7280;font-size:.95rem;margin-bottom:32px}
+  code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:.85rem;color:#374151;font-family:monospace}
+  pre{background:#1e1e2e;color:#a9b1d6;padding:16px 20px;border-radius:8px;overflow-x:auto;font-size:.83rem;line-height:1.6;white-space:pre-wrap}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th{background:#f9fafb;text-align:left;padding:8px 12px;font-size:.85rem;color:#374151;border:1px solid #e5e7eb}
+  td{padding:8px 12px;font-size:.85rem;border:1px solid #e5e7eb}
+  .can{background:#ecfdf5;border-left:4px solid #10b981;padding:10px 16px;border-radius:4px;margin:8px 0}
+  .cannot{background:#fef2f2;border-left:4px solid #ef4444;padding:10px 16px;border-radius:4px;margin:8px 0}
+  .tip{background:#eff6ff;border-left:4px solid #3b82f6;padding:10px 16px;border-radius:4px;margin:8px 0;font-size:.88rem}
+  .chip{display:inline-block;background:#e0e7ff;color:#4338ca;padding:2px 9px;border-radius:10px;font-size:.75rem;font-weight:700;margin:0 2px}
+  .q{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-style:italic;color:#374151;margin:8px 0}
+  .a{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;color:#1f2937;margin:0 0 16px 0}
+  .tag{font-size:.72rem;font-weight:700;color:#4f46e5;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .output-type{display:inline-block;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:3px 10px;font-size:.78rem;color:#374151;margin:2px}
+</style>
+</head>
+<body>
+
+<h1>🗂️ PPM Data Assistant</h1>
+<p class="subtitle">AI-powered natural language interface for your Jira Project &amp; Portfolio Management data</p>
+
+<h2>What is PPM Data Assistant?</h2>
+<p>PPM Data Assistant lets you explore your Jira project data by simply asking questions in plain English (or Turkish). The assistant automatically writes SQL, queries the data warehouse, generates charts, and surfaces key insights — no SQL knowledge required.</p>
+
+<h2>What Can It Do?</h2>
+
+<div class="can">
+  ✅ <strong>Natural language queries</strong> — ask in any language, get data back<br>
+  ✅ <strong>Auto-visualization</strong> — bar, pie, and line charts generated automatically<br>
+  ✅ <strong>Key Insights</strong> — 2-3 AI-generated findings after every data result<br>
+  ✅ <strong>Metabase integration</strong> — browse and run saved Metabase reports/questions<br>
+  ✅ <strong>Multi-format download</strong> — export results as CSV, Excel, or Markdown<br>
+  ✅ <strong>Conversation history</strong> — all chats saved, resumable from left panel<br>
+  ✅ <strong>Multiple AI models</strong> — switch between Gemini, OpenAI, DeepSeek, and more
+</div>
+
+<div class="cannot">
+  ❌ Cannot modify data (no inserts, updates, or deletes)<br>
+  ❌ Cannot access real-time Jira data (data is synced via scheduled pipelines)<br>
+  ❌ Cannot predict future values or forecast<br>
+  ❌ Cannot access data outside the configured warehouse schemas
+</div>
+
+<h2>Available Tools</h2>
+<table>
+  <tr><th>Tool</th><th>What it does</th><th>When used</th></tr>
+  <tr><td><code>query_db</code></td><td>Runs a SQL SELECT against the data warehouse</td><td>Most questions</td></tr>
+  <tr><td><code>list_schemas</code></td><td>Lists all tables and columns</td><td>When exploring structure</td></tr>
+  <tr><td><code>list_metabase_questions</code></td><td>Lists saved Metabase reports/cards</td><td>When asked about reports</td></tr>
+  <tr><td><code>run_metabase_question</code></td><td>Runs a saved Metabase question by ID</td><td>"Run report #42"</td></tr>
+  <tr><td><code>list_metabase_dashboards</code></td><td>Lists available Metabase dashboards</td><td>"What dashboards exist?"</td></tr>
+  <tr><td><code>list_dbt_models</code></td><td>Lists dbt transformation models</td><td>Technical exploration</td></tr>
+</table>
+
+<h2>Data Available</h2>
+<table>
+  <tr><th>Schema</th><th>Tables</th><th>Use case</th></tr>
+  <tr><td><strong>mart</strong> ⭐</td><td>mart_portfolio_dashboard, agg_project_health, rpt_missing_effort</td><td>Reporting &amp; dashboards — start here</td></tr>
+  <tr><td><strong>core</strong></td><td>dim_projects, dim_issues, dim_users, fact_worklogs, fact_issues</td><td>Detailed analysis with joins</td></tr>
+  <tr><td><strong>staging</strong></td><td>stg_jira__issues, stg_jira__users, stg_jira__worklogs, …</td><td>Raw Jira data (on request)</td></tr>
+</table>
+
+<h2>Output Formats</h2>
+
+<h3>1. Table + Insights (most common)</h3>
+<div class="q">How many open issues are there per project?</div>
+<div class="a">
+  Returns a markdown table:<br><br>
+  <code>| project_name | open_issues |<br>|---|---|<br>| Alpha | 42 |<br>| Beta | 18 |</code><br><br>
+  Followed by a <strong>💡 Key Insights</strong> section with AI-generated findings.
+</div>
+<div style="margin-bottom:8px">Output types: <span class="output-type">📋 Table</span> <span class="output-type">💡 Insights</span> <span class="output-type">📥 Downloads</span></div>
+
+<h3>2. Bar Chart</h3>
+<div class="q">Show me the top 10 users by logged hours this month</div>
+<div class="a">Returns a table + <strong>interactive bar chart</strong> showing user names vs hours. Good for comparing categorical values.</div>
+<div style="margin-bottom:8px">Output types: <span class="output-type">📋 Table</span> <span class="output-type">📊 Bar Chart</span> <span class="output-type">💡 Insights</span></div>
+
+<h3>3. Pie Chart</h3>
+<div class="q">What's the distribution of issues by status?</div>
+<div class="a">When there are ≤7 categories and 1 numeric column, a <strong>donut/pie chart</strong> is generated automatically.</div>
+<div style="margin-bottom:8px">Output types: <span class="output-type">📋 Table</span> <span class="output-type">🥧 Pie Chart</span> <span class="output-type">💡 Insights</span></div>
+
+<h3>4. Trend / Line Chart</h3>
+<div class="q">How have logged hours changed month by month over the last year?</div>
+<div class="a">When results contain a date/time column, a <strong>line chart</strong> is generated to show the trend over time.</div>
+<div style="margin-bottom:8px">Output types: <span class="output-type">📋 Table</span> <span class="output-type">📈 Line Chart</span> <span class="output-type">💡 Insights</span></div>
+
+<h3>5. Metabase Report Results</h3>
+<div class="q">What Metabase reports do we have about project health?</div>
+<div class="a">
+  The assistant calls <code>list_metabase_questions</code> and returns a list of saved questions with their IDs.<br><br>
+  You can then say: <em>"Run report #15"</em> or <em>"Show me the data from the project health card"</em>
+</div>
+<div class="q">Run the missing effort report from Metabase</div>
+<div class="a">The assistant finds the matching Metabase question, calls <code>run_metabase_question</code>, and returns the data — already pre-validated by your BI team.</div>
+<div style="margin-bottom:8px">Output types: <span class="output-type">📋 Table</span> <span class="output-type">📊 Chart (if applicable)</span> <span class="output-type">💡 Insights</span></div>
+
+<h3>6. Downloads</h3>
+<p>After any response containing data, you'll see inline download links below the message:</p>
+<p><strong>📥 Download: CSV · Excel · Markdown</strong></p>
+<p>Click to download the raw result in your preferred format.</p>
+
+<h2>How to Use Metabase Integration</h2>
+<ol>
+  <li><strong>Discover reports:</strong> Ask <em>"List all Metabase questions"</em> or <em>"What reports do we have about budgets?"</em></li>
+  <li><strong>Run a specific report:</strong> Say <em>"Run Metabase question 42"</em> or <em>"Show me the data from the portfolio health report"</em></li>
+  <li><strong>Browse dashboards:</strong> Ask <em>"What Metabase dashboards are available?"</em></li>
+  <li><strong>Compare with SQL:</strong> You can ask the assistant to cross-reference a Metabase result with a custom SQL query</li>
+</ol>
+<div class="tip">💡 <strong>Tip:</strong> Metabase questions are pre-built and validated by your BI team — use them when you need trusted, standardized metrics. Use direct SQL queries for ad-hoc exploration.</div>
+
+<h2>Sample Questions by Category</h2>
+
+<h3>Portfolio Overview</h3>
+<ul>
+  <li>Show me all active projects with their issue counts and logged hours</li>
+  <li>Which projects have the highest number of overdue tasks?</li>
+  <li>Give me a portfolio health summary</li>
+</ul>
+
+<h3>Time &amp; Effort</h3>
+<ul>
+  <li>Who are the top 10 users by logged hours this month?</li>
+  <li>Show me the effort logged per project in Q4 2025</li>
+  <li>Which issues have no logged time but are still open?</li>
+  <li>How many hours has the team logged this week?</li>
+</ul>
+
+<h3>Issues &amp; Backlogs</h3>
+<ul>
+  <li>How many open, in-progress, and done issues are there per project?</li>
+  <li>List all epics and their current status</li>
+  <li>Show issues created last month that are still not resolved</li>
+  <li>Which users have the most assigned open issues?</li>
+</ul>
+
+<h3>Trends &amp; Comparisons</h3>
+<ul>
+  <li>How has logged effort changed month by month in 2025?</li>
+  <li>Compare issue resolution rates across projects</li>
+  <li>Which project improved the most in issue velocity last quarter?</li>
+</ul>
+
+<h2>Using the Left Panel</h2>
+<table>
+  <tr><th>Element</th><th>Function</th></tr>
+  <tr><td><strong>Model dropdown</strong> (✦ = free)</td><td>Select the AI model to use. ✦ marks free-tier models.</td></tr>
+  <tr><td><strong>＋ New Chat</strong></td><td>Start a fresh conversation</td></tr>
+  <tr><td><strong>↻ Refresh</strong></td><td>Reload conversation history list</td></tr>
+  <tr><td><strong>Conversation History</strong></td><td>Click any past chat to resume it — no re-submission</td></tr>
+  <tr><td><strong>📖 Guide EN / TR</strong></td><td>Open this user guide</td></tr>
+  <tr><td><strong>⚙ Settings</strong></td><td>Admin: manage LLM providers and models</td></tr>
+  <tr><td><strong>Logout</strong></td><td>Sign out</td></tr>
+</table>
+
+<h2>Tips for Best Results</h2>
+<div class="tip">
+  🎯 <strong>Be specific:</strong> Instead of "show hours", ask "show logged hours per project for October 2025"<br><br>
+  🔄 <strong>Follow up:</strong> After a result, ask "Now filter this to only projects with &gt;100 hours"<br><br>
+  📊 <strong>For charts:</strong> Ask questions that produce 2-column results (category + number) for best visualizations<br><br>
+  🏛️ <strong>For Metabase:</strong> First run "list metabase questions" to discover what's available<br><br>
+  🌍 <strong>Any language:</strong> Ask in Turkish, English, or any language — the assistant responds in the same language
+</div>
+
+</body>
+</html>

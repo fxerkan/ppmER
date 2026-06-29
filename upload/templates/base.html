@@ -12,9 +12,17 @@
 <nav class="bg-indigo-700 text-white px-6 py-3 flex items-center gap-4 shadow">
   <a href="/" class="font-bold text-lg tracking-tight">Data File Manager</a>
   <span class="text-indigo-300 text-sm">/ PPM Data Stack</span>
-  <div class="ml-auto flex gap-3 text-sm">
+  <div class="ml-auto flex gap-3 text-sm items-center">
     <a href="/" class="hover:text-indigo-200">Files</a>
     <a href="/load-examples" class="hover:text-indigo-200">Load Examples</a>
+    {% if user is defined %}
+    <span id="nav-user-info" class="flex gap-3 items-center">
+      <span class="text-indigo-300">|</span>
+      <span class="text-indigo-200">{{ user.name }}</span>
+      <span class="bg-indigo-900 text-indigo-300 text-xs px-2 py-0.5 rounded">{{ user.role }}</span>
+      <a href="/logout" class="hover:text-red-300 text-indigo-300">Logout</a>
+    </span>
+    {% endif %}
   </div>
 </nav>
 
@@ -22,5 +30,11 @@
   {% block content %}{% endblock %}
 </div>
 
+<script>
+  if (window.self !== window.top) {
+    const el = document.getElementById('nav-user-info');
+    if (el) el.style.display = 'none';
+  }
+</script>
 </body>
 </html>

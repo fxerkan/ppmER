@@ -1,0 +1,538 @@
+[
+  {
+    "id": 176,
+    "name": "Active Employees",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/176_active_employees.json"
+  },
+  {
+    "id": 164,
+    "name": "Active Employees",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/164_active_employees.json"
+  },
+  {
+    "id": 188,
+    "name": "Active Employees",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/188_active_employees.json"
+  },
+  {
+    "id": 163,
+    "name": "Active Projects",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/163_active_projects.json"
+  },
+  {
+    "id": 173,
+    "name": "Actual Effort (Person Days)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/173_actual_effort_(person_days).json"
+  },
+  {
+    "id": 223,
+    "name": "All Employees",
+    "display": "table",
+    "type": "question",
+    "collection_id": 34,
+    "file": "cards/223_all_employees.json"
+  },
+  {
+    "id": 222,
+    "name": "All Projects",
+    "display": "table",
+    "type": "question",
+    "collection_id": 34,
+    "file": "cards/222_all_projects.json"
+  },
+  {
+    "id": 212,
+    "name": "Avg Completion %",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/212_avg_completion_%.json"
+  },
+  {
+    "id": 204,
+    "name": "Base Effort (Logged Time)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/204_base_effort_(logged_time).json"
+  },
+  {
+    "id": 170,
+    "name": "Capex Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/170_capex_effort.json"
+  },
+  {
+    "id": 196,
+    "name": "Capex Effort (Financial)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/196_capex_effort_(financial).json"
+  },
+  {
+    "id": 166,
+    "name": "Capex vs Opex",
+    "display": "pie",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/166_capex_vs_opex.json"
+  },
+  {
+    "id": 199,
+    "name": "Capex vs Opex",
+    "display": "pie",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/199_capex_vs_opex.json"
+  },
+  {
+    "id": 193,
+    "name": "Daily Missing Effort",
+    "display": "table",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/193_daily_missing_effort.json"
+  },
+  {
+    "id": 160,
+    "name": "Data Quality Model",
+    "display": "table",
+    "type": "model",
+    "collection_id": 26,
+    "file": "cards/160_data_quality_model.json"
+  },
+  {
+    "id": 178,
+    "name": "Day Off Days",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/178_day_off_days.json"
+  },
+  {
+    "id": 162,
+    "name": "Distributed Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/162_distributed_effort.json"
+  },
+  {
+    "id": 198,
+    "name": "Distributed Effort Trend by Period",
+    "display": "line",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/198_distributed_effort_trend_by_period.json"
+  },
+  {
+    "id": 208,
+    "name": "Distribution Detail",
+    "display": "table",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/208_distribution_detail.json"
+  },
+  {
+    "id": 169,
+    "name": "Effort by Category",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/169_effort_by_category.json"
+  },
+  {
+    "id": 200,
+    "name": "Effort by Customer",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/200_effort_by_customer.json"
+  },
+  {
+    "id": 168,
+    "name": "Effort by IT Domain",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/168_effort_by_it_domain.json"
+  },
+  {
+    "id": 201,
+    "name": "Effort by Product",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/201_effort_by_product.json"
+  },
+  {
+    "id": 180,
+    "name": "Effort by Team",
+    "display": "pie",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/180_effort_by_team.json"
+  },
+  {
+    "id": 182,
+    "name": "Effort by Team per Period",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/182_effort_by_team_per_period.json"
+  },
+  {
+    "id": 202,
+    "name": "Effort by Tribe",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/202_effort_by_tribe.json"
+  },
+  {
+    "id": 181,
+    "name": "Effort by Unit (Manager)",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/181_effort_by_unit_(manager).json"
+  },
+  {
+    "id": 209,
+    "name": "Effort Steps by Period",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/209_effort_steps_by_period.json"
+  },
+  {
+    "id": 179,
+    "name": "Effort Trend",
+    "display": "area",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/179_effort_trend.json"
+  },
+  {
+    "id": 165,
+    "name": "Effort Trend by Period",
+    "display": "area",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/165_effort_trend_by_period.json"
+  },
+  {
+    "id": 183,
+    "name": "Employee Timesheet Summary",
+    "display": "table",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/183_employee_timesheet_summary.json"
+  },
+  {
+    "id": 189,
+    "name": "Employees with Missing",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/189_employees_with_missing.json"
+  },
+  {
+    "id": 174,
+    "name": "Expected Effort (Person Days)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/174_expected_effort_(person_days).json"
+  },
+  {
+    "id": 216,
+    "name": "Full Project Detail",
+    "display": "table",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/216_full_project_detail.json"
+  },
+  {
+    "id": 224,
+    "name": "Issue Type Inventory",
+    "display": "table",
+    "type": "question",
+    "collection_id": 34,
+    "file": "cards/224_issue_type_inventory.json"
+  },
+  {
+    "id": 219,
+    "name": "Issues Without Worklogs",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 33,
+    "file": "cards/219_issues_without_worklogs.json"
+  },
+  {
+    "id": 221,
+    "name": "Latest ETL per Table",
+    "display": "table",
+    "type": "question",
+    "collection_id": 33,
+    "file": "cards/221_latest_etl_per_table.json"
+  },
+  {
+    "id": 191,
+    "name": "Missing by Employee",
+    "display": "table",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/191_missing_by_employee.json"
+  },
+  {
+    "id": 192,
+    "name": "Missing by Manager Unit",
+    "display": "table",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/192_missing_by_manager_unit.json"
+  },
+  {
+    "id": 190,
+    "name": "Missing by Team",
+    "display": "pie",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/190_missing_by_team.json"
+  },
+  {
+    "id": 177,
+    "name": "Missing Effort Days",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/177_missing_effort_days.json"
+  },
+  {
+    "id": 220,
+    "name": "Missing Field Summary",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 33,
+    "file": "cards/220_missing_field_summary.json"
+  },
+  {
+    "id": 211,
+    "name": "Open Projects",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/211_open_projects.json"
+  },
+  {
+    "id": 171,
+    "name": "Opex Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/171_opex_effort.json"
+  },
+  {
+    "id": 197,
+    "name": "Opex Effort (Financial)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/197_opex_effort_(financial).json"
+  },
+  {
+    "id": 158,
+    "name": "Portfolio Model",
+    "display": "table",
+    "type": "model",
+    "collection_id": 26,
+    "file": "cards/158_portfolio_model.json"
+  },
+  {
+    "id": 172,
+    "name": "Project Financial Summary",
+    "display": "table",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/172_project_financial_summary.json"
+  },
+  {
+    "id": 215,
+    "name": "Project Summary",
+    "display": "table",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/215_project_summary.json"
+  },
+  {
+    "id": 214,
+    "name": "Projects by IT Domain",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/214_projects_by_it_domain.json"
+  },
+  {
+    "id": 213,
+    "name": "Projects by Status",
+    "display": "pie",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/213_projects_by_status.json"
+  },
+  {
+    "id": 217,
+    "name": "Projects Missing Fields",
+    "display": "table",
+    "type": "question",
+    "collection_id": 33,
+    "file": "cards/217_projects_missing_fields.json"
+  },
+  {
+    "id": 205,
+    "name": "Team Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/205_team_effort.json"
+  },
+  {
+    "id": 175,
+    "name": "Timesheet Entry %",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 28,
+    "file": "cards/175_timesheet_entry_%.json"
+  },
+  {
+    "id": 184,
+    "name": "Timesheet Entry %",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/184_timesheet_entry_%.json"
+  },
+  {
+    "id": 167,
+    "name": "Top Projects by Effort",
+    "display": "bar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/167_top_projects_by_effort.json"
+  },
+  {
+    "id": 187,
+    "name": "Total Actual Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/187_total_actual_effort.json"
+  },
+  {
+    "id": 207,
+    "name": "Total Distributed",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/207_total_distributed.json"
+  },
+  {
+    "id": 195,
+    "name": "Total Distributed Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/195_total_distributed_effort.json"
+  },
+  {
+    "id": 161,
+    "name": "Total Effort (Person Days)",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 27,
+    "file": "cards/161_total_effort_(person_days).json"
+  },
+  {
+    "id": 186,
+    "name": "Total Expected Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/186_total_expected_effort.json"
+  },
+  {
+    "id": 203,
+    "name": "Total Final Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/203_total_final_effort.json"
+  },
+  {
+    "id": 194,
+    "name": "Total Final Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 30,
+    "file": "cards/194_total_final_effort.json"
+  },
+  {
+    "id": 185,
+    "name": "Total Missing Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 29,
+    "file": "cards/185_total_missing_effort.json"
+  },
+  {
+    "id": 210,
+    "name": "Total Projects",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 32,
+    "file": "cards/210_total_projects.json"
+  },
+  {
+    "id": 206,
+    "name": "Tribe Effort",
+    "display": "scalar",
+    "type": "question",
+    "collection_id": 31,
+    "file": "cards/206_tribe_effort.json"
+  },
+  {
+    "id": 218,
+    "name": "Users Missing Team or Manager",
+    "display": "table",
+    "type": "question",
+    "collection_id": 33,
+    "file": "cards/218_users_missing_team_or_manager.json"
+  },
+  {
+    "id": 159,
+    "name": "Worklog Analysis Model",
+    "display": "table",
+    "type": "model",
+    "collection_id": 26,
+    "file": "cards/159_worklog_analysis_model.json"
+  }
+]

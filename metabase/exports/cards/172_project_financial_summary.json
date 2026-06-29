@@ -1,0 +1,447 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:52:27.481172Z",
+  "description": null,
+  "archived": false,
+  "view_count": 2,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "varchar",
+      "semantic_type": null,
+      "lib/deduplicated-name": "project_name",
+      "lib/original-name": "project_name",
+      "name": "project_name",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "project_name",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "project_name",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "project_name",
+      "display_name": "project_name",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 84,
+          "nil%": 0.008547008547008546
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.008547008547008546,
+            "average-length": 23.623931623931625,
+            "mode-fraction": 0.017094017094017096,
+            "top-3-fraction": 0.05128205128205128
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "text",
+      "semantic_type": null,
+      "lib/deduplicated-name": "customer",
+      "lib/original-name": "customer",
+      "name": "customer",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "customer",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "customer",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "customer",
+      "display_name": "customer",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 35,
+          "nil%": 0.4444444444444444
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.4444444444444444,
+            "average-length": 3.128205128205128,
+            "mode-fraction": 0.4444444444444444,
+            "top-3-fraction": 0.5811965811965812
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "varchar",
+      "semantic_type": null,
+      "lib/deduplicated-name": "category",
+      "lib/original-name": "category",
+      "name": "category",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "category",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "category",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "category",
+      "display_name": "category",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 6,
+          "nil%": 0.452991452991453
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.452991452991453,
+            "average-length": 7.581196581196581,
+            "mode-fraction": 0.452991452991453,
+            "top-3-fraction": 0.9145299145299145
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "final_effort",
+      "lib/original-name": "final_effort",
+      "name": "final_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "final_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "final_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "final_effort",
+      "display_name": "final_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 2,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 10.816653826391956,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": 116.99999999999996,
+            "zero-fraction": 0.9914529914529915,
+            "mode-fraction": 0.9914529914529915,
+            "top-3-fraction": 1.0,
+            "max": 2422.8,
+            "sd": 223.98793923574758,
+            "avg": 20.7076923076923
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "capex_effort",
+      "lib/original-name": "capex_effort",
+      "name": "capex_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "capex_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "capex_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "capex_effort",
+      "display_name": "capex_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 1,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": null,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": null,
+            "zero-fraction": 1.0,
+            "mode-fraction": 1.0,
+            "top-3-fraction": 1.0,
+            "max": 0.0,
+            "sd": 0.0,
+            "avg": 0.0
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "opex_effort",
+      "lib/original-name": "opex_effort",
+      "name": "opex_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "opex_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "opex_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "opex_effort",
+      "display_name": "opex_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 1,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": null,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": null,
+            "zero-fraction": 1.0,
+            "mode-fraction": 1.0,
+            "top-3-fraction": 1.0,
+            "max": 0.0,
+            "sd": 0.0,
+            "avg": 0.0
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "inhouse_effort",
+      "lib/original-name": "inhouse_effort",
+      "name": "inhouse_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "inhouse_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "inhouse_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "inhouse_effort",
+      "display_name": "inhouse_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 2,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 10.81665382639198,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": 116.99999999999994,
+            "zero-fraction": 0.9914529914529915,
+            "mode-fraction": 0.9914529914529915,
+            "top-3-fraction": 1.0,
+            "max": 2273.7,
+            "sd": 210.20363935955055,
+            "avg": 19.43333333333332
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "outsource_effort",
+      "lib/original-name": "outsource_effort",
+      "name": "outsource_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "outsource_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "outsource_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "outsource_effort",
+      "display_name": "outsource_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 2,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 10.816653826391972,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": 116.99999999999989,
+            "zero-fraction": 0.9914529914529915,
+            "mode-fraction": 0.9914529914529915,
+            "top-3-fraction": 1.0,
+            "max": 149.2,
+            "sd": 13.793544879467362,
+            "avg": 1.2752136752136747
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 27,
+  "query_type": "native",
+  "name": "Project Financial Summary",
+  "last_query_start": "2026-06-29T12:14:02.544545Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:46:45.873707Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 99.0,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:52:27.479838Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT project_name, customer, category,\n  ROUND(SUM(final_effort)::numeric,1) AS final_effort,\n  ROUND(SUM(final_effort_capex)::numeric,1) AS capex_effort,\n  ROUND(SUM(final_effort_opex)::numeric,1) AS opex_effort,\n  ROUND(SUM(inhouse_effort)::numeric,1) AS inhouse_effort,\n  ROUND(SUM(outsource_effort)::numeric,1) AS outsource_effort\nFROM mart.fact_financial_dashboard_2026\n\nWHERE 1=1\n  [[AND project_name = {{project_key}}]]\n\n  [[AND period = {{period_filter}}]]\nGROUP BY project_name, customer, category\nORDER BY final_effort DESC",
+        "template-tags": {
+          "project_key": {
+            "name": "project_key",
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "required": false
+          },
+          "period_filter": {
+            "display-name": "Period",
+            "type": "text",
+            "id": "33333333-3333-3333-3333-333333333333",
+            "name": "period_filter",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 172,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "table",
+  "archived_directly": false,
+  "entity_id": "gILm9BH-wfjcFkxqa9m_h",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:27.502824Z"
+  },
+  "visualization_settings": {},
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "overview",
+    "archive_operation_id": null,
+    "name": "Overview",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 27,
+    "archived_directly": null,
+    "entity_id": "msCNE-lIWnZS3hFy5QH55",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:14.834454Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:23.840487Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

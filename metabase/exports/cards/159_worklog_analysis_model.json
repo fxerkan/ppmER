@@ -1,0 +1,344 @@
+{
+  "cache_invalidated_at": null,
+  "description": null,
+  "archived": false,
+  "view_count": 0,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "name": "worklog_id",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "worklog_id",
+      "field_ref": [
+        "field",
+        "worklog_id",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "trx_date",
+      "database_type": "date",
+      "base_type": "type/Date",
+      "display_name": "trx_date",
+      "field_ref": [
+        "field",
+        "trx_date",
+        {
+          "base-type": "type/Date"
+        }
+      ]
+    },
+    {
+      "name": "month",
+      "database_type": "timestamptz",
+      "base_type": "type/DateTimeWithLocalTZ",
+      "display_name": "month",
+      "field_ref": [
+        "field",
+        "month",
+        {
+          "base-type": "type/DateTimeWithLocalTZ"
+        }
+      ]
+    },
+    {
+      "name": "period",
+      "database_type": "text",
+      "base_type": "type/Text",
+      "display_name": "period",
+      "field_ref": [
+        "field",
+        "period",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "project_key",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "project_key",
+      "field_ref": [
+        "field",
+        "project_key",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "project_name",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "project_name",
+      "field_ref": [
+        "field",
+        "project_name",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "issue_key",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "issue_key",
+      "field_ref": [
+        "field",
+        "issue_key",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "issue_type",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "issue_type",
+      "semantic_type": "type/Category",
+      "field_ref": [
+        "field",
+        "issue_type",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "issue_type_name",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "issue_type_name",
+      "field_ref": [
+        "field",
+        "issue_type_name",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "capex_opex",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "capex_opex",
+      "field_ref": [
+        "field",
+        "capex_opex",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "epic_name",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "epic_name",
+      "field_ref": [
+        "field",
+        "epic_name",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "author_name",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "author_name",
+      "semantic_type": "type/Author",
+      "field_ref": [
+        "field",
+        "author_name",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "author_team",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "author_team",
+      "semantic_type": "type/Author",
+      "field_ref": [
+        "field",
+        "author_team",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "author_unit",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "author_unit",
+      "semantic_type": "type/Author",
+      "field_ref": [
+        "field",
+        "author_unit",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "is_outsource_inhouse",
+      "database_type": "varchar",
+      "base_type": "type/Text",
+      "display_name": "is_outsource_inhouse",
+      "semantic_type": "type/Source",
+      "field_ref": [
+        "field",
+        "is_outsource_inhouse",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "time_spent_hours",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "time_spent_hours",
+      "field_ref": [
+        "field",
+        "time_spent_hours",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    },
+    {
+      "name": "time_spent_person_days",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "time_spent_person_days",
+      "field_ref": [
+        "field",
+        "time_spent_person_days",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    },
+    {
+      "name": "_etl_date",
+      "database_type": "timestamptz",
+      "base_type": "type/DateTimeWithLocalTZ",
+      "display_name": "_etl_date",
+      "field_ref": [
+        "field",
+        "_etl_date",
+        {
+          "base-type": "type/DateTimeWithLocalTZ"
+        }
+      ]
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 26,
+  "query_type": "native",
+  "name": "Worklog Analysis Model",
+  "last_query_start": null,
+  "is_remote_synced": false,
+  "dashboard_count": 0,
+  "document_id": null,
+  "last_used_at": "2026-06-29T12:09:51.785286Z",
+  "dashboard": null,
+  "type": "model",
+  "dimensions": null,
+  "persisted": false,
+  "average_query_time": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:38:17.66387Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "native": "\nSELECT\n    worklog_id, trx_date,\n    DATE_TRUNC('month', trx_date) AS month,\n    period, project_key, project_name, issue_key,\n    issue_type, issue_type_name, capex_opex, epic_name,\n    author_name, author_team, author_unit, is_outsource_inhouse,\n    time_spent_hours, time_spent_person_days, _etl_date\nFROM core.fact_worklogs\n"
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 159,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "table",
+  "archived_directly": false,
+  "entity_id": "KtLogIYGZzVzsjrVBxLQu",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:38:17.678176Z"
+  },
+  "visualization_settings": {},
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "models",
+    "archive_operation_id": null,
+    "name": "Models",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 26,
+    "archived_directly": null,
+    "entity_id": "B46phsXb9cVzvAIusT-le",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:14.561499Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:17.66387Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

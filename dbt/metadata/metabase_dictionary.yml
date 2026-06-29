@@ -1,0 +1,129 @@
+schemas:
+  staging: "Staging schema for cleaned Jira and SharePoint source data used as the integration layer before business transformations."
+  core: "Core schema for conformed dimensions, snapshots, and fact tables that standardize PPM business logic across Jira and SharePoint."
+  mart: "Mart schema for business-facing KPI tables, financial datasets, timesheet compliance reports, and data quality checks consumed by Metabase."
+
+models:
+  dim_calc_period:
+    description: "Calculation period dimension used to lock reporting months and freeze snapshot logic for PPM reporting cycles."
+    kpis:
+      - "Locked period count: number of reporting periods closed for financial and effort calculations."
+      - "Open period count: number of periods still accepting refreshed Jira and SharePoint data."
+    metrics:
+      - "Period coverage: min(period_start_date) to max(period_end_date)."
+
+  dim_turkish_holidays:
+    description: "Reference table for Turkish public and religious holidays with expected working effort in manday units."
+    kpis:
+      - "Expected effort calendar: standard expected manday value by holiday date."
+      - "Holiday load impact: total reduced effort due to holiday and half-day rules."
+
+  dim_projects_snapshot:
+    description: "Monthly project snapshot that freezes portfolio master data and delivery aggregates for locked periods."
+    kpis:
+      - "Snapshot project count: number of projects captured per period."
+      - "Portfolio completion snapshot: period-end completion percentage by project."
+
+  dim_issues_snapshot:
+    description: "Monthly issue snapshot that freezes issue hierarchy, status, and delivery context for locked periods."
+    kpis:
+      - "Snapshot issue count: number of issues captured per period."
+      - "Period-end overdue issue count: issues flagged overdue at snapshot close."
+
+  fact_worklogs:
+    kpis:
+      - "Total effort (manday): sum(time_spent_person_days)."
+      - "Total effort (hours): sum(time_spent_hours)."
+      - "Resource utilization: effort by author, team, unit, and project."
+    metrics:
+      - "Worklog count: count(worklog_id)."
+      - "Average effort per worklog: avg(time_spent_person_days)."
+
+  fact_worklogs_snapshot:
+    kpis:
+      - "Closed-period effort (manday): sum(total_person_days)."
+      - "Closed-period effort (hours): sum(total_hours_logged)."
+      - "Snapshot worklog volume: sum(worklog_count)."
+
+  fact_operation_efforts:
+    kpis:
+      - "Planned effort (hours): sum(planned_effort)."
+      - "Actual effort (hours): sum(actual_effort)."
+      - "Effort variance (hours): sum(variance_hours)."
+      - "Effort variance (%): avg(variance_percent)."
+
+  fact_capex_opex_adjustment:
+    description: "Manual CAPEX and OPEX ratio overrides applied by month and project for financial allocation reporting."
+    kpis:
+      - "CAPEX ratio: ratio_capex by project-period."
+      - "OPEX ratio: ratio_opex by project-period."
+      - "Allocation override coverage: projects with manual CAPEX/OPEX ratios."
+
+  fact_distributed_efforts_adjustment:
+    description: "Manual monthly effort adjustments used to override or correct distributed effort results before financial reporting."
+    kpis:
+      - "Manual adjustment (manday): sum(adjustment_amount)."
+      - "Adjusted project count: projects with override entries in the selected period."
+
+  fact_distributed_efforts_view:
+    description: "Unified distributed effort dataset with delivery effort, shared service allocations, CAPEX/OPEX allocation, and workforce split for Metabase reporting."
+    kpis:
+      - "Final effort (manday): sum(final_effort)."
+      - "CAPEX effort (manday): sum(final_effort_capex)."
+      - "OPEX effort (manday): sum(final_effort_opex)."
+      - "Inhouse effort (manday): sum(final_effort_inhouse)."
+      - "Outsource effort (manday): sum(final_effort_outsource)."
+      - "Distributed effort coverage: sum(distributed_effort) where is_distributed_row=true."
+
+  fact_financial_dashboard_2025:
+    description: "2025 financial dashboard fact table for project effort distribution, allocation adjustments, and management reporting."
+    kpis:
+      - "Final effort (manday): sum(final_effort_adjusted)."
+      - "CAPEX effort (manday): sum(final_effort_capex)."
+      - "OPEX effort (manday): sum(final_effort_opex)."
+      - "Operation actual effort (hours): sum(operation_actual_effort)."
+      - "Operation planned effort (hours): sum(operation_planned_effort)."
+
+  fact_financial_dashboard_2026:
+    description: "2026 financial dashboard fact table for project effort distribution, allocation adjustments, and management reporting."
+    kpis:
+      - "Final effort (manday): sum(final_effort_adjusted)."
+      - "CAPEX effort (manday): sum(final_effort_capex)."
+      - "OPEX effort (manday): sum(final_effort_opex)."
+      - "Operation actual effort (hours): sum(operation_actual_effort)."
+      - "Operation planned effort (hours): sum(operation_planned_effort)."
+
+  financial_dashboard_view:
+    description: "Current financial dashboard reporting view that exposes distributed effort, allocation, and adjusted financial KPIs for Metabase."
+    kpis:
+      - "Final effort (manday): sum(final_effort_adjusted)."
+      - "CAPEX effort (manday): sum(final_effort_capex)."
+      - "OPEX effort (manday): sum(final_effort_opex)."
+      - "Shared service distribution (manday): sum(distributed_team_effort) + sum(distributed_l1_effort) + sum(distributed_l2_effort)."
+
+  rpt_missing_effort:
+    description: "Timesheet compliance report that compares expected working effort against actual logged effort at employee-day grain."
+    kpis:
+      - "Missing effort (manday): sum(missing_effort_person_days)."
+      - "Expected effort (manday): sum(expected_effort_person_days)."
+      - "Actual effort (manday): sum(total_actual_effort_day)."
+      - "Timesheet entry percentage: avg(timesheet_entry_percentage)."
+      - "Missing timesheet user count: distinct authors with missing effort."
+
+  stg_jira__issues_hierarchy:
+    description: "Precomputed Jira issue hierarchy staging table that resolves epic lineage and parent levels up to five hops for downstream portfolio analytics."
+    metrics:
+      - "Hierarchy completeness: share of issues with resolved epic_id."
+      - "Subtask lineage depth: deepest non-null hierarchy level per issue."
+
+  stg_shrp__financial_adjustment:
+    description: "SharePoint staging view for manual monthly financial effort adjustments loaded from planning spreadsheets."
+    kpis:
+      - "Manual adjustment (manday): sum(adjustment_amount)."
+      - "Adjustment coverage: project-period rows with manual overrides."
+
+  stg_shrp__calculation_period:
+    description: "SharePoint staging view for reporting calendar periods and lock status used in snapshot and close processes."
+
+  stg_manual__calc_period:
+    description: "Manual staging view for calculation period maintenance when business users manage lock status outside SharePoint ingestion."

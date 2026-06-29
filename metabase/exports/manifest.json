@@ -1,0 +1,54 @@
+{
+  "exported_at": "2026-06-29T13:17:30",
+  "metabase_url": "http://localhost:3000",
+  "collections": 10,
+  "cards": 67,
+  "dashboards": 9,
+  "dashboards_list": [
+    {
+      "id": 20,
+      "name": "PPM - Executive - Overview",
+      "url": "http://localhost:3000/dashboard/20"
+    },
+    {
+      "id": 23,
+      "name": "PPM - Finance - Distributed Effort",
+      "url": "http://localhost:3000/dashboard/23"
+    },
+    {
+      "id": 24,
+      "name": "PPM - Finance - Distribution Steps",
+      "url": "http://localhost:3000/dashboard/24"
+    },
+    {
+      "id": 22,
+      "name": "PPM - HR - Missing Effort",
+      "url": "http://localhost:3000/dashboard/22"
+    },
+    {
+      "id": 21,
+      "name": "PPM - HR - Timesheet",
+      "url": "http://localhost:3000/dashboard/21"
+    },
+    {
+      "id": 25,
+      "name": "PPM - Leadership - Strategic Portfolio",
+      "url": "http://localhost:3000/dashboard/25"
+    },
+    {
+      "id": 26,
+      "name": "PPM - Ops - Data Quality and Pipeline",
+      "url": "http://localhost:3000/dashboard/26"
+    },
+    {
+      "id": 27,
+      "name": "PPM - Ops - Master Data",
+      "url": "http://localhost:3000/dashboard/27"
+    },
+    {
+      "id": 19,
+      "name": "PPM Home",
+      "url": "http://localhost:3000/dashboard/19"
+    }
+  ]
+}

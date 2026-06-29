@@ -1,0 +1,310 @@
+{
+  "cache_invalidated_at": null,
+  "description": null,
+  "archived": false,
+  "view_count": 1,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "varchar",
+      "semantic_type": null,
+      "lib/deduplicated-name": "deputy_gm_upper_unit",
+      "lib/original-name": "deputy_gm_upper_unit",
+      "name": "deputy_gm_upper_unit",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "deputy_gm_upper_unit",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "deputy_gm_upper_unit",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "deputy_gm_upper_unit",
+      "display_name": "deputy_gm_upper_unit",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.0,
+            "average-length": 36.42857142857143,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "missing_effort",
+      "lib/original-name": "missing_effort",
+      "name": "missing_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "missing_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "missing_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "missing_effort",
+      "display_name": "missing_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 0.41414189650404176,
+            "min": 263.5,
+            "q1": 842.9,
+            "q3": 17178.86,
+            "excess-kurtosis": -0.9964993806308309,
+            "zero-fraction": 0.0,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855,
+            "max": 25987.67,
+            "sd": 9683.847898987704,
+            "avg": 10524.965714285714
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    },
+    {
+      "database_type": "int8",
+      "semantic_type": null,
+      "lib/deduplicated-name": "employees",
+      "lib/original-name": "employees",
+      "name": "employees",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "employees",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "employees",
+        {
+          "base-type": "type/BigInteger"
+        }
+      ],
+      "effective_type": "type/BigInteger",
+      "lib/desired-column-alias": "employees",
+      "display_name": "employees",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 0.8346282281809235,
+            "min": 1.0,
+            "q1": 7.0,
+            "q3": 81.0,
+            "excess-kurtosis": 0.10557999369564008,
+            "zero-fraction": 0.0,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855,
+            "max": 133.0,
+            "sd": 47.97171785839772,
+            "avg": 48.57142857142858
+          }
+        }
+      },
+      "base_type": "type/BigInteger"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "timesheet_pct",
+      "lib/original-name": "timesheet_pct",
+      "name": "timesheet_pct",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "timesheet_pct",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "timesheet_pct",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "timesheet_pct",
+      "display_name": "timesheet_pct",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 1.5328420554356033,
+            "min": 0.0,
+            "q1": 1.1,
+            "q3": 7.2,
+            "excess-kurtosis": 2.395208737529517,
+            "zero-fraction": 0.1428571428571429,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855,
+            "max": 13.9,
+            "sd": 4.721884208257386,
+            "avg": 4.542857142857143
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 29,
+  "query_type": "native",
+  "name": "Missing by Manager Unit",
+  "last_query_start": "2026-06-29T12:14:18.867027Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:31.925125Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 172.0,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:38:31.925125Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "template-tags": {
+          "date_range": {
+            "dimension": [
+              "field",
+              {
+                "base-type": "type/Date",
+                "lib/uuid": "3221e79b-dd17-4097-9e6b-2a3b40879e62",
+                "effective-type": "type/Date"
+              },
+              1105
+            ],
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "date_range",
+            "display-name": "Date Range",
+            "type": "dimension",
+            "widget-type": "date/all-options"
+          },
+          "team": {
+            "type": "text",
+            "id": "33333333-7465616d-1111-1111-111111111111",
+            "name": "team",
+            "display-name": "Team",
+            "required": false
+          }
+        },
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT deputy_gm_upper_unit,\n  ROUND(SUM(missing_effort_person_days)::numeric,2) AS missing_effort,\n  COUNT(DISTINCT author_name) AS employees,\n  ROUND(AVG(timesheet_entry_percentage)::numeric,1) AS timesheet_pct\nFROM mart.rpt_missing_effort\nWHERE deputy_gm_upper_unit IS NOT NULL [[AND {{date_range}}]] [[AND author_team = {{team}}]]\nGROUP BY deputy_gm_upper_unit ORDER BY missing_effort DESC"
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 192,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "table",
+  "archived_directly": false,
+  "entity_id": "AXe-lJabJ31U-Tac2cLLk",
+  "param_fields": {
+    "11111111-1111-1111-1111-111111111111": [
+      {
+        "semantic_type": null,
+        "table_id": 38,
+        "name": "trx_date",
+        "has_field_values": "none",
+        "fk_target_field_id": null,
+        "dimensions": [],
+        "id": 1105,
+        "target": null,
+        "display_name": "Trx Date",
+        "name_field": null,
+        "base_type": "type/Date"
+      }
+    ]
+  },
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:38:31.936469Z"
+  },
+  "visualization_settings": {},
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "missing_effort",
+    "archive_operation_id": null,
+    "name": "Missing Effort",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 29,
+    "archived_directly": null,
+    "entity_id": "SNJwTQn4gSXQYuSF7Eb-g",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:15.396195Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:31.925125Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

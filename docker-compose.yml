@@ -1,4 +1,5 @@
 services:
+  # Main PostgreSQL Data Warehouse — contains all databases
   postgres:
     image: postgres:15-alpine
     container_name: ppm-postgres
@@ -19,6 +20,25 @@ services:
       retries: 5
     networks:
       - ppm-network
+
+  # Ensures ppmdatastack database exists in the main postgres instance
+  postgres-init:
+    image: postgres:15-alpine
+    container_name: ppm-postgres-init
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: no
+    command: >
+      sh -c "
+        PGPASSWORD=$$POSTGRES_PASSWORD psql -h postgres -U $$POSTGRES_USER -d $$POSTGRES_DB -tc
+        \"SELECT 1 FROM pg_database WHERE datname='ppmdatastack'\" | grep -q 1 ||
+        PGPASSWORD=$$POSTGRES_PASSWORD psql -h postgres -U $$POSTGRES_USER -d $$POSTGRES_DB
+        -c \"CREATE DATABASE ppmdatastack; GRANT ALL PRIVILEGES ON DATABASE ppmdatastack TO $$POSTGRES_USER;\"
+      "
 
   dlt:
     image: python:3.11-slim
@@ -190,11 +210,17 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
+      AGENT_DB: ppmdatastack
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.deepseek.com}
-      OPENAI_MODEL: ${OPENAI_MODEL:-deepseek-chat}
+      # LLM providers — API keys come from .env; add new keys here as needed
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
     ports:
       - "${AGENT_PORT:-7860}:7860"
     volumes:
@@ -238,12 +264,14 @@ services:
     build: ./portal
     container_name: ppm-portal
     environment:
+      # Data warehouse (read-only stats)
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MAGE_EXTERNAL_PORT: ${MAGE_EXTERNAL_PORT:-6789}
+      # Service ports
+      MAGE_EXTERNAL_PORT: ${MAGE_PORT:-6789}
       DBT_DOCS_EXTERNAL_PORT: ${DBT_DOCS_EXTERNAL_PORT:-8081}
       METABASE_EXTERNAL_PORT: ${METABASE_EXTERNAL_PORT:-3000}
       CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
@@ -252,17 +280,19 @@ services:
       METABASE_URL: http://metabase:3000
       MB_ADMIN_EMAIL: ${MB_ADMIN_EMAIL}
       MB_ADMIN_PASSWORD: ${MB_ADMIN_PASSWORD}
-      # Override these in .env to change portal passwords
-      PORTAL_ADMIN_PASS: admin123
-      PORTAL_DEV_PASS: dev123
-      PORTAL_ANALYST_PASS: analyst123
-      PORTAL_USER_PASS: user123
+      # Portal auth
+      PORTAL_ADMIN_PASS: ${PORTAL_ADMIN_PASS}
+      PORTAL_DEV_PASS: ${PORTAL_DEV_PASS}
+      PORTAL_ANALYST_PASS: ${PORTAL_ANALYST_PASS}
+      PORTAL_USER_PASS: ${PORTAL_USER_PASS}
     ports:
       - "${PORTAL_EXTERNAL_PORT:-9000}:9000"
     volumes:
       - ./portal:/app
       - ./dbt/models:/dbt/models:ro
       - ./dlt:/dlt:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./.env:/run/stack.env
     depends_on:
       postgres:
         condition: service_healthy

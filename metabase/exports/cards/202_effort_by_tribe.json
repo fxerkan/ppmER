@@ -1,0 +1,208 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:50:44.234822Z",
+  "description": null,
+  "archived": false,
+  "view_count": 1,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "text",
+      "semantic_type": null,
+      "lib/deduplicated-name": "tribe",
+      "lib/original-name": "tribe",
+      "name": "tribe",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "tribe",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "tribe",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "tribe",
+      "display_name": "tribe",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 1,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.0,
+            "average-length": 3.0,
+            "mode-fraction": 1.0,
+            "top-3-fraction": 1.0
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "distributed_effort",
+      "lib/original-name": "distributed_effort",
+      "name": "distributed_effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "distributed_effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "distributed_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "distributed_effort",
+      "display_name": "distributed_effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 1,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": null,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": null,
+            "zero-fraction": 1.0,
+            "mode-fraction": 1.0,
+            "top-3-fraction": 1.0,
+            "max": 0.0,
+            "sd": 0.0,
+            "avg": 0.0
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 30,
+  "query_type": "native",
+  "name": "Effort by Tribe",
+  "last_query_start": "2026-06-29T12:13:31.467577Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:37.031501Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 32.0,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:50:44.230816Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "native": "SELECT tribe, ROUND(SUM(distributed_effort)::numeric,1) AS distributed_effort\nFROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE tribe IS NOT NULL\n\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY tribe ORDER BY distributed_effort DESC",
+        "lib/type": "mbql.stage/native",
+        "template-tags": {
+          "period_filter": {
+            "display-name": "Period",
+            "type": "text",
+            "id": "33333333-3333-3333-3333-333333333333",
+            "name": "period_filter",
+            "required": false
+          },
+          "project_key": {
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "name": "project_key",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 202,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "bar",
+  "archived_directly": false,
+  "entity_id": "NCazlRJI2_GVJB-YHPr60",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:50:44.270252Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "tribe"
+    ],
+    "graph.metrics": [
+      "distributed_effort"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "distributed",
+    "archive_operation_id": null,
+    "name": "Distributed",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 30,
+    "archived_directly": null,
+    "entity_id": "A9_inNJ2ENMoqDERTFPlQ",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:15.719171Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:37.031501Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

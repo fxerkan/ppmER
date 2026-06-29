@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPM Data Assistant — Kullanım Kılavuzu</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:860px;margin:40px auto;padding:0 24px 60px;color:#111827;line-height:1.7}
+  h1{color:#4f46e5;font-size:1.8rem;margin-bottom:4px}
+  h2{color:#1f2937;font-size:1.15rem;margin-top:36px;margin-bottom:8px;border-bottom:2px solid #e5e7eb;padding-bottom:4px}
+  h3{color:#374151;font-size:.98rem;margin-top:20px;margin-bottom:4px}
+  .subtitle{color:#6b7280;font-size:.95rem;margin-bottom:32px}
+  code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:.85rem;color:#374151;font-family:monospace}
+  pre{background:#1e1e2e;color:#a9b1d6;padding:16px 20px;border-radius:8px;overflow-x:auto;font-size:.83rem;line-height:1.6;white-space:pre-wrap}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th{background:#f9fafb;text-align:left;padding:8px 12px;font-size:.85rem;color:#374151;border:1px solid #e5e7eb}
+  td{padding:8px 12px;font-size:.85rem;border:1px solid #e5e7eb}
+  .can{background:#ecfdf5;border-left:4px solid #10b981;padding:10px 16px;border-radius:4px;margin:8px 0}
+  .cannot{background:#fef2f2;border-left:4px solid #ef4444;padding:10px 16px;border-radius:4px;margin:8px 0}
+  .tip{background:#eff6ff;border-left:4px solid #3b82f6;padding:10px 16px;border-radius:4px;margin:8px 0;font-size:.88rem}
+  .q{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-style:italic;color:#374151;margin:8px 0}
+  .a{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 14px;color:#1f2937;margin:0 0 16px 0}
+  .output-type{display:inline-block;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:3px 10px;font-size:.78rem;color:#374151;margin:2px}
+</style>
+</head>
+<body>
+
+<h1>🗂️ PPM Data Assistant</h1>
+<p class="subtitle">Jira Proje ve Portföy Yönetimi verileriniz için yapay zeka destekli doğal dil arayüzü</p>
+
+<h2>PPM Data Assistant Nedir?</h2>
+<p>PPM Data Assistant, Jira proje verilerinizi sadece soruları yazarak keşfetmenizi sağlar. Sorularınızı Türkçe veya İngilizce yazın — sistem SQL yazar, veri ambarını sorgular, grafikler oluşturur ve temel bulgular sunar. SQL bilgisi gerekmez.</p>
+
+<h2>Neler Yapabilir?</h2>
+
+<div class="can">
+  ✅ <strong>Doğal dilde sorgulama</strong> — istediğiniz dilde sorun, veriye ulaşın<br>
+  ✅ <strong>Otomatik görselleştirme</strong> — bar, pasta ve çizgi grafikler otomatik oluşturulur<br>
+  ✅ <strong>Temel İçgörüler</strong> — her veri yanıtına AI tarafından 2-3 bulgu eklenir<br>
+  ✅ <strong>Metabase entegrasyonu</strong> — kayıtlı Metabase raporlarına erişim ve çalıştırma<br>
+  ✅ <strong>Çoklu format indirme</strong> — CSV, Excel veya Markdown olarak dışa aktarın<br>
+  ✅ <strong>Konuşma geçmişi</strong> — tüm sohbetler kaydedilir, sol panelden devam edilebilir<br>
+  ✅ <strong>Çoklu AI modeli</strong> — Gemini, OpenAI, DeepSeek ve diğerleri arasında geçiş yapın
+</div>
+
+<div class="cannot">
+  ❌ Veri değiştirme yapamaz (INSERT, UPDATE, DELETE yok)<br>
+  ❌ Jira'ya gerçek zamanlı erişemez (veriler zamanlanmış pipeline'larla senkronize edilir)<br>
+  ❌ Gelecekteki değerleri tahmin edemez<br>
+  ❌ Yapılandırılmış şemalar dışındaki verilere erişemez
+</div>
+
+<h2>Kullanılabilir Araçlar</h2>
+<table>
+  <tr><th>Araç</th><th>Ne Yapar</th><th>Ne Zaman Kullanılır</th></tr>
+  <tr><td><code>query_db</code></td><td>Veri ambarına SQL SELECT çalıştırır</td><td>Çoğu soru için</td></tr>
+  <tr><td><code>list_schemas</code></td><td>Tüm tablo ve kolonları listeler</td><td>Yapıyı keşfederken</td></tr>
+  <tr><td><code>list_metabase_questions</code></td><td>Kayıtlı Metabase raporlarını listeler</td><td>Raporlar hakkında sorulduğunda</td></tr>
+  <tr><td><code>run_metabase_question</code></td><td>ID'ye göre Metabase sorusu çalıştırır</td><td>"42 nolu raporu çalıştır"</td></tr>
+  <tr><td><code>list_metabase_dashboards</code></td><td>Metabase dashboard'larını listeler</td><td>"Hangi dashboardlar var?"</td></tr>
+  <tr><td><code>list_dbt_models</code></td><td>dbt dönüşüm modellerini listeler</td><td>Teknik keşif</td></tr>
+</table>
+
+<h2>Erişilebilen Veriler</h2>
+<table>
+  <tr><th>Şema</th><th>Tablolar</th><th>Kullanım</th></tr>
+  <tr><td><strong>mart</strong> ⭐</td><td>mart_portfolio_dashboard, agg_project_health, rpt_missing_effort</td><td>Raporlama ve dashboard — buradan başlayın</td></tr>
+  <tr><td><strong>core</strong></td><td>dim_projects, dim_issues, dim_users, fact_worklogs, fact_issues</td><td>Join'li detaylı analizler</td></tr>
+  <tr><td><strong>staging</strong></td><td>stg_jira__issues, stg_jira__users, stg_jira__worklogs, …</td><td>Ham Jira verisi (istek üzerine)</td></tr>
+</table>
+
+<h2>Çıktı Formatları</h2>
+
+<h3>1. Tablo + İçgörüler (en yaygın)</h3>
+<div class="q">Projelere göre kaç tane açık issue var?</div>
+<div class="a">
+  Bir markdown tablosu döndürür:<br><br>
+  <code>| proje_adı | açık_issue |<br>|---|---|<br>| Alpha | 42 |<br>| Beta | 18 |</code><br><br>
+  Ardından AI tarafından oluşturulan bulgularla birlikte <strong>💡 Temel İçgörüler</strong> bölümü gelir.
+</div>
+<div style="margin-bottom:8px">Çıktı türleri: <span class="output-type">📋 Tablo</span> <span class="output-type">💡 İçgörüler</span> <span class="output-type">📥 İndirme</span></div>
+
+<h3>2. Bar (Çubuk) Grafik</h3>
+<div class="q">Bu ay en çok saat loglayan 10 kişiyi göster</div>
+<div class="a">Tablo + kullanıcı adları ve saat sayısını gösteren <strong>interaktif bar grafik</strong> döndürür. Kategorik değerleri karşılaştırmak için idealdir.</div>
+<div style="margin-bottom:8px">Çıktı türleri: <span class="output-type">📋 Tablo</span> <span class="output-type">📊 Bar Grafik</span> <span class="output-type">💡 İçgörüler</span></div>
+
+<h3>3. Pasta Grafik</h3>
+<div class="q">İssue'ların statüye göre dağılımı nedir?</div>
+<div class="a">≤7 kategori ve 1 sayısal sütun olduğunda otomatik olarak <strong>halka/pasta grafik</strong> oluşturulur.</div>
+<div style="margin-bottom:8px">Çıktı türleri: <span class="output-type">📋 Tablo</span> <span class="output-type">🥧 Pasta Grafik</span> <span class="output-type">💡 İçgörüler</span></div>
+
+<h3>4. Trend / Çizgi Grafik</h3>
+<div class="q">Geçen yıl boyunca loglanan saatler aylık nasıl değişti?</div>
+<div class="a">Sonuçlar tarih/zaman sütunu içerdiğinde, zaman içindeki trendi gösteren <strong>çizgi grafik</strong> otomatik oluşturulur.</div>
+<div style="margin-bottom:8px">Çıktı türleri: <span class="output-type">📋 Tablo</span> <span class="output-type">📈 Çizgi Grafik</span> <span class="output-type">💡 İçgörüler</span></div>
+
+<h3>5. Metabase Rapor Sonuçları</h3>
+<div class="q">Proje sağlığı hakkında hangi Metabase raporlarımız var?</div>
+<div class="a">
+  Asistan <code>list_metabase_questions</code> çağırır ve ID'leriyle birlikte kayıtlı sorular listesini döndürür.<br><br>
+  Ardından şunu diyebilirsiniz: <em>"15 nolu raporu çalıştır"</em> veya <em>"proje sağlığı kartındaki veriyi göster"</em>
+</div>
+<div class="q">Metabase'deki eksik efor raporunu çalıştır</div>
+<div class="a">Asistan eşleşen Metabase sorusunu bulur, <code>run_metabase_question</code> çağırır ve BI ekibiniz tarafından önceden doğrulanmış veriyi döndürür.</div>
+<div style="margin-bottom:8px">Çıktı türleri: <span class="output-type">📋 Tablo</span> <span class="output-type">📊 Grafik</span> <span class="output-type">💡 İçgörüler</span></div>
+
+<h3>6. Veri İndirme</h3>
+<p>Veri içeren her yanıtın altında inline indirme bağlantıları görünür:</p>
+<p><strong>📥 Download: CSV · Excel · Markdown</strong></p>
+<p>Tercih ettiğiniz formatta ham veriyi indirmek için tıklayın.</p>
+
+<h2>Metabase Entegrasyonu Nasıl Kullanılır?</h2>
+<ol>
+  <li><strong>Raporları keşfedin:</strong> <em>"Tüm Metabase sorularını listele"</em> veya <em>"Bütçeyle ilgili hangi raporlarımız var?"</em></li>
+  <li><strong>Belirli bir raporu çalıştırın:</strong> <em>"42 nolu Metabase sorusunu çalıştır"</em> veya <em>"Portföy sağlığı raporunun verisini göster"</em></li>
+  <li><strong>Dashboard'ları keşfedin:</strong> <em>"Hangi Metabase dashboard'ları mevcut?"</em></li>
+  <li><strong>SQL ile karşılaştırın:</strong> Asistan bir Metabase sonucunu özel SQL sorgusuyla çapraz referans yapabilir</li>
+</ol>
+<div class="tip">💡 <strong>İpucu:</strong> Metabase soruları BI ekibiniz tarafından önceden hazırlanmış ve doğrulanmıştır — standart metrikler için bunları tercih edin. Ad-hoc keşif için doğrudan SQL sorgularını kullanın.</div>
+
+<h2>Kategori Bazlı Örnek Sorular</h2>
+
+<h3>Portföy Genel Bakış</h3>
+<ul>
+  <li>Tüm aktif projeleri issue sayıları ve loglanan saatlerle göster</li>
+  <li>En fazla gecikmiş görevi olan projeler hangileri?</li>
+  <li>Portföy sağlığı özeti ver</li>
+  <li>Hangi projeler riske girmiş?</li>
+</ul>
+
+<h3>Zaman ve Efor</h3>
+<ul>
+  <li>Bu ay en çok saat loglayan 10 kişi kimdir?</li>
+  <li>2025 Q4'te projelere göre loglanan eforu göster</li>
+  <li>Hiç loglanan süresi olmayan ama hâlâ açık olan issue'lar hangileri?</li>
+  <li>Ekip bu hafta kaç saat logladı?</li>
+  <li>Son 1 ayda efor girişi yapılmayan kullanıcıları listele</li>
+</ul>
+
+<h3>Issue ve Backlog</h3>
+<ul>
+  <li>Her projede kaç açık, devam eden ve tamamlanan issue var?</li>
+  <li>Tüm epic'leri ve güncel durumlarını listele</li>
+  <li>Geçen ay oluşturulup hâlâ çözülmemiş issue'ları göster</li>
+  <li>En fazla açık issue atanmış kullanıcılar kimler?</li>
+</ul>
+
+<h3>Trendler ve Karşılaştırmalar</h3>
+<ul>
+  <li>2025'te loglanan efor aylık nasıl değişti?</li>
+  <li>Projeler arasında issue çözüm oranlarını karşılaştır</li>
+  <li>Son çeyrekte hangi proje issue velocity açısından en çok iyileşti?</li>
+  <li>Son 1 aydaki veri tutarsızlıklarını ve kalite sorunlarını özetle</li>
+</ul>
+
+<h2>Sol Paneli Kullanma</h2>
+<table>
+  <tr><th>Öğe</th><th>İşlev</th></tr>
+  <tr><td><strong>Model seçimi</strong> (✦ = ücretsiz)</td><td>Kullanılacak AI modelini seçin. ✦ ücretsiz katmanı işaretler.</td></tr>
+  <tr><td><strong>＋ Yeni Sohbet</strong></td><td>Yeni bir konuşma başlatır</td></tr>
+  <tr><td><strong>↻ Yenile</strong></td><td>Konuşma geçmişi listesini yeniler</td></tr>
+  <tr><td><strong>Konuşma Geçmişi</strong></td><td>Geçmiş sohbeti tıklayarak devam edin — yeniden gönderme olmaz</td></tr>
+  <tr><td><strong>📖 Kılavuz TR / EN</strong></td><td>Bu kılavuzu açar</td></tr>
+  <tr><td><strong>⚙ Ayarlar</strong></td><td>Admin: LLM sağlayıcı ve modelleri yönetin</td></tr>
+  <tr><td><strong>Çıkış</strong></td><td>Oturumu kapat</td></tr>
+</table>
+
+<h2>En İyi Sonuçlar İçin İpuçları</h2>
+<div class="tip">
+  🎯 <strong>Spesifik olun:</strong> "Saatleri göster" yerine "Ekim 2025'te projelere göre loglanan saatleri göster" diye sorun<br><br>
+  🔄 <strong>Takip edin:</strong> Bir sonuç aldıktan sonra "Bunu sadece &gt;100 saatli projelere filtrele" diyebilirsiniz<br><br>
+  📊 <strong>Grafikler için:</strong> 2 sütunlu sonuçlar (kategori + sayı) üretin — en iyi görselleştirmeyi sağlar<br><br>
+  🏛️ <strong>Metabase için:</strong> Önce "metabase sorularını listele" çalıştırın, ne mevcut olduğunu görün<br><br>
+  🌍 <strong>Her dilde:</strong> Türkçe veya İngilizce sorun — asistan aynı dilde yanıt verir
+</div>
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:52:35.664898Z",
+  "description": null,
+  "archived": false,
+  "view_count": 0,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "name": "period",
+      "database_type": "text",
+      "base_type": "type/Text",
+      "display_name": "period",
+      "field_ref": [
+        "field",
+        "period",
+        {
+          "base-type": "type/Text"
+        }
+      ]
+    },
+    {
+      "name": "base_effort",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "base_effort",
+      "field_ref": [
+        "field",
+        "base_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    },
+    {
+      "name": "team_effort",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "team_effort",
+      "field_ref": [
+        "field",
+        "team_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    },
+    {
+      "name": "tribe_effort",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "tribe_effort",
+      "field_ref": [
+        "field",
+        "tribe_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    },
+    {
+      "name": "final_effort",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "final_effort",
+      "field_ref": [
+        "field",
+        "final_effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 31,
+  "query_type": "native",
+  "name": "Effort Steps by Period",
+  "last_query_start": null,
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:40.101302Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:52:35.663606Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT period,\n  ROUND(SUM(logged_time_person_day)::numeric,1) AS base_effort,\n  ROUND(SUM(team_effort)::numeric,1) AS team_effort,\n  ROUND(SUM(tribe_effort)::numeric,1) AS tribe_effort,\n  ROUND(SUM(final_effort)::numeric,1) AS final_effort\nFROM mart.fact_financial_dashboard_2026\n\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n\n  [[AND team = {{team}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY period ORDER BY period",
+        "template-tags": {
+          "period_filter": {
+            "name": "period_filter",
+            "display-name": "Period",
+            "type": "text",
+            "id": "33333333-3333-3333-3333-333333333333",
+            "required": false
+          },
+          "team": {
+            "name": "team",
+            "display-name": "Team",
+            "type": "text",
+            "id": "55555555-5555-5555-5555-555555555555",
+            "required": false
+          },
+          "project_key": {
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "name": "project_key",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 209,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "bar",
+  "archived_directly": false,
+  "entity_id": "d1XgtfDHlilUVNHMrSrlu",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:35.681933Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "period"
+    ],
+    "graph.metrics": [
+      "base_effort",
+      "team_effort",
+      "tribe_effort",
+      "final_effort"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "financial",
+    "archive_operation_id": null,
+    "name": "Financial",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 31,
+    "archived_directly": null,
+    "entity_id": "vPVIrWdOjwKTJb_XWASDK",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:16.148295Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:40.101302Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

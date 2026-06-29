@@ -40,3 +40,7 @@ Thumbs.db
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+
+
+# Docker
+docker-log/

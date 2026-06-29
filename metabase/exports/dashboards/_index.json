@@ -1,0 +1,162 @@
+[
+  {
+    "id": 20,
+    "name": "PPM - Executive - Overview",
+    "description": "Executive summary of PPM portfolio performance and financials",
+    "tabs": [
+      "Overview",
+      "Portfolio Performance",
+      "Financial Summary"
+    ],
+    "parameters": [
+      "Period",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 12,
+    "file": "dashboards/20_ppm_-_executive_-_overview.json"
+  },
+  {
+    "id": 23,
+    "name": "PPM - Finance - Distributed Effort",
+    "description": "Distributed effort analysis by customer, product, and tribe",
+    "tabs": [
+      "Summary",
+      "By Customer",
+      "By Product",
+      "By Tribe"
+    ],
+    "parameters": [
+      "Period",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 9,
+    "file": "dashboards/23_ppm_-_finance_-_distributed_effort.json"
+  },
+  {
+    "id": 24,
+    "name": "PPM - Finance - Distribution Steps",
+    "description": "Step-by-step effort distribution methodology overview",
+    "tabs": [
+      "Overview",
+      "Detailed Data"
+    ],
+    "parameters": [
+      "Period",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 7,
+    "file": "dashboards/24_ppm_-_finance_-_distribution_steps.json"
+  },
+  {
+    "id": 22,
+    "name": "PPM - HR - Missing Effort",
+    "description": "Missing timesheet effort analysis by employee, manager, and period",
+    "tabs": [
+      "Summary",
+      "By Employee",
+      "By Manager",
+      "Daily Detail"
+    ],
+    "parameters": [
+      "Date Range",
+      "Team",
+      "User"
+    ],
+    "card_count": 10,
+    "file": "dashboards/22_ppm_-_hr_-_missing_effort.json"
+  },
+  {
+    "id": 21,
+    "name": "PPM - HR - Timesheet",
+    "description": "Timesheet compliance: actual vs expected effort per employee and period",
+    "tabs": [
+      "Summary",
+      "By Team",
+      "By Employee"
+    ],
+    "parameters": [
+      "Date Range",
+      "Team",
+      "User",
+      "Customer"
+    ],
+    "card_count": 12,
+    "file": "dashboards/21_ppm_-_hr_-_timesheet.json"
+  },
+  {
+    "id": 25,
+    "name": "PPM - Leadership - Strategic Portfolio",
+    "description": "Strategic portfolio overview with project status and completion metrics",
+    "tabs": [
+      "Portfolio Summary",
+      "Project Detail"
+    ],
+    "parameters": [
+      "Date Range",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 7,
+    "file": "dashboards/25_ppm_-_leadership_-_strategic_portfolio.json"
+  },
+  {
+    "id": 26,
+    "name": "PPM - Ops - Data Quality and Pipeline",
+    "description": "Data quality checks, ETL freshness, and missing data reports",
+    "tabs": [
+      "Error Checks",
+      "Missing Data",
+      "ETL Status"
+    ],
+    "parameters": [
+      "Date Range",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 5,
+    "file": "dashboards/26_ppm_-_ops_-_data_quality_and_pipeline.json"
+  },
+  {
+    "id": 27,
+    "name": "PPM - Ops - Master Data",
+    "description": "Reference data: projects, employees, issue types",
+    "tabs": [
+      "Projects",
+      "Employees",
+      "Issue Types"
+    ],
+    "parameters": [
+      "Date Range",
+      "Project",
+      "Team",
+      "User",
+      "Issue Type"
+    ],
+    "card_count": 3,
+    "file": "dashboards/27_ppm_-_ops_-_master_data.json"
+  },
+  {
+    "id": 19,
+    "name": "PPM Home",
+    "description": "PPM Insights - Ana Sayfa. Tum PPM dashboard'larina erisim noktasi.",
+    "tabs": [
+      "Home"
+    ],
+    "parameters": [],
+    "card_count": 9,
+    "file": "dashboards/19_ppm_home.json"
+  }
+]

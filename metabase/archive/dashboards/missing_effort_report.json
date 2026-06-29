@@ -1,0 +1,238 @@
+{
+    "description": "Issues that should have logged hours but don't",
+    "archived": false,
+    "view_count": 3,
+    "collection_position": null,
+    "dashcards": [
+        {
+            "size_x": 24,
+            "dashboard_tab_id": null,
+            "series": [],
+            "inline_parameters": [],
+            "action_id": null,
+            "collection_authority_level": null,
+            "card": {
+                "cache_invalidated_at": "2026-06-28T22:40:24.903478Z",
+                "description": "Issues with no worklogs, open and older than 7 days",
+                "archived": false,
+                "view_count": 1,
+                "collection_position": null,
+                "source_card_id": null,
+                "table_id": null,
+                "result_metadata": [
+                    {
+                        "name": "project_key",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "project_key",
+                        "field_ref": [
+                            "field",
+                            "project_key",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "issue_key",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "issue_key",
+                        "field_ref": [
+                            "field",
+                            "issue_key",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "issue_summary",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "issue_summary",
+                        "field_ref": [
+                            "field",
+                            "issue_summary",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "issue_type",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "issue_type",
+                        "semantic_type": "type/Category",
+                        "field_ref": [
+                            "field",
+                            "issue_type",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "assignee_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "assignee_name",
+                        "field_ref": [
+                            "field",
+                            "assignee_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "status_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "status_name",
+                        "field_ref": [
+                            "field",
+                            "status_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "created_date",
+                        "database_type": "date",
+                        "base_type": "type/Date",
+                        "display_name": "created_date",
+                        "semantic_type": "type/CreationDate",
+                        "field_ref": [
+                            "field",
+                            "created_date",
+                            {
+                                "base-type": "type/Date"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "age_days",
+                        "database_type": "int4",
+                        "base_type": "type/Integer",
+                        "display_name": "age_days",
+                        "field_ref": [
+                            "field",
+                            "age_days",
+                            {
+                                "base-type": "type/Integer"
+                            }
+                        ]
+                    }
+                ],
+                "embedding_type": null,
+                "initially_published_at": null,
+                "can_write": true,
+                "card_schema": 23,
+                "database_id": 2,
+                "enable_embedding": false,
+                "collection_id": null,
+                "query_type": "native",
+                "download_perms": "full",
+                "name": "Effort: Missing Worklogs",
+                "document_id": null,
+                "last_used_at": "2026-06-28T22:37:34.444372Z",
+                "type": "question",
+                "dimensions": null,
+                "query_average_duration": null,
+                "creator_id": 2,
+                "moderation_reviews": [],
+                "updated_at": "2026-06-28T22:40:24.898892Z",
+                "made_public_by_id": null,
+                "embedding_params": null,
+                "cache_ttl": null,
+                "dataset_query": {
+                    "lib/type": "mbql/query",
+                    "database": 2,
+                    "stages": [
+                        {
+                            "lib/type": "mbql.stage/native",
+                            "native": "SELECT\n    i.project_key,\n    i.issue_key,\n    i.issue_summary,\n    i.issue_type,\n    i.assignee_name,\n    i.status_name,\n    i.created_date::date AS created_date,\n    CURRENT_DATE - i.created_date::date AS age_days\nFROM core.dim_issues i\nLEFT JOIN core.fact_worklogs w ON i.issue_key = w.issue_key\nWHERE w.issue_key IS NULL\n  AND i.status_category NOT IN ('Done')\n  AND i.is_subtask = false\n  AND i.issue_type NOT IN ('Epic')\n  AND i.created_date < CURRENT_DATE - INTERVAL '7 days'\nORDER BY age_days DESC"
+                        }
+                    ]
+                },
+                "dimension_mappings": null,
+                "id": 48,
+                "legacy_query": null,
+                "parameter_mappings": [],
+                "display": "table",
+                "archived_directly": false,
+                "entity_id": "kw03_HLypQEquP5-Sn5NG",
+                "collection_preview": true,
+                "visualization_settings": {},
+                "metabase_version": "v0.62.3.3 (686cac9)",
+                "parameters": [],
+                "dashboard_id": null,
+                "created_at": "2026-06-28T22:37:34.444372Z",
+                "public_uuid": null
+            },
+            "updated_at": "2026-06-28T22:40:28.914465Z",
+            "col": 0,
+            "id": 54,
+            "parameter_mappings": [],
+            "card_id": 48,
+            "entity_id": "OjnAtnOnCZTvEeMkFlfdY",
+            "visualization_settings": {},
+            "size_y": 12,
+            "dashboard_id": 8,
+            "created_at": "2026-06-28T22:40:28.914465Z",
+            "row": 0
+        }
+    ],
+    "embedding_type": null,
+    "initially_published_at": null,
+    "can_write": true,
+    "can_set_cache_policy": true,
+    "tabs": [],
+    "enable_embedding": false,
+    "collection_id": null,
+    "show_in_getting_started": false,
+    "name": "Missing Effort Report",
+    "is_remote_synced": false,
+    "width": "full",
+    "caveats": null,
+    "collection_authority_level": null,
+    "creator_id": 2,
+    "can_restore": false,
+    "moderation_reviews": [],
+    "updated_at": "2026-06-28T22:39:25.28074Z",
+    "made_public_by_id": 2,
+    "embedding_params": null,
+    "cache_ttl": null,
+    "last_used_param_values": {},
+    "id": 8,
+    "last_viewed_at": "2026-06-28T22:39:29.175407Z",
+    "position": null,
+    "archived_directly": false,
+    "entity_id": "iTWdNr5j3GQgRR9RIlEgf",
+    "param_fields": {},
+    "last-edit-info": {
+        "id": 2,
+        "email": "admin@jppm.local",
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "timestamp": "2026-06-28T22:40:28.96341Z"
+    },
+    "collection": {
+        "metabase.collections.models.collection.root/is-root?": true,
+        "authority_level": null,
+        "name": "Our analytics",
+        "is_personal": false,
+        "id": "root",
+        "is_remote_synced": false,
+        "can_write": true
+    },
+    "parameters": [],
+    "auto_apply_filters": true,
+    "created_at": "2026-06-28T22:37:41.076432Z",
+    "public_uuid": "4e9b0342-3991-4031-9c45-ed7ea2260e9a",
+    "points_of_interest": null,
+    "can_delete": false
+}

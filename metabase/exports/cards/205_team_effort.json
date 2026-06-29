@@ -1,0 +1,140 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:52:34.359835Z",
+  "description": null,
+  "archived": false,
+  "view_count": 0,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "name": "value",
+      "database_type": "numeric",
+      "base_type": "type/Decimal",
+      "display_name": "value",
+      "field_ref": [
+        "field",
+        "value",
+        {
+          "base-type": "type/Decimal"
+        }
+      ]
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 31,
+  "query_type": "native",
+  "name": "Team Effort",
+  "last_query_start": null,
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:38.63381Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:52:34.358501Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT ROUND(SUM(team_effort)::numeric,1) AS value FROM mart.fact_financial_dashboard_2026\nWHERE 1=1\n  [[AND team = {{team}}]]\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+        "template-tags": {
+          "team": {
+            "name": "team",
+            "display-name": "Team",
+            "type": "text",
+            "id": "55555555-5555-5555-5555-555555555555",
+            "required": false
+          },
+          "period_filter": {
+            "display-name": "Period",
+            "type": "text",
+            "id": "33333333-3333-3333-3333-333333333333",
+            "name": "period_filter",
+            "required": false
+          },
+          "project_key": {
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "name": "project_key",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 205,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "scalar",
+  "archived_directly": false,
+  "entity_id": "G83NJuvJVdOh4T7DhRvtT",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:34.383838Z"
+  },
+  "visualization_settings": {},
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "financial",
+    "archive_operation_id": null,
+    "name": "Financial",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 31,
+    "archived_directly": null,
+    "entity_id": "vPVIrWdOjwKTJb_XWASDK",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:16.148295Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:38.63381Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

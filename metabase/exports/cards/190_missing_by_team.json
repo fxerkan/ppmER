@@ -1,0 +1,229 @@
+{
+  "cache_invalidated_at": null,
+  "description": null,
+  "archived": false,
+  "view_count": 1,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "varchar",
+      "semantic_type": "type/Author",
+      "lib/deduplicated-name": "author_team",
+      "lib/original-name": "author_team",
+      "name": "author_team",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "author_team",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "author_team",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "author_team",
+      "display_name": "author_team",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 0,
+          "nil%": null
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": null,
+            "percent-url": null,
+            "percent-email": null,
+            "percent-state": null,
+            "percent-blank": null,
+            "average-length": null,
+            "mode-fraction": null,
+            "top-3-fraction": null
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "missing",
+      "lib/original-name": "missing",
+      "name": "missing",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "missing",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "missing",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "missing",
+      "display_name": "missing",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 0,
+          "nil%": null
+        },
+        "type": {
+          "type/Number": {
+            "skewness": null,
+            "min": null,
+            "q1": null,
+            "q3": null,
+            "excess-kurtosis": null,
+            "zero-fraction": null,
+            "mode-fraction": null,
+            "top-3-fraction": null,
+            "max": null,
+            "sd": null,
+            "avg": null
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 29,
+  "query_type": "native",
+  "name": "Missing by Team",
+  "last_query_start": "2026-06-29T12:14:13.50303Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:38:31.285675Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 35.0,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:38:31.285675Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "template-tags": {
+          "date_range": {
+            "dimension": [
+              "field",
+              {
+                "base-type": "type/Date",
+                "lib/uuid": "4260f72c-df1a-4d0e-bbc4-ff242b9302d6",
+                "effective-type": "type/Date"
+              },
+              1105
+            ],
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "date_range",
+            "display-name": "Date Range",
+            "type": "dimension",
+            "widget-type": "date/all-options"
+          },
+          "team": {
+            "type": "text",
+            "id": "33333333-7465616d-1111-1111-111111111111",
+            "name": "team",
+            "display-name": "Team",
+            "required": false
+          }
+        },
+        "lib/type": "mbql.stage/native",
+        "native": "SELECT author_team, ROUND(SUM(missing_effort_person_days)::numeric,1) AS missing\nFROM mart.rpt_missing_effort\nWHERE missing_effort_person_days > 0 AND author_team IS NOT NULL\n  [[AND {{date_range}}]] [[AND author_team = {{team}}]]\nGROUP BY author_team ORDER BY missing DESC"
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 190,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "pie",
+  "archived_directly": false,
+  "entity_id": "jxv3mcU4r4KTEwgrMfpyO",
+  "param_fields": {
+    "11111111-1111-1111-1111-111111111111": [
+      {
+        "semantic_type": null,
+        "table_id": 38,
+        "name": "trx_date",
+        "has_field_values": "none",
+        "fk_target_field_id": null,
+        "dimensions": [],
+        "id": 1105,
+        "target": null,
+        "display_name": "Trx Date",
+        "name_field": null,
+        "base_type": "type/Date"
+      }
+    ]
+  },
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:38:31.295329Z"
+  },
+  "visualization_settings": {
+    "pie.dimension": "author_team",
+    "pie.metric": "missing"
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "missing_effort",
+    "archive_operation_id": null,
+    "name": "Missing Effort",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 29,
+    "archived_directly": null,
+    "entity_id": "SNJwTQn4gSXQYuSF7Eb-g",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:15.396195Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:31.285675Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

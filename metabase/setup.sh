@@ -5,11 +5,11 @@
 set -e
 
 MB_URL="http://metabase:3000"
-ADMIN_EMAIL="${MB_ADMIN_EMAIL:-admin@ppm.local}"
-ADMIN_PASSWORD="${MB_ADMIN_PASSWORD:-PpmAdmin123!}"
-ADMIN_NAME="${MB_ADMIN_NAME:-PPM Admin}"
+ADMIN_EMAIL="${MB_ADMIN_EMAIL:-admin@jppm.local}"
+ADMIN_PASSWORD="${MB_ADMIN_PASSWORD:-Jppm@min123}"
+ADMIN_NAME="${MB_ADMIN_NAME:-admin}"
 DB_USER="${POSTGRES_USER:-ppm_user}"
-DB_PASS="${POSTGRES_PASSWORD:-ppm_password}"
+DB_PASS="${POSTGRES_PASSWORD:-Jppm@min123}"
 
 echo "Waiting for Metabase to be ready..."
 for i in $(seq 1 120); do

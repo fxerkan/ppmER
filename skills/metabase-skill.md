@@ -1,131 +1,206 @@
 # Metabase Skill — PPM Data Stack
 
-## What Metabase Does
+## Connection & Auth
 
-Metabase provides BI dashboards connected directly to the PPM PostgreSQL data warehouse. It is the end-user-facing layer of the stack. UI is at http://localhost:3000.
+- **URL**: http://localhost:3000
+- **Admin email**: `admin@jppm.local`
+- **Admin password**: `Jppm@min123`
+- **DB_ID**: `2` (PPM Data Warehouse — postgres)
 
-## Data Connection
+```python
+# Session token (use for all API calls)
+import urllib.request, json
 
-Metabase connects to the `ppm_datawarehouse` database. Always use `mart.*` schema tables for dashboards — these are the business-ready aggregations produced by dbt. Do not build dashboards on `raw_jira.*` or `staging.*`.
-
-## Key Tables for Dashboards
-
-| Table | Schema | Use for |
-|-------|--------|---------|
-| `mart_portfolio_dashboard` | mart | Portfolio-level KPIs, executive summary |
-| `agg_project_health` | mart | Project status summary, RAG status |
-| `rpt_missing_effort` | mart | Issues without any logged time |
-| `fact_worklogs` | core | Raw worklog data for time analysis |
-| `dim_projects` | core | Project dimensions and attributes |
-| `dim_users` | core | User dimensions, team membership |
-
-When in doubt, prefer `mart.*` over `core.*`. Use `core.*` only when the mart table doesn't have the grain you need.
-
-## Naming Conventions
-
-**Questions (saved queries)**:
+def get_session():
+    r = urllib.request.urlopen(urllib.request.Request(
+        "http://localhost:3000/api/session",
+        data=json.dumps({"username": "admin@jppm.local", "password": "Jppm@min123"}).encode(),
+        headers={"Content-Type": "application/json"}, method="POST"
+    ))
+    return json.loads(r.read())["id"]
 ```
-[Layer] Entity - Metric
-```
-Examples:
-- `[Mart] Portfolio - Open Issues by Project`
-- `[Mart] Team - Hours Logged This Month`
-- `[Core] Worklogs - Daily Log Volume`
 
-**Dashboards**:
-```
-PPM - <Audience> - <Topic>
-```
-Examples:
-- `PPM - PMO - Portfolio Overview`
-- `PPM - Dev - Team Workload`
-- `PPM - Management - Sprint Progress`
+## MCP — Claude Code Integration
 
-## Creating Dashboards via API (Automation)
+Metabase has a built-in MCP server (v0.62.3+, available in OSS).
+
+- **MCP endpoint**: `http://localhost:3000/api/metabase-mcp`
+- **API key**: `mb_CgSDaave8BeS3QS2m4X+g4vqVrdQrkoIahyxMPLGWDA=` (regenerate: `PUT /api/api-key/1/regenerate`)
+- **Config**: `.claude/settings.json` in the project root (already configured)
+- **Tools**: `execute_sql`, `create_question`, `create_dashboard`, `update_dashboard`, `search`, `construct_query`
+
+To regenerate API key:
+```bash
+SESSION=$(curl -s -X POST http://localhost:3000/api/session -H "Content-Type: application/json" \
+  -d '{"username":"admin@jppm.local","password":"Jppm@min123"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+curl -s -X PUT http://localhost:3000/api/api-key/1/regenerate -H "X-Metabase-Session: $SESSION"
+```
+
+## Data Model — Critical Notes
+
+`fact_worklogs` has **133K+ rows** but `project_key` column is **NULL for all rows** (dbt join issue — `fact_worklogs.issue_key` and `dim_issues.issue_key` don't overlap).
+
+**Workaround**: extract project from issue_key pattern `DG-176` → `DG`:
+```sql
+SPLIT_PART(issue_key, '-', 1) AS project_key
+```
+
+**Use this pattern everywhere** when joining fact_worklogs to project-level data:
+```sql
+-- Wrong (returns 0 rows):
+LEFT JOIN core.fact_worklogs w ON i.issue_key = w.issue_key
+
+-- Correct for project hours:
+LEFT JOIN (
+    SELECT SPLIT_PART(issue_key, '-', 1) AS project_key,
+           SUM(time_spent_hours) AS total_hours
+    FROM core.fact_worklogs WHERE issue_key IS NOT NULL
+    GROUP BY 1
+) wl ON p.project_key = wl.project_key
+```
+
+Also: `fact_worklogs.trx_date` has future dates up to 2031 (Jira data quality). Add `AND w.trx_date <= CURRENT_DATE` when needed.
+
+**Key tables**:
+| Table | Rows | Project Key | Notes |
+|-------|------|-------------|-------|
+| `core.dim_projects` | ~491 | `project_key` ✓ | |
+| `core.dim_issues` | 55K | `project_key` ✓ | Issues but NOT the same as fact_worklogs issue_keys |
+| `core.fact_worklogs` | 133K | NULL ✗ | Use `SPLIT_PART(issue_key,'-',1)` |
+| `core.dim_users` | ~500 | — | Join: `w.author_id = u.user_id` ✓ |
+
+## Dashboard Patterns
+
+### Create/upsert a question with optional project filter
+
+```python
+def upsert_question(session, name, sql, display="table", existing_id=None, template_tags=None):
+    payload = {
+        "name": name, "display": display,
+        "dataset_query": {
+            "database": 2, "type": "native",
+            "native": {"query": sql, "template-tags": template_tags or {}}
+        },
+        "collection_id": None,
+        "visualization_settings": {},
+    }
+    method = "PUT" if existing_id else "POST"
+    path = f"/card/{existing_id}" if existing_id else "/card"
+    # ... call API
+```
+
+### Optional project filter template tag
+
+```python
+PROJECT_TAG = {
+    "project_key": {
+        "id": "11111111-1111-1111-1111-111111111111",  # static UUID for idempotency
+        "name": "project_key",
+        "display-name": "Project",
+        "type": "text",
+        "required": False,
+    }
+}
+```
+
+SQL pattern (optional filter — omits WHERE when not set):
+```sql
+WHERE is_subtask = false
+  [[AND project_key = {{project_key}}]]      -- for dim_issues queries
+  [[AND SPLIT_PART(issue_key, '-', 1) = {{project_key}}]]  -- for fact_worklogs
+```
+
+### Add filter to dashboard + parameter mapping
+
+```python
+PROJECT_PARAM = {
+    "id": "project_key_param",
+    "name": "Project",
+    "type": "string/=",
+    "slug": "project_key",
+    "sectionId": "string",
+    "default": None,
+}
+
+# In PUT /api/dashboard/{id}:
+{
+    "width": "full",
+    "parameters": [PROJECT_PARAM],
+    "dashcards": [
+        {
+            "id": -1, "card_id": 44,
+            "row": 0, "col": 0, "size_x": 24, "size_y": 8,
+            "parameter_mappings": [{
+                "parameter_id": "project_key_param",
+                "card_id": 44,
+                "target": ["variable", ["template-tag", "project_key"]]
+            }],
+            "visualization_settings": {}
+        }
+    ]
+}
+```
+
+### Click-through drill-down (Portfolio → Team Workload)
+
+Set `visualization_settings` on the table dashcard:
+```python
+{
+    "click_behavior": {
+        "type": "link",
+        "linkType": "dashboard",
+        "targetId": <target_dashboard_id>,
+        "parameterMapping": {
+            "project_key_param": {
+                "source": {"type": "column", "id": "project_key", "name": "project_key"},
+                "target": {"type": "parameter", "id": "project_key_param"},
+                "id": "project_key_param"
+            }
+        }
+    }
+}
+```
+
+**Important**: Create destination dashboards BEFORE the source dashboard so you have the target ID. The `source.id` must exactly match the SQL column alias.
+
+### Full-width dashboard
+
+Always include `"width": "full"` in every `PUT /api/dashboard/{id}` call.
+
+## Existing Dashboards
+
+| ID | Name | URL | Notes |
+|----|------|-----|-------|
+| 5 | Portfolio Overview | /dashboard/5 | KPI cards + project table, click → Team Workload |
+| 6 | Team Workload | /dashboard/6 | Project filter, 3 charts |
+| 7 | Sprint Progress | /dashboard/7 | Project filter, status + epic completion |
+| 8 | Missing Effort Report | /dashboard/8 | Project filter, issues without worklogs |
+| 9 | Historical Trend | /dashboard/9 | Project filter, monthly trends |
+
+Re-run after changes: `python3 metabase/create_dashboards.py`
+
+## Quick API Reference
 
 ```bash
-# 1. Get session token
-SESSION=$(curl -s -X POST http://localhost:3000/api/session \
-  -H "Content-Type: application/json" \
-  -d '{"username":"admin@example.com","password":"yourpassword"}' \
-  | jq -r '.id')
+# List all questions
+curl -s http://localhost:3000/api/card -H "X-Metabase-Session: $SESSION"
 
-# 2. Create a question (saved query)
-curl -X POST http://localhost:3000/api/card \
-  -H "X-Metabase-Session: $SESSION" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "[Mart] Portfolio - Open Issues by Project",
-    "dataset_query": {
-      "type": "native",
-      "native": {"query": "SELECT project_key, COUNT(*) FROM mart.mart_portfolio_dashboard WHERE status != '\''Done'\'' GROUP BY 1"},
-      "database": 1
-    },
-    "display": "bar",
-    "visualization_settings": {}
-  }'
+# Run a question
+curl -s -X POST http://localhost:3000/api/card/{id}/query \
+  -H "X-Metabase-Session: $SESSION" -H "Content-Type: application/json" -d '{}'
 
-# 3. Create a dashboard and add the card
-curl -X POST http://localhost:3000/api/dashboard \
-  -H "X-Metabase-Session: $SESSION" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "PPM - PMO - Portfolio Overview"}'
+# Get dashboard
+curl -s http://localhost:3000/api/dashboard/{id} -H "X-Metabase-Session: $SESSION"
+
+# Sync DB schema
+curl -s -X POST http://localhost:3000/api/database/2/sync_schema -H "X-Metabase-Session: $SESSION"
 ```
 
-## Exporting and Importing Dashboards
+## Common Mistakes to Avoid
 
-To share dashboards across environments (dev → prod):
-1. Admin > Export → saves as `.zip`
-2. On target: Admin > Import → upload the `.zip`
-
-This preserves all questions, dashboards, and collections but not database connections (reconfigure those after import).
-
-## Common Errors and Fixes
-
-### "Database not found" on first start
-Metabase needs time to sync the schema on first connect. Wait 2 minutes after `docker compose up` and refresh the browser. If it persists, check that the `metabase` database exists:
-```bash
-docker exec ppm-postgres psql -U ppm_user -d ppm_datawarehouse -c "\l" | grep metabase
-```
-If missing, it should have been created by `postgres/init/01-init-schemas.sql`. Run the init script manually if needed.
-
-### Dashboard shows stale data
-Metabase caches query results. Options:
-- Click the refresh icon on the dashboard
-- Set cache TTL: Admin > Performance > set to 60 seconds
-- Disable caching for the specific question: Question settings > Caching off
-
-### Column not found in question
-The dbt model was updated (column renamed or dropped) but Metabase hasn't re-synced. Force a sync:
-Admin > Databases > select database > Sync now
-
-### "Permission denied" accessing a table
-Check Metabase user groups in Admin > People > Groups. By default all users see all databases. To restrict access, move dashboards into Collections and set Collection permissions per group.
-
-### Slow queries
-1. First check the query with `EXPLAIN ANALYZE` in CloudBeaver (http://localhost:8978)
-2. If a join is missing an index, add it via a dbt `post-hook`:
-   ```yaml
-   # in schema.yml or dbt_project.yml
-   models:
-     - name: fact_worklogs
-       config:
-         post-hook: "CREATE INDEX IF NOT EXISTS idx_fact_worklogs_issue_id ON {{ this }} (issue_id)"
-   ```
-3. Re-run `dbt run --select fact_worklogs` to apply the index
-
-### Metabase container won't start
-Check that the `metabase` internal database exists in PostgreSQL:
-```bash
-docker logs ppm-metabase | tail -30
-docker exec ppm-postgres psql -U ppm_user -c "\l"
-```
-The `01-init-schemas.sql` init script should create it. If the postgres container was recreated after Metabase first ran, re-run the init script.
-
-## What NOT to Do
-
-- Never build dashboards on `raw_jira.*` or `staging.*` — they change without notice
-- Never hardcode date ranges in questions — use Metabase's relative date filters (`Past 30 days`, `This month`)
-- Never store sensitive data in Metabase questions — access control is at the Collection level, not per-column
-- Never use `SELECT *` in native queries — name all columns explicitly so Metabase can display them correctly
-- Never delete a question that's used in a dashboard without first removing it from the dashboard
+1. **Empty description** fails API: either omit `description` or make it non-empty string
+2. **Joining dim_issues ↔ fact_worklogs by issue_key returns 0 rows** — different datasets
+3. **project_key is NULL in fact_worklogs** — always use `SPLIT_PART(issue_key, '-', 1)`
+4. **Parameter mappings** must be in the dashcard, not a separate API call
+5. **Create destination dashboards first** when setting up drill-through click behaviors
+6. **MCP session init**: POST to `/api/metabase-mcp` with `x-api-key` header (not session token)

@@ -1,0 +1,1814 @@
+{
+  "description": "Distributed effort analysis by customer, product, and tribe",
+  "archived": false,
+  "view_count": 22,
+  "collection_position": null,
+  "dashcards": [
+    {
+      "size_x": 6,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:52:31.095152Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "value",
+            "lib/original-name": "value",
+            "name": "value",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "value",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "value",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "value",
+            "display_name": "value",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Opex Effort (Financial)",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:34.554603Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:52:31.093758Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT ROUND(SUM(final_effort_opex)::numeric,1) AS value FROM mart.fact_financial_dashboard_2026\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 197,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "scalar",
+        "archived_directly": false,
+        "entity_id": "hvntmfJFdunFuRldH_wrL",
+        "collection_preview": true,
+        "visualization_settings": {},
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:34.554603Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 18,
+      "id": 212,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 197,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 197,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 197,
+      "entity_id": "OxltI4ftYKWreks1dyvpj",
+      "visualization_settings": {},
+      "size_y": 3,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 10,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:52:31.780615Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "text",
+            "semantic_type": "type/Category",
+            "lib/deduplicated-name": "type",
+            "lib/original-name": "type",
+            "name": "type",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "type",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "type",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "effective_type": "type/Text",
+            "lib/desired-column-alias": "type",
+            "display_name": "type",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 2,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Text": {
+                  "percent-json": 0.0,
+                  "percent-url": 0.0,
+                  "percent-email": 0.0,
+                  "percent-state": 0.0,
+                  "percent-blank": 0.0,
+                  "average-length": 4.5,
+                  "mode-fraction": 0.5,
+                  "top-3-fraction": 1.0
+                }
+              }
+            },
+            "base_type": "type/Text"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "effort",
+            "lib/original-name": "effort",
+            "name": "effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "effort",
+            "display_name": "effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Capex vs Opex",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:35.788196Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:52:31.776959Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT 'Capex' AS type, ROUND(SUM(final_effort_capex)::numeric,1) AS effort\nFROM mart.fact_financial_dashboard_2026\nUNION ALL\nSELECT 'Opex', ROUND(SUM(final_effort_opex)::numeric,1)\nFROM mart.fact_financial_dashboard_2026\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 199,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "pie",
+        "archived_directly": false,
+        "entity_id": "gJ5KLhe7ej6Kz-CEwlPyw",
+        "collection_preview": true,
+        "visualization_settings": {
+          "pie.dimension": "type",
+          "pie.metric": "effort"
+        },
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:35.788196Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 14,
+      "id": 214,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 199,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 199,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 199,
+      "entity_id": "D73QIxD_c6Jz7u-D2kBu0",
+      "visualization_settings": {},
+      "size_y": 8,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 3
+    },
+    {
+      "size_x": 24,
+      "dashboard_tab_id": 67,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:42.219111Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "text",
+            "semantic_type": null,
+            "lib/deduplicated-name": "product",
+            "lib/original-name": "product",
+            "name": "product",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "product",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "product",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "effective_type": "type/Text",
+            "lib/desired-column-alias": "product",
+            "display_name": "product",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 0,
+                "nil%": null
+              },
+              "type": {
+                "type/Text": {
+                  "percent-json": null,
+                  "percent-url": null,
+                  "percent-email": null,
+                  "percent-state": null,
+                  "percent-blank": null,
+                  "average-length": null,
+                  "mode-fraction": null,
+                  "top-3-fraction": null
+                }
+              }
+            },
+            "base_type": "type/Text"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "distributed_effort",
+            "lib/original-name": "distributed_effort",
+            "name": "distributed_effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "distributed_effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "distributed_effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "distributed_effort",
+            "display_name": "distributed_effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 0,
+                "nil%": null
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": null,
+                  "q1": null,
+                  "q3": null,
+                  "excess-kurtosis": null,
+                  "zero-fraction": null,
+                  "mode-fraction": null,
+                  "top-3-fraction": null,
+                  "max": null,
+                  "sd": null,
+                  "avg": null
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Effort by Product",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:36.722803Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:42.21175Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT product, ROUND(SUM(distributed_effort)::numeric,1) AS distributed_effort\nFROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE product IS NOT NULL\n\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY product ORDER BY distributed_effort DESC",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 201,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "bar",
+        "archived_directly": false,
+        "entity_id": "pRxuwSoVtGmQvMh0cZAPv",
+        "collection_preview": true,
+        "visualization_settings": {
+          "graph.dimensions": [
+            "product"
+          ],
+          "graph.metrics": [
+            "distributed_effort"
+          ]
+        },
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:36.722803Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 0,
+      "id": 216,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 201,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 201,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 201,
+      "entity_id": "SCyjJO0OVmniz6AuNu684",
+      "visualization_settings": {},
+      "size_y": 10,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 6,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:45.969416Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "value",
+            "lib/original-name": "value",
+            "name": "value",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "value",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "value",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "value",
+            "display_name": "value",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 2422.8,
+                  "q1": 2422.8,
+                  "q3": 2422.8,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 0.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 2422.8,
+                  "sd": 0.0,
+                  "avg": 2422.8
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Total Final Effort",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:33.6273Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:45.963031Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT ROUND(SUM(final_effort)::numeric,1) AS value FROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 194,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "scalar",
+        "archived_directly": false,
+        "entity_id": "I3NE2U7waZFtrk6TcF0As",
+        "collection_preview": true,
+        "visualization_settings": {},
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:33.6273Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 0,
+      "id": 209,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 194,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 194,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 194,
+      "entity_id": "7eVRtgb-S7f7pau5fjNJq",
+      "visualization_settings": {},
+      "size_y": 3,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 14,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:43.003391Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "text",
+            "semantic_type": null,
+            "lib/deduplicated-name": "period",
+            "lib/original-name": "period",
+            "name": "period",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "period",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "period",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "effective_type": "type/Text",
+            "lib/desired-column-alias": "period",
+            "display_name": "period",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 6,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Text": {
+                  "percent-json": 0.0,
+                  "percent-url": 0.0,
+                  "percent-email": 0.0,
+                  "percent-state": 0.0,
+                  "percent-blank": 0.0,
+                  "average-length": 7.0,
+                  "mode-fraction": 0.16666666666666666,
+                  "top-3-fraction": 0.5
+                }
+              }
+            },
+            "base_type": "type/Text"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "final_effort",
+            "lib/original-name": "final_effort",
+            "name": "final_effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "final_effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "final_effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "final_effort",
+            "display_name": "final_effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 6,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": -0.8100371661667294,
+                  "min": 201.9,
+                  "q1": 382.9,
+                  "q3": 488.6,
+                  "excess-kurtosis": 1.5228576236151836,
+                  "zero-fraction": 0.0,
+                  "mode-fraction": 0.16666666666666666,
+                  "top-3-fraction": 0.5,
+                  "max": 550.5,
+                  "sd": 118.32609179720255,
+                  "avg": 403.8
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "distributed_effort",
+            "lib/original-name": "distributed_effort",
+            "name": "distributed_effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "distributed_effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "distributed_effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "distributed_effort",
+            "display_name": "distributed_effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Distributed Effort Trend by Period",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:35.157465Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:42.99741Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT period,\n  ROUND(SUM(final_effort)::numeric,1) AS final_effort,\n  ROUND(SUM(distributed_effort)::numeric,1) AS distributed_effort\nFROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\n\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY period ORDER BY period",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 198,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "line",
+        "archived_directly": false,
+        "entity_id": "u65UqdBgAw5OJTN7IW1je",
+        "collection_preview": true,
+        "visualization_settings": {
+          "graph.dimensions": [
+            "period"
+          ],
+          "graph.metrics": [
+            "final_effort",
+            "distributed_effort"
+          ]
+        },
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:35.157465Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 0,
+      "id": 213,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 198,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 198,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 198,
+      "entity_id": "og69E57HxpXmYL84URixW",
+      "visualization_settings": {},
+      "size_y": 8,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 3
+    },
+    {
+      "size_x": 6,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:44.928837Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "value",
+            "lib/original-name": "value",
+            "name": "value",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "value",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "value",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "value",
+            "display_name": "value",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Total Distributed Effort",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:33.936229Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:44.918091Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT ROUND(SUM(distributed_effort)::numeric,1) AS value FROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 195,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "scalar",
+        "archived_directly": false,
+        "entity_id": "4JphAEoepsaGVE1Suxkb4",
+        "collection_preview": true,
+        "visualization_settings": {},
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:33.936229Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 6,
+      "id": 210,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 195,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 195,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 195,
+      "entity_id": "kRBmQgOO2HHifFmjarZmr",
+      "visualization_settings": {},
+      "size_y": 3,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 6,
+      "dashboard_tab_id": 65,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:52:32.473457Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "value",
+            "lib/original-name": "value",
+            "name": "value",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "value",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "value",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "value",
+            "display_name": "value",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Capex Effort (Financial)",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:34.251534Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:52:32.470915Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT ROUND(SUM(final_effort_capex)::numeric,1) AS value FROM mart.fact_financial_dashboard_2026\nWHERE 1=1\n  [[AND period = {{period_filter}}]]\n  [[AND project_name = {{project_key}}]]",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 196,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "scalar",
+        "archived_directly": false,
+        "entity_id": "NNEHzz066je4Mm9GXbTJl",
+        "collection_preview": true,
+        "visualization_settings": {},
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:34.251534Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 12,
+      "id": 211,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 196,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 196,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 196,
+      "entity_id": "41wH0qaY2JFbay4r6rHrV",
+      "visualization_settings": {},
+      "size_y": 3,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 24,
+      "dashboard_tab_id": 66,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:43.679566Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "text",
+            "semantic_type": null,
+            "lib/deduplicated-name": "customer",
+            "lib/original-name": "customer",
+            "name": "customer",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "customer",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "customer",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "effective_type": "type/Text",
+            "lib/desired-column-alias": "customer",
+            "display_name": "customer",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 0,
+                "nil%": null
+              },
+              "type": {
+                "type/Text": {
+                  "percent-json": null,
+                  "percent-url": null,
+                  "percent-email": null,
+                  "percent-state": null,
+                  "percent-blank": null,
+                  "average-length": null,
+                  "mode-fraction": null,
+                  "top-3-fraction": null
+                }
+              }
+            },
+            "base_type": "type/Text"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "distributed_effort",
+            "lib/original-name": "distributed_effort",
+            "name": "distributed_effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "distributed_effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "distributed_effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "distributed_effort",
+            "display_name": "distributed_effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 0,
+                "nil%": null
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": null,
+                  "q1": null,
+                  "q3": null,
+                  "excess-kurtosis": null,
+                  "zero-fraction": null,
+                  "mode-fraction": null,
+                  "top-3-fraction": null,
+                  "max": null,
+                  "sd": null,
+                  "avg": null
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Effort by Customer",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:36.411316Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:43.677357Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT customer, ROUND(SUM(distributed_effort)::numeric,1) AS distributed_effort\nFROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE customer IS NOT NULL\n\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY customer ORDER BY distributed_effort DESC",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 200,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "bar",
+        "archived_directly": false,
+        "entity_id": "EUWUwTiHJ49P1godwF8ov",
+        "collection_preview": true,
+        "visualization_settings": {
+          "graph.dimensions": [
+            "customer"
+          ],
+          "graph.metrics": [
+            "distributed_effort"
+          ]
+        },
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:36.411316Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 0,
+      "id": 215,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 200,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 200,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 200,
+      "entity_id": "MgcDdD-FNlIJnzItAWphS",
+      "visualization_settings": {},
+      "size_y": 10,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    },
+    {
+      "size_x": 24,
+      "dashboard_tab_id": 68,
+      "series": [],
+      "inline_parameters": [],
+      "action_id": null,
+      "collection_authority_level": null,
+      "card": {
+        "cache_invalidated_at": "2026-06-29T11:50:44.234822Z",
+        "description": null,
+        "archived": false,
+        "view_count": 1,
+        "collection_position": null,
+        "source_card_id": null,
+        "table_id": null,
+        "result_metadata": [
+          {
+            "database_type": "text",
+            "semantic_type": null,
+            "lib/deduplicated-name": "tribe",
+            "lib/original-name": "tribe",
+            "name": "tribe",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "tribe",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "tribe",
+              {
+                "base-type": "type/Text"
+              }
+            ],
+            "effective_type": "type/Text",
+            "lib/desired-column-alias": "tribe",
+            "display_name": "tribe",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Text": {
+                  "percent-json": 0.0,
+                  "percent-url": 0.0,
+                  "percent-email": 0.0,
+                  "percent-state": 0.0,
+                  "percent-blank": 0.0,
+                  "average-length": 3.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0
+                }
+              }
+            },
+            "base_type": "type/Text"
+          },
+          {
+            "database_type": "numeric",
+            "semantic_type": null,
+            "lib/deduplicated-name": "distributed_effort",
+            "lib/original-name": "distributed_effort",
+            "name": "distributed_effort",
+            "lib/source": "source/native",
+            "lib/source-column-alias": "distributed_effort",
+            "source": "native",
+            "field_ref": [
+              "field",
+              "distributed_effort",
+              {
+                "base-type": "type/Decimal"
+              }
+            ],
+            "effective_type": "type/Decimal",
+            "lib/desired-column-alias": "distributed_effort",
+            "display_name": "distributed_effort",
+            "fingerprint": {
+              "global": {
+                "distinct-count": 1,
+                "nil%": 0.0
+              },
+              "type": {
+                "type/Number": {
+                  "skewness": null,
+                  "min": 0.0,
+                  "q1": 0.0,
+                  "q3": 0.0,
+                  "excess-kurtosis": null,
+                  "zero-fraction": 1.0,
+                  "mode-fraction": 1.0,
+                  "top-3-fraction": 1.0,
+                  "max": 0.0,
+                  "sd": 0.0,
+                  "avg": 0.0
+                }
+              }
+            },
+            "base_type": "type/Decimal"
+          }
+        ],
+        "embedding_type": null,
+        "initially_published_at": null,
+        "can_write": true,
+        "card_schema": 23,
+        "database_id": 2,
+        "enable_embedding": false,
+        "collection_id": 30,
+        "query_type": "native",
+        "download_perms": "full",
+        "name": "Effort by Tribe",
+        "document_id": null,
+        "last_used_at": "2026-06-29T11:38:37.031501Z",
+        "type": "question",
+        "dimensions": null,
+        "query_average_duration": null,
+        "creator_id": 1,
+        "moderation_reviews": [],
+        "updated_at": "2026-06-29T11:50:44.230816Z",
+        "made_public_by_id": null,
+        "embedding_params": null,
+        "cache_ttl": null,
+        "dataset_query": {
+          "lib/type": "mbql/query",
+          "database": 2,
+          "stages": [
+            {
+              "native": "SELECT tribe, ROUND(SUM(distributed_effort)::numeric,1) AS distributed_effort\nFROM (\n  SELECT period, project_name, customer, it_domain, tribe, product,\n         business_line, financial_code, is_outsource_inhouse,\n         final_effort, distributed_effort,\n         NULL::numeric AS final_effort_capex, NULL::numeric AS final_effort_opex\n  FROM mart.fact_distributed_efforts_2026\n) d\nWHERE tribe IS NOT NULL\n\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY tribe ORDER BY distributed_effort DESC",
+              "lib/type": "mbql.stage/native",
+              "template-tags": {
+                "period_filter": {
+                  "display-name": "Period",
+                  "type": "text",
+                  "id": "33333333-3333-3333-3333-333333333333",
+                  "name": "period_filter",
+                  "required": false
+                },
+                "project_key": {
+                  "display-name": "Project",
+                  "type": "text",
+                  "id": "44444444-4444-4444-4444-444444444444",
+                  "name": "project_key",
+                  "required": false
+                }
+              }
+            }
+          ]
+        },
+        "dimension_mappings": null,
+        "id": 202,
+        "legacy_query": null,
+        "parameter_mappings": [],
+        "display": "bar",
+        "archived_directly": false,
+        "entity_id": "NCazlRJI2_GVJB-YHPr60",
+        "collection_preview": true,
+        "visualization_settings": {
+          "graph.dimensions": [
+            "tribe"
+          ],
+          "graph.metrics": [
+            "distributed_effort"
+          ]
+        },
+        "metabase_version": "v0.62.3.3 (686cac9)",
+        "parameters": [],
+        "dashboard_id": null,
+        "created_at": "2026-06-29T11:38:37.031501Z",
+        "public_uuid": null
+      },
+      "updated_at": "2026-06-29T11:52:32.95541Z",
+      "col": 0,
+      "id": 217,
+      "parameter_mappings": [
+        {
+          "parameter_id": "date_param",
+          "card_id": 202,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "period_filter"
+            ]
+          ]
+        },
+        {
+          "parameter_id": "project_param",
+          "card_id": 202,
+          "target": [
+            "variable",
+            [
+              "template-tag",
+              "project_key"
+            ]
+          ]
+        }
+      ],
+      "card_id": 202,
+      "entity_id": "hb9LDcy1ml4-jher15KwA",
+      "visualization_settings": {},
+      "size_y": 10,
+      "dashboard_id": 23,
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "row": 0
+    }
+  ],
+  "embedding_type": null,
+  "initially_published_at": null,
+  "can_write": true,
+  "can_set_cache_policy": true,
+  "tabs": [
+    {
+      "id": 65,
+      "dashboard_id": 23,
+      "name": "Summary",
+      "position": 0,
+      "entity_id": "IYV98BT6fyt7AsOipj01y",
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "updated_at": "2026-06-29T11:38:37.336057Z"
+    },
+    {
+      "id": 66,
+      "dashboard_id": 23,
+      "name": "By Customer",
+      "position": 1,
+      "entity_id": "hR3o0rpke0tZv8q1CWKsE",
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "updated_at": "2026-06-29T11:38:37.336057Z"
+    },
+    {
+      "id": 67,
+      "dashboard_id": 23,
+      "name": "By Product",
+      "position": 2,
+      "entity_id": "oGzkLyLvpC1yUxQsUirb9",
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "updated_at": "2026-06-29T11:38:37.336057Z"
+    },
+    {
+      "id": 68,
+      "dashboard_id": 23,
+      "name": "By Tribe",
+      "position": 3,
+      "entity_id": "i1CNC-VL93XUvFnO4ps-p",
+      "created_at": "2026-06-29T11:38:37.336057Z",
+      "updated_at": "2026-06-29T11:38:37.336057Z"
+    }
+  ],
+  "enable_embedding": false,
+  "collection_id": 25,
+  "show_in_getting_started": false,
+  "name": "PPM - Finance - Distributed Effort",
+  "is_remote_synced": false,
+  "width": "full",
+  "caveats": null,
+  "collection_authority_level": null,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T12:13:19.294646Z",
+  "made_public_by_id": 1,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "last_used_param_values": {},
+  "id": 23,
+  "last_viewed_at": "2026-06-29T12:13:31.457141Z",
+  "position": null,
+  "archived_directly": false,
+  "entity_id": "08tYz2OfrApFyKaoMZwKI",
+  "param_fields": {},
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:33.029256Z"
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "ppm_insights",
+    "archive_operation_id": null,
+    "name": "PPM Insights",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "effective_location": "/",
+    "id": 25,
+    "archived_directly": null,
+    "entity_id": "aTzf_3V7THs5iuzu2rO4C",
+    "location": "/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:14.279067Z"
+  },
+  "parameters": [
+    {
+      "id": "date_param",
+      "name": "Period",
+      "type": "string/=",
+      "slug": "period_filter",
+      "sectionId": "string"
+    },
+    {
+      "id": "project_param",
+      "name": "Project",
+      "type": "string/=",
+      "slug": "project_key",
+      "sectionId": "string"
+    },
+    {
+      "id": "team_param",
+      "name": "Team",
+      "type": "string/=",
+      "slug": "team",
+      "sectionId": "string"
+    },
+    {
+      "id": "user_param",
+      "name": "User",
+      "type": "string/=",
+      "slug": "user_name",
+      "sectionId": "string"
+    },
+    {
+      "id": "issuetype_param",
+      "name": "Issue Type",
+      "type": "string/=",
+      "slug": "issue_type",
+      "sectionId": "string"
+    }
+  ],
+  "auto_apply_filters": true,
+  "created_at": "2026-06-29T11:38:33.019284Z",
+  "public_uuid": "bc4e8186-4181-4407-b4af-12b2a347dab4",
+  "points_of_interest": null,
+  "can_delete": false
+}

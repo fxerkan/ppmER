@@ -1,0 +1,208 @@
+{
+  "cache_invalidated_at": "2026-06-29T11:52:27.03547Z",
+  "description": null,
+  "archived": false,
+  "view_count": 2,
+  "collection_position": null,
+  "source_card_id": null,
+  "table_id": null,
+  "can_run_adhoc_query": true,
+  "result_metadata": [
+    {
+      "database_type": "text",
+      "semantic_type": null,
+      "lib/deduplicated-name": "it_domain",
+      "lib/original-name": "it_domain",
+      "name": "it_domain",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "it_domain",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "it_domain",
+        {
+          "base-type": "type/Text"
+        }
+      ],
+      "effective_type": "type/Text",
+      "lib/desired-column-alias": "it_domain",
+      "display_name": "it_domain",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 7,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Text": {
+            "percent-json": 0.0,
+            "percent-url": 0.0,
+            "percent-email": 0.0,
+            "percent-state": 0.0,
+            "percent-blank": 0.0,
+            "average-length": 15.142857142857142,
+            "mode-fraction": 0.14285714285714285,
+            "top-3-fraction": 0.42857142857142855
+          }
+        }
+      },
+      "base_type": "type/Text"
+    },
+    {
+      "database_type": "numeric",
+      "semantic_type": null,
+      "lib/deduplicated-name": "effort",
+      "lib/original-name": "effort",
+      "name": "effort",
+      "lib/source": "source/native",
+      "lib/source-column-alias": "effort",
+      "source": "native",
+      "field_ref": [
+        "field",
+        "effort",
+        {
+          "base-type": "type/Decimal"
+        }
+      ],
+      "effective_type": "type/Decimal",
+      "lib/desired-column-alias": "effort",
+      "display_name": "effort",
+      "fingerprint": {
+        "global": {
+          "distinct-count": 2,
+          "nil%": 0.0
+        },
+        "type": {
+          "type/Number": {
+            "skewness": 2.6457513110645907,
+            "min": 0.0,
+            "q1": 0.0,
+            "q3": 0.0,
+            "excess-kurtosis": 7.000000000000002,
+            "zero-fraction": 0.8571428571428571,
+            "mode-fraction": 0.8571428571428571,
+            "top-3-fraction": 1.0,
+            "max": 2422.8,
+            "sd": 915.7323252067558,
+            "avg": 346.11428571428576
+          }
+        }
+      },
+      "base_type": "type/Decimal"
+    }
+  ],
+  "embedding_type": null,
+  "creator": {
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "is_data_analyst": false,
+    "last_login": "2026-06-29T13:17:21.623294Z",
+    "is_qbnewb": false,
+    "is_superuser": true,
+    "id": 1,
+    "last_name": "PPM",
+    "tenant_id": null,
+    "date_joined": "2026-06-29T08:21:32.398523Z",
+    "common_name": "Admin PPM"
+  },
+  "initially_published_at": null,
+  "can_write": true,
+  "card_schema": 23,
+  "database_id": 2,
+  "enable_embedding": false,
+  "collection_id": 27,
+  "query_type": "native",
+  "name": "Effort by IT Domain",
+  "last_query_start": "2026-06-29T12:13:53.230949Z",
+  "is_remote_synced": false,
+  "dashboard_count": 1,
+  "document_id": null,
+  "last_used_at": "2026-06-29T11:46:42.760268Z",
+  "dashboard": null,
+  "type": "question",
+  "dimensions": null,
+  "average_query_time": 91.5,
+  "creator_id": 1,
+  "can_restore": false,
+  "moderation_reviews": [],
+  "updated_at": "2026-06-29T11:52:27.029826Z",
+  "made_public_by_id": null,
+  "embedding_params": null,
+  "cache_ttl": null,
+  "dataset_query": {
+    "lib/type": "mbql/query",
+    "database": 2,
+    "stages": [
+      {
+        "native": "SELECT it_domain, ROUND(SUM(final_effort)::numeric,1) AS effort\nFROM mart.fact_financial_dashboard_2026\nWHERE it_domain IS NOT NULL\n\n  [[AND period = {{period_filter}}]]\n\n  [[AND project_name = {{project_key}}]]\nGROUP BY it_domain ORDER BY effort DESC",
+        "lib/type": "mbql.stage/native",
+        "template-tags": {
+          "period_filter": {
+            "display-name": "Period",
+            "type": "text",
+            "id": "33333333-3333-3333-3333-333333333333",
+            "name": "period_filter",
+            "required": false
+          },
+          "project_key": {
+            "display-name": "Project",
+            "type": "text",
+            "id": "44444444-4444-4444-4444-444444444444",
+            "name": "project_key",
+            "required": false
+          }
+        }
+      }
+    ]
+  },
+  "dimension_mappings": null,
+  "id": 168,
+  "legacy_query": null,
+  "parameter_mappings": [],
+  "can_manage_db": true,
+  "display": "bar",
+  "archived_directly": false,
+  "entity_id": "PbKOdJ9uT1XQvtleTIF5b",
+  "param_fields": {},
+  "collection_preview": true,
+  "last-edit-info": {
+    "id": 1,
+    "email": "admin@jppm.local",
+    "first_name": "Admin",
+    "last_name": "PPM",
+    "timestamp": "2026-06-29T11:52:27.068763Z"
+  },
+  "visualization_settings": {
+    "graph.dimensions": [
+      "it_domain"
+    ],
+    "graph.metrics": [
+      "effort"
+    ]
+  },
+  "collection": {
+    "authority_level": null,
+    "description": null,
+    "archived": false,
+    "slug": "overview",
+    "archive_operation_id": null,
+    "name": "Overview",
+    "is_remote_synced": false,
+    "personal_owner_id": null,
+    "type": null,
+    "is_sample": false,
+    "id": 27,
+    "archived_directly": null,
+    "entity_id": "msCNE-lIWnZS3hFy5QH55",
+    "location": "/25/",
+    "namespace": null,
+    "is_personal": false,
+    "created_at": "2026-06-29T11:38:14.834454Z"
+  },
+  "metabase_version": "v0.62.3.3 (686cac9)",
+  "parameters": [],
+  "dashboard_id": null,
+  "created_at": "2026-06-29T11:38:22.340697Z",
+  "parameter_usage_count": 0,
+  "public_uuid": null,
+  "can_delete": false
+}

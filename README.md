@@ -1,6 +1,6 @@
-# PPM Data Stack
+# Jira PPM Data Stack
 
-> **Open-source Project & Portfolio Management intelligence platform** built on Jira data.  
+> **Open-source Project & Portfolio Management (PPM) intelligence platform** built on Jira data.
 > Self-hosted · Free · Extensible · Production-ready in minutes.
 
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
@@ -13,17 +13,47 @@
 
 ## Why This Exists
 
-Enterprise PPM tools (Planview, Clarity, ServiceNow PPM) cost **$50,000–$500,000/year** and lock your data behind proprietary schemas. Jira Advanced Roadmaps gives you boards, not a data warehouse.
+Enterprise PPM tools (Planview, Clarity, ServiceNow PPM) cost tens of thousands per year.and lock your data behind proprietary schemas. Jira Advanced Roadmaps gives you boards, not a data warehouse.
+
+This stack gives you the same analytical capabilities using open-source tools, your existing Jira data, and a single `docker-compose up`.
 
 **PPM Data Stack** gives you:
+
 - A **full analytical warehouse** on top of your existing Jira data
 - **SQL access** to every project, issue, worklog, and sprint — forever
 - **Extensible pipelines** to mix in SharePoint lists, Excel uploads, HR data
 - A **unified portal** for every role in your organization — analyst, developer, manager
 
-No licenses. No vendor lock-in. Your data, your infrastructure.
+No price. No licenses. No vendor lock-in. ***Your data, your infrastructure.***
 
 ---
+
+## Screenshots
+
+| Orchestration Pipelines (Mage)      | Data Dictionary & Lineage (dbt) |
+| ----------------------------------- | ------------------------------- |
+| ![Mage](assets/02_mage_pipelines.png) | ![dbt](assets/05_dbt_lineage.png) |
+
+| Data Ingestion (dlt + mage)                     | Data Warehouse (PostgreSQL)             |
+| ----------------------------------------------- | --------------------------------------- |
+| ![Pipeline](assets/06_master_daily_jira_tree.png) | ![CloudBeaver](assets/04_cloudbeaver.png) |
+
+| Dashboards (Metabase)                           | Data Upload & Versioning            |
+| ----------------------------------------------- | --------------------------------------- |
+| ![Dashboards](assets/06_master_daily_jira_tree.png) | ![Excel File Upload](assets/11_upload_excel.png) |
+
+| Monitoring                           | Portal (Single Point of View)            |
+| ----------------------------------------------- | --------------------------------------- |
+| ![Monitoring](assets/08_master_daily_jira_runs.png) | ![Jira](assets/mage-master_daily_jira.png) |
+
+| Agentic AI & Chatbot                           | ...            |
+| ----------------------------------------------- | --------------------------------------- |
+| ![PPM Agent](assets/12_ppm_agent.png) | ![...](assets/mage-master_daily_jira.png) |
+
+---
+
+---
+
 
 ## Architecture
 
@@ -56,16 +86,16 @@ No licenses. No vendor lock-in. Your data, your infrastructure.
 
 ## Services at a Glance
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| **Portal** | 9000 | Role-based unified UI — entry point for all users |
-| **Metabase** | 3000 | Dashboards & self-service analytics |
-| **Mage AI** | 6789 | Pipeline orchestration & scheduling |
-| **dbt Docs** | 8081 | Data dictionary & lineage explorer |
-| **CloudBeaver** | 8978 | SQL browser for power users |
-| **Upload API** | 8085 | Excel / CSV ingestion with version history |
-| **AI Agent** | 7860 | Natural-language queries over PPM data |
-| **PostgreSQL** | 15432 | Central data warehouse |
+| Service               | Port  | Purpose                                            |
+| --------------------- | ----- | -------------------------------------------------- |
+| **Portal**      | 9000  | Role-based unified UI — entry point for all users |
+| **Metabase**    | 3000  | Dashboards & self-service analytics                |
+| **Mage AI**     | 6789  | Pipeline orchestration & scheduling                |
+| **dbt Docs**    | 8081  | Data dictionary & lineage explorer                 |
+| **CloudBeaver** | 8978  | SQL browser for power users                        |
+| **Upload API**  | 8085  | Excel / CSV ingestion with version history         |
+| **AI Agent**    | 7860  | Natural-language queries over PPM data             |
+| **PostgreSQL**  | 15432 | Central data warehouse                             |
 
 ---
 
@@ -97,12 +127,12 @@ open http://localhost:9000
 
 **Demo accounts** (change passwords in `.env`):
 
-| Username | Password | Role |
-|----------|----------|------|
-| `admin` | `admin123` | Full access — all tools |
-| `developer` | `dev123` | Developer tools (Mage, CloudBeaver, dbt Docs) |
-| `analyst` | `analyst123` | Power user (Metabase, Data Files, AI Agent) |
-| `user` | `user123` | View only (Metabase dashboards) |
+| Username      | Password       | Role                                          |
+| ------------- | -------------- | --------------------------------------------- |
+| `admin`     | `Jppm@min123` | Full access — all tools                      |
+| `developer` | `Jppm@min123` | Developer tools (Mage, CloudBeaver, dbt Docs) |
+| `analyst`   | `Jppm@min123` | Power user (Metabase, Data Files, AI Agent)   |
+| `user`      | `Jppm@min123` | View only (Metabase dashboards)               |
 
 ---
 
@@ -111,30 +141,35 @@ open http://localhost:9000
 ### Currently Available
 
 **Portfolio Overview**
+
 - Total project count by status, type, and team
 - Open issue count with priority breakdown
 - Worklog hours by project and period
 - Portfolio health scores
 
 **Time & Effort Tracking**
+
 - Worklog fact table with historical snapshots (`fact_worklogs`)
 - Distributed effort calculations across periods (`fact_distributed_efforts_*`)
 - CAPEX/OPEX classification per worklog (`fact_capex_opex_adjustment`)
 - Missing effort reports (`rpt_missing_effort`)
 
 **Project Dimensions**
+
 - Project master data with categories, leads, and custom fields (`dim_projects`)
 - User directory synced from Jira (`dim_users`)
 - HR user enrichment via manual upload (`dim_hr`)
 - Issue hierarchy: Epics → Stories → Sub-tasks (`map_issue_subtasks`)
 
 **Data Ingestion**
+
 - Incremental Jira sync (issues, projects, users, worklogs, subtasks, issue links)
 - SharePoint list ingestion (risks, budgets, calculation periods)
 - Excel/CSV upload with version history and instant DB materialization
 - Mage AI orchestration with scheduling and retry logic
 
 **Developer Experience**
+
 - dbt data lineage graph with full documentation
 - CloudBeaver SQL browser with pre-configured connection
 - AI agent for natural-language data exploration
@@ -147,50 +182,50 @@ The warehouse schema is designed to be extended. Each item below maps to a new d
 
 ### 🔵 Near-term (data already available in Jira)
 
-| Feature | How to build |
-|---------|-------------|
-| **Sprint velocity & burndown** | Add `jira_sprints.py` dlt source → `fact_sprint_velocity` dbt model |
-| **Cycle time & lead time** | Extend `fact_issues` with status transition timestamps |
-| **Team capacity vs. utilization** | Join `dim_hr` (contracted hours) with `fact_worklogs` |
-| **Cross-project dependency map** | `jira_issue_links_optimized.py` already loads → add Metabase graph |
-| **SLA / due-date compliance** | Add `due_date` field to `fact_issues`, compute breach % |
-| **Issue aging report** | Days-open calculated field in `stg_jira__issues` |
+| Feature                                 | How to build                                                            |
+| --------------------------------------- | ----------------------------------------------------------------------- |
+| **Sprint velocity & burndown**    | Add`jira_sprints.py` dlt source → `fact_sprint_velocity` dbt model |
+| **Cycle time & lead time**        | Extend`fact_issues` with status transition timestamps                 |
+| **Team capacity vs. utilization** | Join`dim_hr` (contracted hours) with `fact_worklogs`                |
+| **Cross-project dependency map**  | `jira_issue_links_optimized.py` already loads → add Metabase graph   |
+| **SLA / due-date compliance**     | Add`due_date` field to `fact_issues`, compute breach %              |
+| **Issue aging report**            | Days-open calculated field in`stg_jira__issues`                       |
 
 ### 🟡 Medium-term (needs new data source)
 
-| Feature | How to build |
-|---------|-------------|
-| **Budget vs. actuals** | Add budget Excel upload → join with `fact_distributed_efforts_*` |
-| **Resource demand forecasting** | Upload planned allocations → compare with logged hours |
-| **Risk register dashboard** | SharePoint risk list already ingested → build Metabase dashboard |
-| **OKR / Goal tracking** | New upload template → `fact_okr_progress` dbt model |
-| **Program Increment planning** | Add PI board data via Jira Align API or Excel upload |
-| **Portfolio financial summary** | CAPEX/OPEX by business unit, quarter, and project type |
+| Feature                               | How to build                                                       |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| **Budget vs. actuals**          | Add budget Excel upload → join with`fact_distributed_efforts_*` |
+| **Resource demand forecasting** | Upload planned allocations → compare with logged hours            |
+| **Risk register dashboard**     | SharePoint risk list already ingested → build Metabase dashboard  |
+| **OKR / Goal tracking**         | New upload template →`fact_okr_progress` dbt model              |
+| **Program Increment planning**  | Add PI board data via Jira Align API or Excel upload               |
+| **Portfolio financial summary** | CAPEX/OPEX by business unit, quarter, and project type             |
 
 ### 🟢 Long-term (ML / AI layer)
 
-| Feature | How to build |
-|---------|-------------|
-| **Predictive delivery date** | Train on historical velocity → serve via AI agent |
-| **Anomaly detection on worklogs** | Flag unusually high/low effort weeks automatically |
-| **Natural-language KPI queries** | AI agent already connected — expand prompt library |
-| **Executive PDF reports** | Scheduled Metabase export → email via SMTP |
-| **Slack / Teams notifications** | Add webhook step to Mage pipelines |
+| Feature                                 | How to build                                        |
+| --------------------------------------- | --------------------------------------------------- |
+| **Predictive delivery date**      | Train on historical velocity → serve via AI agent  |
+| **Anomaly detection on worklogs** | Flag unusually high/low effort weeks automatically  |
+| **Natural-language KPI queries**  | AI agent already connected — expand prompt library |
+| **Executive PDF reports**         | Scheduled Metabase export → email via SMTP         |
+| **Slack / Teams notifications**   | Add webhook step to Mage pipelines                  |
 
 ---
 
 ## Comparison with Enterprise PPM Tools
 
-| Capability | PPM Data Stack | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
-|------------|:---:|:---:|:---:|:---:|
-| Self-hosted | ✅ | ❌ | ❌ | ❌ |
-| Open source | ✅ | ❌ | ❌ | ❌ |
-| SQL data access | ✅ | ❌ | ❌ | limited |
-| Custom dbt models | ✅ | ❌ | ❌ | ❌ |
-| Excel/CSV ingestion | ✅ | ✅ | ❌ | ✅ |
-| AI natural-language | ✅ | ❌ | ❌ | ❌ |
-| Role-based portal | ✅ | ✅ | limited | ✅ |
-| Annual cost | **$0** | $50k–$500k | ~$15/user/mo | ~$10/user/mo |
+| Capability          |              PPM Data Stack              | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
+| ------------------- | :---------------------------------------: | :----------------: | :--------------------: | :---------------: |
+| Self-hosted         |                    ✅                    |         ❌         |           ❌           |        ❌        |
+| Open source         |                    ✅                    |         ❌         |           ❌           |        ❌        |
+| SQL data access     |                    ✅                    |         ❌         |           ❌           |      limited      |
+| Custom dbt models   |                    ✅                    |         ❌         |           ❌           |        ❌        |
+| Excel/CSV ingestion |                    ✅                    |         ✅         |           ❌           |        ✅        |
+| AI natural-language |                    ✅                    |         ❌         |           ❌           |        ❌        |
+| Role-based portal   |                    ✅                    |         ✅         |        limited        |        ✅        |
+| Annual cost         | **$0** | $50k–$500k | ~$15/user/mo |    ~$10/user/mo    |                        |                  |
 
 ---
 
@@ -228,27 +263,27 @@ JIRA_START_DATE=2023-01-01
 JIRA_INCREMENTAL_DAYS=7
 
 # Portal passwords (change before sharing)
-PORTAL_ADMIN_PASS=admin123
-PORTAL_DEV_PASS=dev123
-PORTAL_ANALYST_PASS=analyst123
-PORTAL_USER_PASS=user123
+PORTAL_ADMIN_PASS=Jppm@min123
+PORTAL_DEV_PASS=Jppm@min123
+PORTAL_ANALYST_PASS=Jppm@min123
+PORTAL_USER_PASS=Jppm@min123
 ```
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Ingestion | [dlt](https://dlthub.com) | 0.5.x |
-| Orchestration | [Mage AI](https://www.mage.ai) | 0.9.x |
-| Transformation | [dbt-core](https://www.getdbt.com) + dbt-postgres | 1.x |
-| Warehouse | PostgreSQL | 16 |
-| BI | [Metabase](https://www.metabase.com) | latest |
-| SQL Browser | [CloudBeaver](https://cloudbeaver.io) Community | 24.2 |
-| Portal | FastAPI + Jinja2 + Tailwind CSS | Python 3.11 |
-| AI Agent | Gradio + LLM | Python 3.11 |
-| Upload API | FastAPI + openpyxl | Python 3.11 |
+| Layer          | Technology                                     | Version     |
+| -------------- | ---------------------------------------------- | ----------- |
+| Ingestion      | [dlt](https://dlthub.com)                         | 0.5.x       |
+| Orchestration  | [Mage AI](https://www.mage.ai)                    | 0.9.x       |
+| Transformation | [dbt-core](https://www.getdbt.com) + dbt-postgres | 1.x         |
+| Warehouse      | PostgreSQL                                     | 16          |
+| BI             | [Metabase](https://www.metabase.com)              | latest      |
+| SQL Browser    | [CloudBeaver](https://cloudbeaver.io) Community   | 24.2        |
+| Portal         | FastAPI + Jinja2 + Tailwind CSS                | Python 3.11 |
+| AI Agent       | Gradio + LLM                                   | Python 3.11 |
+| Upload API     | FastAPI + openpyxl                             | Python 3.11 |
 
 ---
 
@@ -293,18 +328,6 @@ group by 1, 2
 
 ---
 
-## Screenshots
-
-| Mage AI Pipelines | dbt Lineage |
-|---|---|
-| ![Mage](assets/02_mage_pipelines.png) | ![dbt](assets/05_dbt_lineage.png) |
-
-| Pipeline Detail | CloudBeaver |
-|---|---|
-| ![Pipeline](assets/06_master_daily_jira_tree.png) | ![CloudBeaver](assets/04_cloudbeaver.png) |
-
----
-
 ## Contributing
 
 Pull requests are welcome. To add a new PPM feature:
@@ -322,4 +345,4 @@ MIT — use freely, modify freely, contribute back if you can.
 
 ---
 
-*Built for teams that want enterprise PPM analytics without enterprise PPM prices.*
+*Built by **FXerkan** & AI for teams that want enterprise PPM analytics without enterprise PPM prices.*

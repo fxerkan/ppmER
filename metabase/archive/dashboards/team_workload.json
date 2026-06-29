@@ -1,0 +1,286 @@
+{
+    "description": "Team workload analysis showing weekly hours per user and top performers",
+    "archived": false,
+    "view_count": 3,
+    "collection_position": null,
+    "dashcards": [
+        {
+            "size_x": 24,
+            "dashboard_tab_id": null,
+            "series": [],
+            "inline_parameters": [],
+            "action_id": null,
+            "collection_authority_level": null,
+            "card": {
+                "cache_invalidated_at": "2026-06-28T22:40:23.013195Z",
+                "description": "Weekly hours per user for the last 12 weeks",
+                "archived": false,
+                "view_count": 1,
+                "collection_position": null,
+                "source_card_id": null,
+                "table_id": null,
+                "result_metadata": [
+                    {
+                        "name": "display_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "display_name",
+                        "field_ref": [
+                            "field",
+                            "display_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "week_start",
+                        "database_type": "timestamptz",
+                        "base_type": "type/DateTimeWithLocalTZ",
+                        "display_name": "week_start",
+                        "semantic_type": "type/CreationTimestamp",
+                        "field_ref": [
+                            "field",
+                            "week_start",
+                            {
+                                "base-type": "type/DateTimeWithLocalTZ"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "hours_logged",
+                        "database_type": "numeric",
+                        "base_type": "type/Decimal",
+                        "display_name": "hours_logged",
+                        "field_ref": [
+                            "field",
+                            "hours_logged",
+                            {
+                                "base-type": "type/Decimal"
+                            }
+                        ]
+                    }
+                ],
+                "embedding_type": null,
+                "initially_published_at": null,
+                "can_write": true,
+                "card_schema": 23,
+                "database_id": 2,
+                "enable_embedding": false,
+                "collection_id": null,
+                "query_type": "native",
+                "download_perms": "full",
+                "name": "Workload: Weekly Hours per User",
+                "document_id": null,
+                "last_used_at": "2026-06-28T22:37:31.449984Z",
+                "type": "question",
+                "dimensions": null,
+                "query_average_duration": null,
+                "creator_id": 2,
+                "moderation_reviews": [],
+                "updated_at": "2026-06-28T22:40:23.007103Z",
+                "made_public_by_id": null,
+                "embedding_params": null,
+                "cache_ttl": null,
+                "dataset_query": {
+                    "lib/type": "mbql/query",
+                    "database": 2,
+                    "stages": [
+                        {
+                            "lib/type": "mbql.stage/native",
+                            "native": "SELECT\n    u.display_name,\n    DATE_TRUNC('week', w.trx_date) AS week_start,\n    ROUND(SUM(w.time_spent_hours)::numeric, 1) AS hours_logged\nFROM core.fact_worklogs w\nJOIN core.dim_users u ON w.author_id = u.user_id\nWHERE w.trx_date >= CURRENT_DATE - INTERVAL '12 weeks'\nGROUP BY u.display_name, DATE_TRUNC('week', w.trx_date)\nORDER BY week_start DESC, hours_logged DESC"
+                        }
+                    ]
+                },
+                "dimension_mappings": null,
+                "id": 44,
+                "legacy_query": null,
+                "parameter_mappings": [],
+                "display": "bar",
+                "archived_directly": false,
+                "entity_id": "O5CtSAowHGGMtlgPViJMx",
+                "collection_preview": true,
+                "visualization_settings": {},
+                "metabase_version": "v0.62.3.3 (686cac9)",
+                "parameters": [],
+                "dashboard_id": null,
+                "created_at": "2026-06-28T22:37:31.449984Z",
+                "public_uuid": null
+            },
+            "updated_at": "2026-06-28T22:40:27.567141Z",
+            "col": 0,
+            "id": 50,
+            "parameter_mappings": [],
+            "card_id": 44,
+            "entity_id": "oG8_jneR4a0eOHVr1HBHD",
+            "visualization_settings": {},
+            "size_y": 8,
+            "dashboard_id": 6,
+            "created_at": "2026-06-28T22:40:27.567141Z",
+            "row": 0
+        },
+        {
+            "size_x": 24,
+            "dashboard_tab_id": null,
+            "series": [],
+            "inline_parameters": [],
+            "action_id": null,
+            "collection_authority_level": null,
+            "card": {
+                "cache_invalidated_at": "2026-06-28T22:40:23.529048Z",
+                "description": "Top 10 users by total logged hours this month",
+                "archived": false,
+                "view_count": 1,
+                "collection_position": null,
+                "source_card_id": null,
+                "table_id": null,
+                "result_metadata": [
+                    {
+                        "name": "display_name",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "display_name",
+                        "field_ref": [
+                            "field",
+                            "display_name",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "email",
+                        "database_type": "varchar",
+                        "base_type": "type/Text",
+                        "display_name": "email",
+                        "field_ref": [
+                            "field",
+                            "email",
+                            {
+                                "base-type": "type/Text"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "hours_this_month",
+                        "database_type": "numeric",
+                        "base_type": "type/Decimal",
+                        "display_name": "hours_this_month",
+                        "field_ref": [
+                            "field",
+                            "hours_this_month",
+                            {
+                                "base-type": "type/Decimal"
+                            }
+                        ]
+                    }
+                ],
+                "embedding_type": null,
+                "initially_published_at": null,
+                "can_write": true,
+                "card_schema": 23,
+                "database_id": 2,
+                "enable_embedding": false,
+                "collection_id": null,
+                "query_type": "native",
+                "download_perms": "full",
+                "name": "Workload: Top 10 Users This Month",
+                "document_id": null,
+                "last_used_at": "2026-06-28T22:37:32.013246Z",
+                "type": "question",
+                "dimensions": null,
+                "query_average_duration": null,
+                "creator_id": 2,
+                "moderation_reviews": [],
+                "updated_at": "2026-06-28T22:40:23.526889Z",
+                "made_public_by_id": null,
+                "embedding_params": null,
+                "cache_ttl": null,
+                "dataset_query": {
+                    "lib/type": "mbql/query",
+                    "database": 2,
+                    "stages": [
+                        {
+                            "lib/type": "mbql.stage/native",
+                            "native": "SELECT\n    u.display_name,\n    u.email,\n    ROUND(SUM(w.time_spent_hours)::numeric, 1) AS hours_this_month\nFROM core.fact_worklogs w\nJOIN core.dim_users u ON w.author_id = u.user_id\nWHERE DATE_TRUNC('month', w.trx_date) = DATE_TRUNC('month', CURRENT_DATE)\nGROUP BY u.display_name, u.email\nORDER BY hours_this_month DESC\nLIMIT 10"
+                        }
+                    ]
+                },
+                "dimension_mappings": null,
+                "id": 45,
+                "legacy_query": null,
+                "parameter_mappings": [],
+                "display": "bar",
+                "archived_directly": false,
+                "entity_id": "cSj4c8rVv_cQDQrV6fPOP",
+                "collection_preview": true,
+                "visualization_settings": {},
+                "metabase_version": "v0.62.3.3 (686cac9)",
+                "parameters": [],
+                "dashboard_id": null,
+                "created_at": "2026-06-28T22:37:32.013246Z",
+                "public_uuid": null
+            },
+            "updated_at": "2026-06-28T22:40:27.567141Z",
+            "col": 0,
+            "id": 51,
+            "parameter_mappings": [],
+            "card_id": 45,
+            "entity_id": "Gh4jmpXnLVvy4YyNQZeK-",
+            "visualization_settings": {},
+            "size_y": 8,
+            "dashboard_id": 6,
+            "created_at": "2026-06-28T22:40:27.567141Z",
+            "row": 8
+        }
+    ],
+    "embedding_type": null,
+    "initially_published_at": null,
+    "can_write": true,
+    "can_set_cache_policy": true,
+    "tabs": [],
+    "enable_embedding": false,
+    "collection_id": null,
+    "show_in_getting_started": false,
+    "name": "Team Workload",
+    "is_remote_synced": false,
+    "width": "full",
+    "caveats": null,
+    "collection_authority_level": null,
+    "creator_id": 2,
+    "can_restore": false,
+    "moderation_reviews": [],
+    "updated_at": "2026-06-28T22:39:25.417831Z",
+    "made_public_by_id": 2,
+    "embedding_params": null,
+    "cache_ttl": null,
+    "last_used_param_values": {},
+    "id": 6,
+    "last_viewed_at": "2026-06-28T22:39:45.473266Z",
+    "position": null,
+    "archived_directly": false,
+    "entity_id": "YvmBxaBAh2HqbhJaYTkmP",
+    "param_fields": {},
+    "last-edit-info": {
+        "id": 2,
+        "email": "admin@jppm.local",
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "timestamp": "2026-06-28T22:40:27.73373Z"
+    },
+    "collection": {
+        "metabase.collections.models.collection.root/is-root?": true,
+        "authority_level": null,
+        "name": "Our analytics",
+        "is_personal": false,
+        "id": "root",
+        "is_remote_synced": false,
+        "can_write": true
+    },
+    "parameters": [],
+    "auto_apply_filters": true,
+    "created_at": "2026-06-28T22:37:38.682757Z",
+    "public_uuid": "805e9be6-db05-49bc-b425-baea4fa0ab01",
+    "points_of_interest": null,
+    "can_delete": false
+}

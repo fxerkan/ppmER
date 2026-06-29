@@ -99,10 +99,10 @@ open http://localhost:9000
 
 | Kullanıcı | Şifre | Rol |
 |-----------|-------|-----|
-| `admin` | `admin123` | Tam erişim — tüm araçlar |
-| `developer` | `dev123` | Geliştirici araçları (Mage, CloudBeaver, dbt Docs) |
-| `analyst` | `analyst123` | İleri kullanıcı (Metabase, Data Files, AI Ajan) |
-| `user` | `user123` | Sadece okuma (Metabase dashboardları) |
+| `admin` | `Jppm@min123` | Tam erişim — tüm araçlar |
+| `developer` | `Jppm@min123` | Geliştirici araçları (Mage, CloudBeaver, dbt Docs) |
+| `analyst` | `Jppm@min123` | İleri kullanıcı (Metabase, Data Files, AI Ajan) |
+| `user` | `Jppm@min123` | Sadece okuma (Metabase dashboardları) |
 
 ---
 
