@@ -26,6 +26,9 @@ DB_DSN = (
 )
 
 
+DBGPT_INTERNAL_URL = os.getenv("DBGPT_INTERNAL_URL", "http://dbgpt:5670")
+
+
 def get_service_url(key: str) -> str:
     port_map = {
         "mage": int(os.getenv("MAGE_EXTERNAL_PORT", os.getenv("MAGE_PORT", 6789))),
@@ -34,6 +37,7 @@ def get_service_url(key: str) -> str:
         "cloudbeaver": int(os.getenv("CLOUDBEAVER_EXTERNAL_PORT", 8978)),
         "upload": int(os.getenv("UPLOAD_EXTERNAL_PORT", 8085)),
         "agent": int(os.getenv("AGENT_PORT", 7860)),
+        "dbgpt": int(os.getenv("DBGPT_PORT", 5670)),
     }
     port = port_map.get(key, 8000)
     return f"http://localhost:{port}"
@@ -46,7 +50,8 @@ SERVICES = {
     "metabase": {"name": "Metabase", "icon": "📊", "roles": ["admin", "developer", "power_user", "end_user"], "embed": False, "internal": "metabase:3000"},
     "cloudbeaver": {"name": "Database & Query", "icon": "🗄️", "roles": ["admin", "developer", "power_user", "end_user"], "embed": True, "internal": "cloudbeaver:8978"},
     "upload": {"name": "Data Files", "icon": "📁", "roles": ["admin", "developer", "power_user", "end_user"], "embed": True, "internal": "upload:8080"},
-    "agent": {"name": "AI Agent", "icon": "🤖", "roles": ["admin", "developer", "power_user", "end_user"], "embed": True, "internal": "agent:7860"},
+    "agent": {"name": "AI Agent (legacy)", "icon": "🤖", "roles": ["admin", "developer"], "embed": True, "internal": "agent:7860"},
+    "dbgpt": {"name": "AI Assistant", "icon": "🧠", "roles": ["admin", "developer", "power_user", "end_user"], "embed": False, "internal": "dbgpt:5670"},
 }
 
 

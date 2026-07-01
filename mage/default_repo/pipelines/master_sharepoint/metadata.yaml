@@ -157,7 +157,7 @@ blocks:
   - dlt_load_shrp_projects
   - dlt_load_shrp_operation_efforts
   uuid: dbt_run_staging_models_sharepoint
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: null
   configuration:
     file_source:
@@ -194,7 +194,7 @@ blocks:
   type: data_loader
   upstream_blocks: []
   uuid: dlt_load_shrp_capex_opex_adjustment
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: null
   configuration:
     file_source:
@@ -235,24 +235,9 @@ executor_count: 1
 executor_type: null
 extensions: {}
 name: Master SharePoint Load
-custom_notifications:
-  email_on_failure:
-    to:
-      - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
-    cc: []
-    bcc: []
-  email_on_success:
-    to:
-      - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
-    cc: []
-    bcc: []
+notification_config: {}
 remote_variables_dir: null
-retry_config:
-  delay: 60
-  exponential_backoff: true
-  retries: 3
+retry_config: {}
 run_pipeline_in_one_process: false
 settings:
   triggers: null

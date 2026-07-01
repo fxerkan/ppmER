@@ -9,7 +9,7 @@ triggers:
   settings: null
   sla: null
   start_time: 2025-12-16 08:00:00+00:00
-  status: active
+  status: inactive
   token: 943d29e66b424d3aa896f6aea4c3878f
   variables:
     pipeline_type: daily
@@ -23,7 +23,7 @@ triggers:
   settings: null
   sla: null
   start_time: 2026-02-18 13:02:00+00:00
-  status: active
+  status: inactive
   token: c3a717bca8764bc2bd675ba01c574d85
   variables:
     pipeline_type: daily

@@ -9,7 +9,7 @@ exposures:
     url: "http://localhost:3000/dashboard/19"
     description: >
       PPM Insights homepage with links to all dashboards
-    depends_on:
+    depends_on: []
     owner:
       name: PPM Team
       email: admin@jppm.local

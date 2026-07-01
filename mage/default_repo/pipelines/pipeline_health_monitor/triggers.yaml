@@ -10,6 +10,6 @@ triggers:
   settings: {}
   sla: null
   start_time: '2025-12-20'
-  status: active
+  status: inactive
   token: null
   variables: {}

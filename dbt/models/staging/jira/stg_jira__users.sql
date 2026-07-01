@@ -44,22 +44,23 @@ with
         where row_num = 1
     ),
 
-    -- Get HR user data, deduplicated by user_account_id (keep most recent)
+    -- Get HR user data, deduplicated by email (keep most recent)
+    -- ponytail: user_account_id in hr_users is the HR admin's ID, not the employee's
     hr_users_source as (select * from {{ source("raw_jira", "hr_users") }}),
 
     hr_users_deduplicated as (
         select
             *,
             row_number() over (
-                partition by user_account_id order by created_at desc, _dlt_load_id desc
+                partition by lower(email) order by created_at desc, _dlt_load_id desc
             ) as row_num
         from hr_users_source
-        where user_account_id is not null
+        where email is not null and trim(email) != ''
     ),
 
     hr_users_cleaned as (
         select
-            user_account_id,
+            lower(email) as email,
             user_name as hr_user_name,
             name_surname,
             manager_director,
@@ -72,6 +73,7 @@ with
             company_info,
             active_inactive_status as hr_status,
             start_time as employment_start_date,
+            exit_date,
             issue_key as hr_issue_key,
             created_at as hr_record_created_at
         from hr_users_deduplicated
@@ -119,6 +121,7 @@ with
             hr.outsource_inhouse,
             hr.company_info,
             hr.employment_start_date,
+            hr.exit_date,
 
             -- HR record metadata
             hr.hr_issue_key,
@@ -126,7 +129,7 @@ with
 
             -- Flag to indicate if HR data exists
             case
-                when hr.user_account_id is not null then true else false
+                when hr.email is not null then true else false
             end as has_hr_data,
 
             -- Metadata from users table
@@ -134,7 +137,7 @@ with
             u._dlt_id,
             u._etl_date
         from users_cleaned u
-        left join hr_users_cleaned hr on u.user_id = hr.user_account_id
+        left join hr_users_cleaned hr on lower(u.email) = hr.email
     )
 
 select
@@ -157,6 +160,7 @@ select
     outsource_inhouse,
     company_info,
     employment_start_date,
+    exit_date,
     -- Metadata
     has_hr_data,
     -- hr_issue_key,

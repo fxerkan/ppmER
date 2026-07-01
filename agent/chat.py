@@ -748,7 +748,7 @@ with gr.Blocks(title="PPM Data Assistant", fill_width=True) as demo:
     with gr.Column(visible=False) as app_view:
 
         # ── Chat layout ────────────────────────────────────────────────────────
-        with gr.Column(visible=True) as chat_view:
+        with gr.Column(visible=True, elem_classes=["chat-page"]) as chat_view:
             with gr.Row(elem_classes=["main-row"]):
 
                 # Left panel
@@ -804,36 +804,42 @@ with gr.Blocks(title="PPM Data Assistant", fill_width=True) as demo:
                         send_btn = gr.Button("Send ▶", variant="primary", scale=1, min_width=80)
 
         # ── Settings view ──────────────────────────────────────────────────────
-        with gr.Column(visible=False) as settings_view:
+        with gr.Column(visible=False, elem_classes=["settings-page"]) as settings_view:
             with gr.Row():
-                gr.Markdown("## ⚙ Settings — Providers & Models", elem_classes=["settings-header"])
-                back_btn = gr.Button("← Back to Chat", variant="secondary", scale=0)
+                gr.Markdown("## ⚙ Settings — Providers & Models")
+                back_btn = gr.Button("← Back to Chat", variant="secondary", scale=0, min_width=130)
             settings_msg = gr.Markdown("")
 
-            gr.Markdown("### Providers")
-            providers_df = gr.Dataframe(headers=["ID","Name","Base URL","API Key Env","Active"],
-                                        value=admin_providers(), interactive=False)
+            gr.Markdown("### LLM Providers")
+            providers_df = gr.Dataframe(
+                headers=["ID", "Name", "Base URL", "API Key Env", "Active"],
+                value=admin_providers(), interactive=False,
+                wrap=True,
+            )
             with gr.Row():
-                s_pn = gr.Textbox(label="Name", scale=1)
-                s_pu = gr.Textbox(label="Base URL", scale=2)
-                s_pe = gr.Textbox(label="API Key Env Var", scale=1)
-                s_pk = gr.Textbox(label="Direct Key", type="password", scale=1)
+                s_pn = gr.Textbox(label="Name", placeholder="My Provider", scale=1)
+                s_pu = gr.Textbox(label="Base URL", placeholder="https://api.example.com/v1", scale=2)
+                s_pe = gr.Textbox(label="API Key Env Var", placeholder="MY_API_KEY", scale=1)
+                s_pk = gr.Textbox(label="Direct API Key", type="password", placeholder="sk-…", scale=1)
             with gr.Row():
-                save_prov = gr.Button("Save Provider", variant="primary", scale=0)
-                test_name = gr.Textbox(label="Test Provider", scale=2)
-                test_prov = gr.Button("🔌 Test", scale=0)
-            ref_admin = gr.Button("↻ Refresh", size="sm")
+                save_prov = gr.Button("Save Provider", variant="primary", scale=0, min_width=140)
+                test_name = gr.Textbox(label="Test Provider Name", placeholder="Google Gemini", scale=2)
+                test_prov = gr.Button("🔌 Test Connection", scale=0, min_width=140)
+            ref_admin  = gr.Button("↻ Refresh Tables", size="sm")
 
             gr.Markdown("---\n### Models")
-            models_df = gr.Dataframe(headers=["ID","Provider","Model ID","Display Name","Free","Default","Active"],
-                                     value=admin_models(), interactive=False)
+            models_df = gr.Dataframe(
+                headers=["ID", "Provider", "Model ID", "Display Name", "Free", "Default", "Active"],
+                value=admin_models(), interactive=False,
+                wrap=True,
+            )
             with gr.Row():
-                s_mp = gr.Textbox(label="Provider Name", scale=1)
-                s_mi = gr.Textbox(label="Model ID", scale=1)
-                s_md = gr.Textbox(label="Display Name", scale=1)
-                s_mf = gr.Checkbox(label="Free", scale=0)
-                s_md2= gr.Checkbox(label="Default", scale=0)
-            add_model = gr.Button("Add Model", variant="primary", scale=0)
+                s_mp  = gr.Textbox(label="Provider Name",  placeholder="Google Gemini", scale=1)
+                s_mi  = gr.Textbox(label="Model ID",       placeholder="gemini-2.5-flash", scale=1)
+                s_md  = gr.Textbox(label="Display Name",   placeholder="Gemini 2.5 Flash", scale=1)
+                s_mf  = gr.Checkbox(label="Free Tier", scale=0)
+                s_md2 = gr.Checkbox(label="Set as Default", scale=0)
+            add_model = gr.Button("Add Model", variant="primary", scale=0, min_width=120)
 
 
     # ════════════════════════════════════════════════════════════════════════════

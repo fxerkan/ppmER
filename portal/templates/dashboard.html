@@ -53,12 +53,12 @@
     </div>
     {% endif %}
 
-    {% if 'agent' in services %}
+    {% if 'dbgpt' in services %}
     <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/agent', 'AI Assistant')">
-      <div class="text-3xl mb-3">🤖</div>
+         onclick="window.location='/chat'">
+      <div class="text-3xl mb-3">🧠</div>
       <h4 class="font-semibold text-slate-800">AI Assistant</h4>
-      <p class="text-sm text-slate-500 mt-1">Ask questions about your project data</p>
+      <p class="text-sm text-slate-500 mt-1">Ask questions about your project data in natural language</p>
     </div>
     {% endif %}
 
