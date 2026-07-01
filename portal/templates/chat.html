@@ -1,0 +1,680 @@
+{% extends "base.html" %}
+{% block title %} — AI Assistant{% endblock %}
+{% block active_agent %}active{% endblock %}
+
+{% block content %}
+<div class="flex h-full overflow-hidden bg-slate-100 dark:bg-slate-950">
+
+  <!-- ── Sessions Sidebar ── -->
+  <aside id="session-sidebar" class="w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
+    <div class="p-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <button id="new-chat-btn"
+        class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-3 py-2 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Chat
+      </button>
+    </div>
+
+    <!-- Model Selector -->
+    <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <label class="text-xs text-slate-500 font-medium uppercase tracking-wide">Model</label>
+      <select id="model-selector" class="w-full mt-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <option value="gemini-2.5-flash">Gemini 2.5 Flash ⚡</option>
+        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+        <option value="deepseek-v4-flash">DeepSeek V4 Flash</option>
+        <option value="gpt-4o-mini">GPT-4o Mini</option>
+      </select>
+    </div>
+
+    <!-- Session List -->
+    <div class="flex-1 overflow-y-auto py-2">
+      <p class="text-xs text-slate-400 px-3 py-1 font-semibold uppercase tracking-wide">Recent Sessions</p>
+      <div id="session-list" class="space-y-0.5 px-2"></div>
+    </div>
+
+    <!-- DB-GPT Admin Link -->
+    <div class="p-3 border-t border-slate-100 dark:border-slate-800 shrink-0">
+      <a href="http://localhost:{{ request.url.port or 5670 | default(5670) }}" target="_blank"
+         onclick="event.preventDefault(); window.open('http://localhost:5670', '_blank')"
+         class="flex items-center gap-2 text-xs text-slate-400 hover:text-blue-500 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        DB-GPT Admin UI
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── Main Chat Area ── -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-5 py-2.5 flex items-center gap-3 shrink-0">
+      <span class="text-xl">🧠</span>
+      <div class="flex-1 min-w-0">
+        <h2 id="chat-title" class="font-semibold text-slate-800 dark:text-slate-200 text-sm truncate">PPM AI Assistant</h2>
+        <p class="text-xs text-slate-500">DB-GPT · ppm_datawarehouse</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-300"></span>
+        <span id="status-text" class="text-xs text-slate-400">Checking...</span>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="messages" class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+      <!-- Welcome -->
+      <div class="flex gap-3" id="welcome-msg">
+        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 text-base mt-1">🧠</div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm max-w-3xl w-full space-y-4">
+
+          <!-- Greeting -->
+          <div>
+            <p class="text-base font-semibold text-slate-800 dark:text-slate-100">Merhaba <strong>{{ user.name }}</strong>, PPM AI Asistanına hoş geldiniz 👋</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Doğal dil ile proje portföyünüzü analiz edin. Sorularınızı Türkçe veya İngilizce sorabilirsiniz — AI arka planda SQL üretir ve sonuçları tablo veya grafik olarak sunar.</p>
+          </div>
+
+          <!-- What's in the system -->
+          <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl px-4 py-3 space-y-2">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">📦 Sistemdeki Veri Setleri</p>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-300">
+              <div>🗂️ <strong>Projeler</strong> — tüm Jira projeleri, tipler, durumlar</div>
+              <div>📋 <strong>Issue'lar</strong> — Epic, Story, Task, Bug hiyerarşisi</div>
+              <div>⏱️ <strong>Worklog / Efor</strong> — kişi bazlı iş kaydı geçmişi</div>
+              <div>👤 <strong>Kullanıcılar</strong> — ekip üyeleri ve rolleri</div>
+              <div>🏃 <strong>Sprint'ler</strong> — sprint kapsamı ve tamamlanma</div>
+              <div>📊 <strong>Portfolio</strong> — özet KPI'lar ve sağlık metrikleri</div>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Detaylı tablo ve kolon açıklamaları için → <a href="/data-catalog" class="text-blue-500 hover:text-blue-600 underline font-medium">Data Catalog</a></p>
+          </div>
+
+          <!-- KPIs / Terms -->
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-4 py-3 space-y-1.5">
+            <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">📐 PPM Terimleri & KPI'lar</p>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-300">
+              <div><span class="font-semibold">Efor (h)</span> — worklog'a girilen toplam saat</div>
+              <div><span class="font-semibold">Velocity</span> — sprint başına tamamlanan story point</div>
+              <div><span class="font-semibold">Lead Time</span> — issue açılışından kapanışına süre</div>
+              <div><span class="font-semibold">Burndown</span> — sprint ilerlemesi kalan iş vs zaman</div>
+              <div><span class="font-semibold">CapEx / OpEx</span> — proje yatırım vs operasyon maliyeti</div>
+              <div><span class="font-semibold">Health Score</span> — gecikmeli issue oranı bazlı sağlık</div>
+              <div><span class="font-semibold">Missing Effort</span> — worklog kaydı eksik issue oranı</div>
+              <div><span class="font-semibold">Utilization</span> — çalışan kapasite kullanım yüzdesi</div>
+            </div>
+          </div>
+
+          <!-- Example questions grid -->
+          <div class="space-y-1.5">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">💬 Örnek Sorular</p>
+            <div class="grid grid-cols-1 gap-1.5">
+              <p class="text-xs text-slate-400 font-medium mt-0.5">— Proje Sağlığı & Gecikme</p>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">🔴 En kötü gidişata sahip top 5 projeyi hangi Epic/Task'lardan dolayı geciktiğiyle listele</button>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">🚨 Deadline geçmiş veya bu ay kapanması gereken ama effort kaydı eksik olan issue listesi</button>
+
+              <p class="text-xs text-slate-400 font-medium mt-1">— Efor & Kaynak Kullanımı</p>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">⏱️ 2026 yılı başından itibaren en fazla efora girişi olan projeler ve kişi bazında dağılım</button>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">👥 Son 3 ayda en fazla ve en az effort kaydeden top 10 kullanıcıyı göster, proje bazında da kır</button>
+
+              <p class="text-xs text-slate-400 font-medium mt-1">— Finansal & Portföy Analizi</p>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">💰 Projeleri CapEx ve OpEx kategorisine göre grupla, toplam efor saatlerini ve tahmini maliyeti göster</button>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">📊 Portfolio dashboard özeti: aktif proje sayısı, açık issue'lar, ortalama lead time ve toplam loglu saat</button>
+              <button onclick="sendSuggestion(this)" class="suggest-btn">📈 Hangi projeler bu çeyrekte en yüksek ROI'ye sahip? Tamamlanan iş / harcanan efor oranına göre sırala</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <style>
+        .suggest-btn {
+          text-align: left;
+          font-size: 0.75rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          color: #475569;
+          cursor: pointer;
+          transition: background 0.15s, border-color 0.15s;
+          width: 100%;
+        }
+        .dark .suggest-btn { background: rgba(51,65,85,0.5); border-color: #334155; color: #cbd5e1; }
+        .suggest-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+        .dark .suggest-btn:hover { background: rgba(29,78,216,0.2); border-color: #3b82f6; color: #93c5fd; }
+        /* Insights bullet formatting */
+        .insights-content ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .insights-content li { display: flex; gap: 6px; align-items: flex-start; }
+        .insights-content p { margin: 4px 0; }
+        .insights-content strong { color: #92400e; }
+        .dark .insights-content strong { color: #fbbf24; }
+      </style>
+    </div>
+
+    <!-- Input Area -->
+    <div class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 py-3 shrink-0">
+      <div class="flex gap-2 max-w-4xl mx-auto">
+        <textarea id="user-input" rows="1"
+          placeholder="PPM verileriniz hakkında bir soru sorun..."
+          class="flex-1 resize-none rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button id="send-btn" onclick="sendMessage()"
+          class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl text-sm font-medium transition-colors shrink-0 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          Send
+        </button>
+      </div>
+      <p class="text-center text-xs text-slate-400 mt-1.5 max-w-4xl mx-auto">
+        DB-GPT executes SQL on <span class="font-mono">ppm_datawarehouse</span> · Results reflect live data
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let currentSessionId = null;
+let isStreaming = false;
+let chartInstances = {};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function isNumeric(val) {
+  if (val === null || val === '' || val === undefined) return false;
+  return !isNaN(parseFloat(String(val))) && isFinite(String(val).replace(/[,%]/g,''));
+}
+function formatCell(val, col) {
+  if (val === null || val === undefined || val === '') return '—';
+  const s = String(val);
+  // Date formatting: ISO dates and YYYY-MM
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return new Date(s).toLocaleDateString('tr-TR', {day:'2-digit',month:'short',year:'numeric'});
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return new Date(s).toLocaleDateString('tr-TR', {day:'2-digit',month:'short',year:'numeric'});
+  if (/^\d{4}-\d{2}$/.test(s)) { const [y,m] = s.split('-'); return new Date(y,m-1,1).toLocaleDateString('tr-TR',{month:'long',year:'numeric'}); }
+  return s;
+}
+
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const sessionList = document.getElementById('session-list');
+const modelSelector = document.getElementById('model-selector');
+const chatTitle = document.getElementById('chat-title');
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async () => {
+  checkHealth();
+  await loadSessions();
+  // ponytail: no auto-session; session is created on first message send
+})();
+
+async function checkHealth() {
+  try {
+    const r = await fetch('/api/dbgpt/health');
+    const d = await r.json();
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    if (d.status === 'ok') { dot.className = 'w-2 h-2 rounded-full bg-emerald-500'; txt.textContent = 'DB-GPT connected'; }
+    else { dot.className = 'w-2 h-2 rounded-full bg-amber-400'; txt.textContent = 'DB-GPT degraded'; }
+  } catch {
+    document.getElementById('status-dot').className = 'w-2 h-2 rounded-full bg-red-500';
+    document.getElementById('status-text').textContent = 'DB-GPT unavailable';
+  }
+}
+
+// ── Sessions ──────────────────────────────────────────────────────────────────
+async function loadSessions() {
+  try {
+    const r = await fetch('/api/dbgpt/sessions');
+    const d = await r.json();
+    renderSessionList(d.sessions || []);
+  } catch {}
+}
+
+function renderSessionList(sessions) {
+  sessionList.innerHTML = '';
+  if (!sessions.length) {
+    sessionList.innerHTML = '<p class="text-xs text-slate-400 px-3 py-2 italic">No sessions yet</p>';
+    return;
+  }
+  sessions.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'group flex items-center gap-1 rounded-lg px-2 py-1.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ' + (s.id === currentSessionId ? 'bg-blue-50 dark:bg-blue-900/20' : '');
+    el.innerHTML = `
+      <div class="flex-1 min-w-0" onclick="loadSession('${s.id}')">
+        <p class="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">${escHtml(s.title)}</p>
+        <p class="text-xs text-slate-400">${s.message_count} msgs</p>
+      </div>
+      <button onclick="deleteSession('${s.id}', event)" class="hidden group-hover:flex w-5 h-5 items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>`;
+    sessionList.appendChild(el);
+  });
+}
+
+async function createNewSession() {
+  const model = modelSelector.value;
+  try {
+    const r = await fetch('/api/dbgpt/sessions', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model_name: model})
+    });
+    const d = await r.json();
+    currentSessionId = d.id;
+    chatTitle.textContent = 'New Chat';
+    // Clear messages except welcome
+    const all = messagesEl.querySelectorAll('.msg-item');
+    all.forEach(el => el.remove());
+    document.getElementById('welcome-msg').style.display = '';
+    await loadSessions();
+  } catch {}
+}
+
+async function loadSession(sessionId) {
+  currentSessionId = sessionId;
+  try {
+    const r = await fetch(`/api/dbgpt/sessions/${sessionId}/messages`);
+    const d = await r.json();
+    // Clear current messages
+    const all = messagesEl.querySelectorAll('.msg-item');
+    all.forEach(el => el.remove());
+    document.getElementById('welcome-msg').style.display = 'none';
+    (d.messages || []).forEach(m => {
+      if (m.role === 'user') {
+        addMessage('user', m.content);
+      } else {
+        const chartData = m.chart_data || null;
+        const bubble = addMessage('assistant', '');
+        bubble.innerHTML = renderAssistantContent(m.content, chartData, m.insights, m.id, sessionId, m.thoughts || '');
+        bubble.querySelectorAll('table').forEach(styleTable);
+        initCharts(bubble);
+      }
+    });
+    // Update title
+    const sessions = await fetch('/api/dbgpt/sessions').then(r=>r.json());
+    const sess = (sessions.sessions||[]).find(s=>s.id===sessionId);
+    if (sess) chatTitle.textContent = sess.title;
+    await loadSessions();
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  } catch {}
+}
+
+async function deleteSession(sessionId, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this session?')) return;
+  await fetch(`/api/dbgpt/sessions/${sessionId}`, {method: 'DELETE'});
+  if (currentSessionId === sessionId) await createNewSession();
+  await loadSessions();
+}
+
+document.getElementById('new-chat-btn').addEventListener('click', createNewSession);
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function styleTable(t) {
+  t.className = 'w-full text-xs border-collapse border border-slate-200 dark:border-slate-700 rounded overflow-hidden';
+  t.querySelectorAll('th').forEach(th => {
+    th.className = 'bg-slate-700 text-white px-3 py-2 text-left font-semibold whitespace-nowrap border-b border-slate-600';
+  });
+  t.querySelectorAll('tr:nth-child(even) td').forEach(td => td.classList.add('bg-slate-50', 'dark:bg-slate-800/50'));
+  t.querySelectorAll('td').forEach(td => {
+    td.className = td.className + ' px-3 py-1.5 border-b border-slate-100 dark:border-slate-700/50';
+  });
+}
+
+function renderAssistantContent(rawContent, chartData, insights, msgId, sessionId, thoughts) {
+  let html = '';
+
+  if (chartData && chartData.data && chartData.data.length > 0) {
+    const type = (chartData.type || 'response_table').toLowerCase();
+    const data = chartData.data;
+    const cols = Object.keys(data[0]);
+    const isTable = type === 'response_table' || type === 'table';
+
+    if (isTable) {
+      html += `<div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">`;
+      html += `<table class="w-full text-xs border-collapse"><thead><tr>`;
+      html += cols.map(c => `<th class="text-left">${escHtml(c)}</th>`).join('');
+      html += `</tr></thead><tbody>`;
+      html += data.map((row, i) => {
+        const cells = cols.map(c => {
+          const val = row[c];
+          const num = isNumeric(val);
+          const display = formatCell(val, c);
+          return `<td class="${num ? 'text-right font-mono tabular-nums' : ''}">${escHtml(display)}</td>`;
+        }).join('');
+        return `<tr class="${i%2===1?'bg-slate-50 dark:bg-slate-800/30':''}">${cells}</tr>`;
+      }).join('');
+      html += `</tbody></table></div>`;
+      html += `<div class="flex items-center justify-between mt-2">`;
+      html += `<span class="text-xs text-slate-400">${data.length} row(s) returned</span>`;
+      if (msgId && sessionId) {
+        html += `<a href="/api/dbgpt/export/${sessionId}/${msgId}" class="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Export CSV</a>`;
+      }
+      html += `</div>`;
+    } else {
+      // Chart — tall container, canvas receives data via attribute
+      const chartId = 'chart-' + Math.random().toString(36).slice(2);
+      html += `<div style="height:380px;position:relative"><canvas id="${chartId}" data-type="${type}" data-chartdata='${JSON.stringify(chartData).replace(/'/g,"&#39;")}'></canvas></div>`;
+      if (msgId && sessionId) {
+        html += `<div class="mt-2 flex justify-end"><a href="/api/dbgpt/export/${sessionId}/${msgId}" class="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1">Export CSV</a></div>`;
+      }
+    }
+  } else if (rawContent && !rawContent.includes('<span')) {
+    html += `<div class="prose prose-sm dark:prose-invert max-w-none">${marked.parse(rawContent)}</div>`;
+  }
+
+  // Agent Thoughts (collapsible, muted)
+  if (thoughts && thoughts.trim()) {
+    const thId = 'th-' + Math.random().toString(36).slice(2);
+    html += `
+    <div class="mt-2 border border-slate-200 dark:border-slate-700/50 rounded-lg overflow-hidden">
+      <button onclick="toggleSql('${thId}')" class="w-full flex items-center justify-between px-3 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs hover:bg-slate-150 dark:hover:bg-slate-800 transition-colors">
+        <span class="flex items-center gap-2">
+          <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <span class="font-medium text-slate-400">Ajan Düşüncesi</span>
+        </span>
+        <svg id="${thId}-icon" class="w-3.5 h-3.5 text-slate-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="${thId}" class="hidden">
+        <div class="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-700/50">${escHtml(thoughts)}</div>
+      </div>
+    </div>`;
+  }
+
+  // SQL Block (collapsible)
+  const sql = chartData?.sql || '';
+  if (sql) {
+    const sqlId = 'sql-' + Math.random().toString(36).slice(2);
+    const formatted = formatSql(sql);
+    html += `
+    <div class="mt-2 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+      <button onclick="toggleSql('${sqlId}')" class="w-full flex items-center justify-between px-3 py-2 bg-slate-800 text-slate-300 text-xs font-mono hover:bg-slate-700 transition-colors">
+        <span class="flex items-center gap-2">
+          <svg class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h8m-8 5h16"/></svg>
+          <span class="text-green-400 font-semibold">SQL</span>
+          <span class="text-slate-500 truncate max-w-xs">${escHtml(sql.slice(0,60))}...</span>
+        </span>
+        <svg id="${sqlId}-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="${sqlId}" class="hidden">
+        <pre class="language-sql m-0 rounded-none text-xs overflow-x-auto max-h-64"><code class="language-sql">${escHtml(formatted)}</code></pre>
+      </div>
+    </div>`;
+  }
+
+  // Key Insights — render each line as a separate card
+  if (insights && insights.trim()) {
+    // Split on leading emoji — model sometimes outputs all bullets inline without newlines
+    const emojiRe = /(?=[\u{1F300}-\u{1FFFF}\u{2600}-\u{27BF}])/u;
+    const rawBullets = insights.trim().split('\n').map(l => l.trim()).filter(Boolean);
+    // If only 1 line (model output inline), re-split on emoji boundaries
+    const bullets = rawBullets.length <= 1
+      ? insights.trim().split(emojiRe).map(l => l.trim()).filter(l => l.length > 2)
+      : rawBullets;
+    const bulletHtml = bullets.map(line => {
+      // Split on → to get finding vs action parts
+      const [finding, ...actionParts] = line.split('→');
+      const action = actionParts.join('→').trim();
+      const findingMd = marked.parseInline ? marked.parseInline(finding.trim()) : finding.trim();
+      return `
+      <div class="flex gap-3 p-3 bg-white dark:bg-slate-800/60 rounded-lg border border-amber-100 dark:border-amber-900/30 shadow-sm">
+        <div class="flex-1 min-w-0">
+          <div class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">${findingMd}</div>
+          ${action ? `<div class="mt-1.5 flex items-start gap-1.5"><span class="text-amber-500 shrink-0 mt-0.5">→</span><span class="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">${action}</span></div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    html += `
+    <div class="mt-3 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-xl p-3">
+      <p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-2.5 px-1">💡 Key Insights & Aksiyonlar</p>
+      <div class="flex flex-col gap-2">${bulletHtml}</div>
+    </div>`;
+  }
+
+  return html || '<em class="text-slate-400 text-xs">No response content</em>';
+}
+
+function formatSql(sql) {
+  // Basic SQL formatting: uppercase keywords, newlines after major clauses
+  const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'ON', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'WITH', 'UNION', 'EXCEPT', 'INTERSECT', 'INSERT INTO', 'UPDATE', 'SET', 'DELETE FROM'];
+  let formatted = sql.trim();
+  keywords.forEach(kw => {
+    formatted = formatted.replace(new RegExp('\\b' + kw + '\\b', 'gi'), '\n' + kw);
+  });
+  // Remove leading newline
+  formatted = formatted.replace(/^\n/, '').replace(/\n+/g, '\n');
+  return formatted;
+}
+
+function toggleSql(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  const hidden = el.classList.toggle('hidden');
+  icon.style.transform = hidden ? '' : 'rotate(180deg)';
+  if (!hidden) hljs.highlightElement(el.querySelector('code'));
+}
+
+function initCharts(container) {
+  container.querySelectorAll('canvas[data-type]').forEach(canvas => {
+    const rawType = canvas.getAttribute('data-type');
+    const raw = JSON.parse(canvas.getAttribute('data-chartdata').replace(/&#39;/g, "'"));
+    const data = raw.data || [];
+    if (!data.length) return;
+    const cols = Object.keys(data[0]);
+    const PALETTE = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1','#14b8a6','#f43f5e'];
+
+    // Detect column roles
+    const numCols = cols.filter(c => data.some(r => isNumeric(r[c])));
+    const strCols = cols.filter(c => !numCols.includes(c));
+
+    // Auto-detect multi-series: if there are 2 string cols and 1+ numeric cols
+    // e.g. {month, project_name, monthly_effort} → grouped by project_name over months
+    let chartType = rawType === 'line_chart' ? 'line' : rawType === 'pie_chart' ? 'pie' : 'bar';
+    let chartData;
+
+    if (strCols.length >= 2 && numCols.length >= 1) {
+      // Multi-series: prefer date-like col as x-axis, other string cols as series
+      const dateLike = strCols.find(c => data.some(r => /^\d{4}-\d{2}/.test(String(r[c] || ''))));
+      const xCol = dateLike || strCols[0];
+      const groupCol = strCols.find(c => c !== xCol) || strCols[1];
+      const valCol = numCols[0];
+      const groups = [...new Set(data.map(r => String(r[groupCol])))];
+      const xLabels = [...new Set(data.map(r => String(r[xCol])))];
+      const datasets = groups.map((g, i) => ({
+        label: g,
+        data: xLabels.map(x => {
+          const row = data.find(r => String(r[xCol]) === x && String(r[groupCol]) === g);
+          return row ? (parseFloat(row[valCol]) || 0) : 0;
+        }),
+        backgroundColor: PALETTE[i % PALETTE.length] + (chartType === 'line' ? '00' : 'cc'),
+        borderColor: PALETTE[i % PALETTE.length],
+        tension: 0.3,
+        fill: false,
+        pointRadius: 4,
+      }));
+      chartData = { labels: xLabels, datasets };
+    } else if (strCols.length >= 1 && numCols.length >= 1) {
+      // Single series
+      const labelCol = strCols[0], valueCol = numCols[0];
+      const labels = data.map(r => String(r[labelCol]));
+      const values = data.map(r => parseFloat(r[valueCol]) || 0);
+      if (chartType === 'pie') {
+        chartData = { labels, datasets: [{ data: values, backgroundColor: PALETTE.slice(0, labels.length) }] };
+      } else {
+        chartData = { labels, datasets: [{ label: valueCol, data: values, backgroundColor: PALETTE.slice(0, labels.length), borderColor: PALETTE[0], tension: 0.3, fill: false }] };
+      }
+    } else {
+      return; // can't render
+    }
+
+    // Auto-upgrade to line for time-series (x labels look like dates/months)
+    if (chartType === 'bar' && chartData.labels && /^\d{4}-\d{2}/.test(chartData.labels[0])) chartType = 'line';
+
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12, boxWidth: 12 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y !== undefined ? ctx.parsed.y.toLocaleString('tr-TR', {maximumFractionDigits: 2}) : ctx.parsed}`
+          }
+        }
+      },
+      scales: chartType !== 'pie' ? {
+        x: { ticks: { font: { size: 11 }, maxRotation: 35 }, grid: { display: false } },
+        y: { ticks: { font: { size: 11 }, callback: v => v.toLocaleString('tr-TR', {maximumFractionDigits:1}) }, beginAtZero: true },
+      } : undefined,
+    };
+
+    const chartId = canvas.id;
+    if (chartInstances[chartId]) chartInstances[chartId].destroy();
+    chartInstances[chartId] = new Chart(canvas, { type: chartType, data: chartData, options });
+  });
+}
+
+// ── Message handling ──────────────────────────────────────────────────────────
+function addMessage(role, content) {
+  const div = document.createElement('div');
+  div.className = 'flex gap-3 msg-item ' + (role === 'user' ? 'flex-row-reverse' : '');
+
+  const avatar = document.createElement('div');
+  avatar.className = 'w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-semibold ' +
+    (role === 'user' ? 'bg-blue-600 text-white' : 'bg-blue-100 dark:bg-blue-900/50');
+  avatar.textContent = role === 'user' ? '{{ user.name[0] | upper }}' : '🧠';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'rounded-2xl px-4 py-3 shadow-sm text-sm ' + (role === 'user'
+    ? 'bg-blue-600 text-white rounded-tr-sm max-w-xl'
+    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-tl-sm flex-1 max-w-4xl');
+
+  if (content) bubble.textContent = content;
+
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  // Remove welcome if user sends first message
+  if (role === 'user') document.getElementById('welcome-msg').style.display = 'none';
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return bubble;
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function sendSuggestion(btn) {
+  inputEl.value = btn.textContent.slice(2).trim();
+  sendMessage();
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text || isStreaming) return;
+  if (!currentSessionId) await createNewSession();
+
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+  isStreaming = true;
+  sendBtn.disabled = true;
+
+  addMessage('user', text);
+
+  const assistantBubble = addMessage('assistant', '');
+  assistantBubble.innerHTML = `<div class="flex gap-1 py-2"><span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:0ms"></span><span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:150ms"></span><span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay:300ms"></span></div>`;
+
+  try {
+    const resp = await fetch('/api/dbgpt/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_input: text,
+        session_id: currentSessionId,
+        model_name: modelSelector.value,
+      }),
+    });
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let finalContent = '';
+    let finalChartData = null;
+    let finalInsights = '';
+    let finalThoughts = '';
+    let sseBuffer = '';  // ponytail: buffer incomplete SSE lines across chunks
+
+    const processSSELines = (text) => {
+      for (const line of text.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (!raw || raw === '[DONE]') continue;
+        try {
+          const d = JSON.parse(raw);
+          if (d.insights !== undefined) { finalInsights = d.insights; continue; }
+          if (d.thoughts !== undefined) { finalThoughts = d.thoughts; continue; }
+          const content = d.choices?.[0]?.message?.content || '';
+          if (content && !content.includes('<span')) {
+            // ponytail: skip DB-GPT plan/thought responses (raw JSON with "thoughts" key, no data yet)
+            try {
+              const parsed = JSON.parse(content);
+              if (parsed.thoughts !== undefined) continue;  // intermediate plan, skip
+            } catch {}
+            finalContent = content;
+            if (content.includes('<chart-view')) finalChartData = extractChartData(content);
+          }
+        } catch {}
+      }
+    };
+
+    while (true) {
+      const { done, value } = await reader.read();
+      sseBuffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+      if (done) { processSSELines(sseBuffer); break; }  // flush remaining buffer
+      const lines = sseBuffer.split('\n');
+      sseBuffer = lines.pop();  // hold incomplete last line for next chunk
+      processSSELines(lines.join('\n'));
+      if (finalContent && !finalContent.includes('<chart-view')) {
+        assistantBubble.innerHTML = `<span class="text-xs text-slate-400 italic">Generating...</span>`;
+      }
+    }
+
+    // Final render
+    assistantBubble.innerHTML = renderAssistantContent(finalContent, finalChartData, finalInsights, null, currentSessionId, finalThoughts);
+    assistantBubble.querySelectorAll('table').forEach(styleTable);
+    initCharts(assistantBubble);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    // Update session title
+    const sessions = await fetch('/api/dbgpt/sessions').then(r=>r.json());
+    const sess = (sessions.sessions||[]).find(s=>s.id===currentSessionId);
+    if (sess) chatTitle.textContent = sess.title;
+    renderSessionList(sessions.sessions || []);
+
+  } catch (err) {
+    assistantBubble.innerHTML = `<span class="text-red-500 text-xs">⚠️ ${err.message}</span>`;
+  }
+
+  isStreaming = false;
+  sendBtn.disabled = false;
+  inputEl.focus();
+}
+
+function extractChartData(content) {
+  if (!content.includes('<chart-view')) return null;
+  try {
+    const raw = content.split('<chart-view content="')[1].split('"')[0];
+    return JSON.parse(raw.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+  } catch { return null; }
+}
+</script>
+{% endblock %}

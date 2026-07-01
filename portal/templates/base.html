@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPM Data Stack{% block title %}{% endblock %}</title>
+  <title>ppmER{% block title %}{% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="/static/assets/favicon/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="/static/assets/favicon/favicon.svg" />
+  <link rel="apple-touch-icon" href="/static/assets/favicon/apple-touch-icon.png" />
   <script>
     // Apply saved theme before paint to avoid flash
     (function() {
@@ -24,10 +27,9 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
-    <div class="flex items-center gap-1.5">
-      <div class="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center text-xs font-bold">P</div>
-      <span class="font-bold text-base tracking-wide text-blue-400">PPM</span>
-      <span class="font-semibold text-base text-white">Data Stack</span>
+    <div class="flex items-center gap-2">
+      <img src="/static/assets/ppm-data-stack-logo-v2.png" alt="ppmER" class="h-8 w-auto" />
+      <span class="font-bold text-base tracking-wide text-blue-400">ppm</span><span class="font-bold text-base text-white">ER</span>
     </div>
     <div class="ml-auto flex items-center gap-2">
       <!-- Theme Toggle -->
@@ -99,7 +101,7 @@
         </span>
         <span class="nav-label">Datasets</span>
       </a>
-      <a href="/embed/agent" class="nav-item {% block active_agent %}{% endblock %}" data-url="/embed/agent" data-name="AI Assistant">
+      <a href="/chat" class="nav-item {% block active_agent %}{% endblock %}" data-url="/chat" data-name="AI Assistant">
         <span class="nav-icon">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -155,7 +157,7 @@
       <div class="mt-auto px-4 py-3 border-t border-slate-800 text-xs text-slate-500">
         <div>Developed by <a href="https://www.fxerkan.com" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors">FXerkan</a></div>
         <div class="mt-0.5">
-          <a href="https://github.com/fxerkan/jira-ppm-data-stack" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors">JPPMDS v1.1.0</a>
+          <a href="https://github.com/fxerkan/ppmER" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors">ppmER v1.2.0</a>
         </div>
       </div>
     </nav>

@@ -1,9 +1,15 @@
 import os
+import io
+import csv
+import json
+import uuid
 import httpx
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
@@ -13,7 +19,7 @@ load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 import config
 from auth import create_token, get_current_user, LoginRequired
 
-app = FastAPI(title="PPM Data Stack Portal")
+app = FastAPI(title="ppmER Portal")
 
 BASE_DIR = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
@@ -388,6 +394,461 @@ async def save_env_vars(request: Request):
 # ---------------------------------------------------------------------------
 # Developer routes
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# DB-GPT Chat (AI Assistant) — sessions, insights, export, knowledge base
+# ---------------------------------------------------------------------------
+
+DBGPT_URL = os.getenv("DBGPT_INTERNAL_URL", "http://dbgpt:5670")
+DBGPT_DB = os.getenv("POSTGRES_DB", "ppm_datawarehouse")
+_AGENT_DSN = (
+    f"host={os.getenv('DB_HOST', 'postgres')} "
+    f"port={os.getenv('DB_PORT', '5432')} "
+    f"dbname={os.getenv('AGENT_DB', 'ppmdatastack')} "
+    f"user={os.getenv('DB_USER', 'ppm_user')} "
+    f"password={os.getenv('DB_PASSWORD', '')}"
+)
+
+AVAILABLE_MODELS = [
+    {"id": "gemini-2.5-flash", "label": "Gemini 2.5 Flash", "provider": "Google"},
+    {"id": "gemini-2.0-flash-lite", "label": "Gemini 2.0 Flash Lite", "provider": "Google"},
+    {"id": "deepseek-v4-flash", "label": "DeepSeek V4 Flash", "provider": "DeepSeek"},
+    {"id": "gpt-4o-mini", "label": "GPT-4o Mini", "provider": "OpenAI"},
+]
+
+
+def _agent_conn():
+    return psycopg2.connect(_AGENT_DSN)
+
+
+def _ensure_dbgpt_tables():
+    try:
+        conn = _agent_conn()
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS dbgpt_sessions (
+                    id TEXT PRIMARY KEY,
+                    title TEXT NOT NULL DEFAULT 'New Chat',
+                    user_name TEXT NOT NULL,
+                    model_name TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
+                    message_count INTEGER DEFAULT 0,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ DEFAULT NOW()
+                );
+                CREATE TABLE IF NOT EXISTS dbgpt_messages (
+                    id SERIAL PRIMARY KEY,
+                    session_id TEXT REFERENCES dbgpt_sessions(id) ON DELETE CASCADE,
+                    role TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    sql_query TEXT,
+                    chart_data JSONB,
+                    insights TEXT,
+                    created_at TIMESTAMPTZ DEFAULT NOW()
+                );
+            """)
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+
+_ensure_dbgpt_tables()
+
+
+async def _generate_insights(user_input: str, sql: str, data: list, model_name: str) -> str:
+    """Call Gemini to generate key insights about query results."""
+    if not data or len(data) == 0:
+        return ""
+    try:
+        from openai import AsyncOpenAI
+        client = AsyncOpenAI(
+            api_key=os.getenv("GEMINI_API_KEY", ""),
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai",
+        )
+        sample = data[:5]
+        prompt = f"""You are a senior PPM analyst reviewing data results.
+User asked (respond in the SAME language): "{user_input}"
+Query returned {len(data)} rows. Data sample:
+{json.dumps(sample, ensure_ascii=False, default=str)}
+
+Write EXACTLY 3 insight bullets. Each bullet has two parts:
+1. **Finding** — a concrete observation from the data (1 sentence, with specific numbers/names)
+2. **Action** — a specific, actionable recommendation based on that finding (1 sentence)
+
+Output format — EXACTLY 3 lines, each on its own line, nothing else:
+🔴 **[observation with data]** → [specific action to take]
+📌 **[observation with data]** → [specific action to take]
+💡 **[observation with data]** → [specific action to take]
+
+CRITICAL: Each bullet MUST be on a SEPARATE LINE. No introductory text. No paragraph prose. Just the 3 lines above.
+
+Use appropriate emoji: 🔴 for risks, 📌 for important findings, 💡 for opportunities, ⚠️ for warnings, ✅ for positives."""
+        # ponytail: gemini-2.5-flash thinking uses ~1200 tokens; set max_tokens high enough for thinking+output
+        resp = await client.chat.completions.create(
+            model="gemini-2.5-flash",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=3000,
+        )
+        return resp.choices[0].message.content or ""
+    except Exception:
+        return ""
+
+
+def _parse_dbgpt_plan(content: str) -> dict | None:
+    """Extract DB-GPT plan JSON ({"thoughts":..., "sql":...}) from raw content or markdown code block."""
+    text = content.strip()
+    # Strip markdown code fences
+    if "```" in text:
+        import re
+        m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if m:
+            text = m.group(1)
+        else:
+            text = re.sub(r"```[a-z]*", "", text).strip()
+    # Find first JSON object in text
+    start = text.find("{")
+    if start == -1:
+        return None
+    try:
+        return json.loads(text[start:])
+    except Exception:
+        # Try to find JSON by brace matching
+        depth, end = 0, -1
+        for i, ch in enumerate(text[start:], start):
+            if ch == "{": depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    break
+        if end > start:
+            try:
+                return json.loads(text[start:end])
+            except Exception:
+                pass
+    return None
+
+
+def _extract_chart_data(content: str) -> dict | None:
+    """Parse DB-GPT's <chart-view> tag into structured data."""
+    if "<chart-view" not in content:
+        return None
+    try:
+        raw = content.split('<chart-view content="')[1].split('"')[0]
+        raw = raw.replace("&quot;", '"').replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
+        return json.loads(raw)
+    except Exception:
+        return None
+
+
+@app.get("/chat", response_class=HTMLResponse)
+async def chat_page(request: Request):
+    user = get_current_user(request)
+    services = config.get_user_services(user["role"])
+    role_label = config.ROLE_LABELS.get(user["role"], user["role"])
+    return templates.TemplateResponse(
+        "chat.html",
+        {"request": request, "user": user, "services": services, "role_label": role_label},
+    )
+
+
+@app.get("/api/dbgpt/models")
+async def dbgpt_models(request: Request):
+    get_current_user(request)
+    return JSONResponse({"models": AVAILABLE_MODELS})
+
+
+@app.get("/api/dbgpt/sessions")
+async def dbgpt_sessions(request: Request):
+    user = get_current_user(request)
+    try:
+        conn = _agent_conn()
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                "SELECT id, title, model_name, message_count, created_at, updated_at FROM dbgpt_sessions WHERE user_name=%s ORDER BY updated_at DESC LIMIT 50",
+                (user["username"],),
+            )
+            rows = [dict(r) for r in cur.fetchall()]
+            for r in rows:
+                r["created_at"] = r["created_at"].isoformat()
+                r["updated_at"] = r["updated_at"].isoformat()
+        conn.close()
+        return JSONResponse({"sessions": rows})
+    except Exception as e:
+        return JSONResponse({"sessions": [], "error": str(e)})
+
+
+@app.post("/api/dbgpt/sessions")
+async def dbgpt_create_session(request: Request):
+    user = get_current_user(request)
+    body = await request.json()
+    sid = str(uuid.uuid4())
+    model_name = body.get("model_name", "gemini-2.5-flash")
+    try:
+        conn = _agent_conn()
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO dbgpt_sessions (id, title, user_name, model_name) VALUES (%s, %s, %s, %s)",
+                (sid, "New Chat", user["username"], model_name),
+            )
+        conn.commit()
+        conn.close()
+        return JSONResponse({"id": sid, "title": "New Chat", "model_name": model_name})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.delete("/api/dbgpt/sessions/{session_id}")
+async def dbgpt_delete_session(request: Request, session_id: str):
+    user = get_current_user(request)
+    try:
+        conn = _agent_conn()
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM dbgpt_sessions WHERE id=%s AND user_name=%s", (session_id, user["username"]))
+        conn.commit()
+        conn.close()
+        return JSONResponse({"ok": True})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/dbgpt/sessions/{session_id}/messages")
+async def dbgpt_session_messages(request: Request, session_id: str):
+    user = get_current_user(request)
+    try:
+        conn = _agent_conn()
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                "SELECT s.user_name FROM dbgpt_sessions s WHERE s.id=%s", (session_id,)
+            )
+            row = cur.fetchone()
+            if not row or row["user_name"] != user["username"]:
+                conn.close()
+                return JSONResponse({"error": "not found"}, status_code=404)
+            cur.execute(
+                "SELECT id, role, content, sql_query, chart_data, insights, created_at FROM dbgpt_messages WHERE session_id=%s ORDER BY id",
+                (session_id,),
+            )
+            msgs = []
+            for m in cur.fetchall():
+                d = dict(m)
+                d["created_at"] = d["created_at"].isoformat()
+                msgs.append(d)
+        conn.close()
+        return JSONResponse({"messages": msgs})
+    except Exception as e:
+        return JSONResponse({"messages": [], "error": str(e)})
+
+
+@app.post("/api/dbgpt/chat")
+async def dbgpt_chat(request: Request):
+    """Proxy chat to DB-GPT, save history, generate insights."""
+    user = get_current_user(request)
+    body = await request.json()
+    user_input = body.get("user_input", "")
+    session_id = body.get("session_id") or str(uuid.uuid4())
+    model_name = body.get("model_name", os.getenv("LLM_MODEL_NAME", "gemini-2.5-flash"))
+
+    _SYS_HINT = """[PPM Analyst Rules]
+- ALWAYS include both _key and _name columns: project_key+project_name, issue_key+summary, user_key+user_name
+- For effort/time metrics ALWAYS return BOTH: time_spent_hours AND time_spent_person_days (mandays) in the same query
+- Format dates as ISO (YYYY-MM-DD) or YYYY-MM for monthly grouping
+- Numeric columns must be labeled clearly (e.g. total_hours, total_mandays, open_issues)
+- Choose display_type wisely: response_table for data, bar_chart/line_chart/pie_chart for trends/comparisons
+- For trend queries use line_chart; for comparisons use bar_chart; for distributions use pie_chart
+- When user asks for a chart, ALWAYS use a chart display_type (not response_table)
+- Include enough columns to make the chart meaningful (label + at least one numeric series)
+- Schema to use: mart, core, staging (NEVER raw_jira)
+"""
+    dbgpt_payload = {
+        "user_input": _SYS_HINT + "\nUser question: " + user_input,
+        "chat_mode": "chat_with_db_execute",
+        "select_param": DBGPT_DB,
+        "model_name": model_name,
+        "incremental": False,
+        "conv_uid": session_id,
+        "user_name": user.get("username", "portal_user"),
+    }
+
+    async def stream_response():
+        # Save user message
+        try:
+            conn = _agent_conn()
+            with conn.cursor() as cur:
+                # Ensure session exists
+                cur.execute(
+                    "INSERT INTO dbgpt_sessions (id, title, user_name, model_name) VALUES (%s, %s, %s, %s) ON CONFLICT (id) DO NOTHING",
+                    (session_id, user_input[:60] or "New Chat", user["username"], model_name),
+                )
+                cur.execute(
+                    "INSERT INTO dbgpt_messages (session_id, role, content) VALUES (%s, 'user', %s)",
+                    (session_id, user_input),
+                )
+                # Update session title from first message
+                cur.execute(
+                    "UPDATE dbgpt_sessions SET updated_at=NOW(), message_count=message_count+1, title=CASE WHEN title='New Chat' THEN %s ELSE title END WHERE id=%s",
+                    (user_input[:60], session_id),
+                )
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
+
+        # Call DB-GPT
+        try:
+            async with httpx.AsyncClient(timeout=120) as client:
+                resp = await client.post(f"{DBGPT_URL}/api/v1/chat/completions", json=dbgpt_payload)
+                if resp.status_code != 200:
+                    yield f'data: {{"error": "DB-GPT returned {resp.status_code}"}}\n\n'
+                    return
+
+                lines = [l for l in resp.text.splitlines() if l.startswith("data:")]
+                final_content = ""
+                for line in lines:
+                    raw = line[5:].strip()
+                    try:
+                        d = json.loads(raw)
+                        c = d["choices"][0]["message"]["content"]
+                        if c and "<span" not in c:
+                            final_content = c
+                    except Exception:
+                        pass
+                    yield line + "\n\n"
+
+                chart_data = _extract_chart_data(final_content)
+                sql_query = chart_data.get("sql") if chart_data else None
+                data_rows = chart_data.get("data", []) if chart_data else []
+
+                # ponytail: DB-GPT returns plan JSON when it fails to execute complex SQL.
+                # Portal backend executes the SQL itself and sends a synthetic chart-view event.
+                if not chart_data and final_content:
+                    plan = _parse_dbgpt_plan(final_content)
+                    if plan and plan.get("sql"):
+                        sql_query = plan["sql"]
+                        display_type = plan.get("display_type", "response_table")
+                        agent_thoughts = plan.get("thoughts", "")
+                        try:
+                            conn = _agent_conn()
+                            with conn.cursor() as cur:
+                                cur.execute(sql_query)
+                                cols = [desc[0] for desc in cur.description]
+                                rows = cur.fetchmany(200)
+                                data_rows = [dict(zip(cols, r)) for r in rows]
+                            conn.close()
+                            chart_data = {"type": display_type, "sql": sql_query, "data": data_rows}
+                            chart_json = json.dumps(chart_data, ensure_ascii=False, default=str)
+                            encoded = chart_json.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+                            synth_content = f'<chart-view content="{encoded}" />'
+                            synth_line = json.dumps({"choices": [{"message": {"role": "assistant", "content": synth_content}}]})
+                            yield f"data: {synth_line}\n\n"
+                            # send thoughts so frontend can display them
+                            if agent_thoughts:
+                                yield f'data: {json.dumps({"thoughts": agent_thoughts})}\n\n'
+                            final_content = synth_content
+                        except Exception as exec_err:
+                            err_content = f"SQL execution failed: {exec_err}"
+                            err_line = json.dumps({"choices": [{"message": {"role": "assistant", "content": err_content}}]})
+                            yield f"data: {err_line}\n\n"
+                            chart_data = None
+                insights = ""
+                if data_rows:
+                    insights = await _generate_insights(user_input, sql_query or "", data_rows, model_name)
+
+                # Send insights as extra SSE event
+                if insights:
+                    insights_payload = json.dumps({"insights": insights})
+                    yield f"data: {insights_payload}\n\n"
+
+                # Save assistant response
+                try:
+                    conn = _agent_conn()
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            "INSERT INTO dbgpt_messages (session_id, role, content, sql_query, chart_data, insights) VALUES (%s, 'assistant', %s, %s, %s, %s)",
+                            (session_id, final_content, sql_query, json.dumps(chart_data) if chart_data else None, insights),
+                        )
+                        cur.execute(
+                            "UPDATE dbgpt_sessions SET updated_at=NOW(), message_count=message_count+1 WHERE id=%s",
+                            (session_id,),
+                        )
+                    conn.commit()
+                    conn.close()
+                except Exception:
+                    pass
+
+                yield "data: [DONE]\n\n"
+
+        except httpx.ConnectError:
+            yield 'data: {"error": "DB-GPT service not available."}\n\n'
+        except Exception as e:
+            yield f'data: {{"error": "{str(e)}"}}\n\n'
+
+    return StreamingResponse(stream_response(), media_type="text/event-stream")
+
+
+@app.get("/api/dbgpt/export/{session_id}/{msg_id}")
+async def dbgpt_export_csv(request: Request, session_id: str, msg_id: int):
+    """Export query results as CSV."""
+    user = get_current_user(request)
+    try:
+        conn = _agent_conn()
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                "SELECT m.chart_data, s.user_name FROM dbgpt_messages m JOIN dbgpt_sessions s ON m.session_id=s.id WHERE m.id=%s AND m.session_id=%s",
+                (msg_id, session_id),
+            )
+            row = cur.fetchone()
+        conn.close()
+        if not row or row["user_name"] != user["username"]:
+            return JSONResponse({"error": "not found"}, status_code=404)
+        chart_data = row["chart_data"] or {}
+        if isinstance(chart_data, str):
+            chart_data = json.loads(chart_data)
+        data = chart_data.get("data", [])
+        if not data:
+            return JSONResponse({"error": "no data"}, status_code=400)
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=list(data[0].keys()))
+        writer.writeheader()
+        writer.writerows(data)
+        return StreamingResponse(
+            iter([output.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=ppm_export_{msg_id}.csv"},
+        )
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/dbgpt/health")
+async def dbgpt_health(request: Request):
+    get_current_user(request)
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            resp = await client.get(f"{DBGPT_URL}/api/health")
+            return JSONResponse({"status": "ok" if resp.status_code == 200 else "degraded"})
+    except Exception as e:
+        return JSONResponse({"status": "unavailable", "error": str(e)}, status_code=503)
+
+
+@app.post("/api/dbgpt/init-datasource")
+async def dbgpt_init_datasource(request: Request):
+    user = get_current_user(request)
+    if user["role"] != "admin":
+        return JSONResponse({"error": "forbidden"}, status_code=403)
+    payload = {
+        "db_type": "postgresql", "db_name": os.getenv("POSTGRES_DB", "ppm_datawarehouse"),
+        "db_host": "postgres", "db_port": 5432,
+        "db_user": "ppm_ai", "db_pwd": os.getenv("DBGPT_AI_DB_PASS", "ppm_ai_123"),
+        "comment": "PPM Data Warehouse",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(f"{DBGPT_URL}/api/v1/chat/db/add", json=payload)
+            return JSONResponse({"status": resp.status_code, "body": resp.json()})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=503)
+
+
 @app.get("/files", response_class=HTMLResponse)
 async def browse_files(request: Request):
     user = get_current_user(request)

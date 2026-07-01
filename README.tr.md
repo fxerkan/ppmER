@@ -1,4 +1,8 @@
-# PPM Data Stack
+# ppmER — Proje & Portföy Yönetimi Veri Yığını
+
+<p align="center">
+  <img src="assets/ppm-data-stack-logo-v2.png" alt="ppmER Logo" width="320"/>
+</p>
 
 > **Jira verisi üzerine kurulu açık kaynaklı Proje & Portföy Yönetimi (PPM) analitik platformu.**  
 > Kendi sunucunda çalışır · Ücretsiz · Genişletilebilir · Dakikalar içinde production'a hazır.
@@ -15,11 +19,14 @@
 
 Planview, Clarity, ServiceNow PPM gibi kurumsal PPM araçları **yılda $50,000–$500,000** lisans ücreti alır ve verilerinizi tescilli şemalara kilitler. Jira Advanced Roadmaps panolar sunar; veri ambarı değil.
 
-**PPM Data Stack** sana şunları verir:
+**ppmER** sana şunları verir:
 - Mevcut Jira verilerin üzerinde **tam analitik ambar**
 - Her proje, issue, iş günlüğü ve sprint'e **SQL erişimi** — sonsuza kadar
-- SharePoint listeleri, Excel yüklemeleri ve İK verileriyle **genişletilebilir pipeline'lar**
+- SharePoint listeleri *(opsiyonel)*, Excel yüklemeleri ve İK verileriyle **genişletilebilir pipeline'lar**
+- **Yerel Excel/CSV entegrasyonu** — kendi hazırladığın tabloları Upload UI veya Metabase'in Excel yükleme özelliğiyle depoya yükle, ambar verileriyle kolayca kesiştir
 - Organizasyondaki her rol için **birleşik portal** — analist, geliştirici, yönetici
+- [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) tabanlı **Agentic AI & Yapay Zeka Asistanları** — doğal dilde sorgu ve otonom veri keşfi
+- dbt veri kökeni ve [OpenMetadata](https://open-metadata.org) entegrasyonu ile **uçtan uca Metadata & Veri Yönetişimi**
 
 Lisans yok. Vendor lock-in yok. Verin senin, altyapın senin.
 

@@ -11,7 +11,7 @@ services:
     ports:
       - "${POSTGRES_EXTERNAL_PORT:-15432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${VOLUME_BASE_PATH:-./volumes}/postgres:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -56,7 +56,7 @@ services:
       SOURCES__JIRA__API_TOKEN: ${JIRA_API_TOKEN}
     volumes:
       - ./dlt:/app
-      - dlt_data:/root/.dlt
+      - ${VOLUME_BASE_PATH:-./volumes}/dlt:/root/.dlt
     depends_on:
       postgres:
         condition: service_healthy
@@ -137,14 +137,14 @@ services:
     image: dbeaver/cloudbeaver:24.2.0
     container_name: ppm-cloudbeaver
     environment:
-      CB_SERVER_NAME: "PPM Data Stack"
+      CB_SERVER_NAME: "ppmER"
       CB_SERVER_URL: "http://localhost:${CLOUDBEAVER_EXTERNAL_PORT:-8978}"
       CB_ADMIN_NAME: ${CB_ADMIN_NAME:-admin}
       CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-admin}
     ports:
       - "${CLOUDBEAVER_EXTERNAL_PORT:-8978}:8978"
     volumes:
-      - cloudbeaver_data:/opt/cloudbeaver/workspace
+      - ${VOLUME_BASE_PATH:-./volumes}/cloudbeaver:/opt/cloudbeaver/workspace
       - ./cloudbeaver/conf/initial-data-sources.conf:/opt/cloudbeaver/conf/initial-data-sources.conf:ro
       - ./cloudbeaver/conf/initial-data.conf:/opt/cloudbeaver/conf/initial-data.conf:ro
       - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf:ro
@@ -251,13 +251,87 @@ services:
       - "${UPLOAD_EXTERNAL_PORT:-8085}:8080"
     volumes:
       - ./upload:/app
-      - upload_files:/app/uploaded_files
+      - ${VOLUME_BASE_PATH:-./volumes}/upload_files:/app/uploaded_files
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - ppm-network
     restart: unless-stopped
+
+  # DB-GPT — AI-powered natural language SQL interface over ppm_datawarehouse
+  dbgpt:
+    image: eosphorosai/dbgpt:latest
+    platform: linux/amd64
+    container_name: ppm-dbgpt
+    env_file: .env
+    environment:
+      # ponytail: DeepSeek returns raw JSON without markdown wrapping (Gemini doesn't)
+      LLM_API_KEY: ${GEMINI_API_KEY}
+      LLM_MODEL_NAME: gemini-2.5-flash
+      DB_HOST: postgres
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      LLM_API_BASE: https://generativelanguage.googleapis.com/v1beta/openai
+      EMBEDDING_API_URL: https://generativelanguage.googleapis.com/v1beta/openai/embeddings
+      EMBEDDING_MODEL_NAME: text-embedding-004
+    command: >
+      bash -c "
+        /opt/.uv.venv/bin/pip install psycopg2-binary -q &&
+        dbgpt start webserver --config /ppm-config/dbgpt-proxy-ppm.toml
+      "
+    ports:
+      - "${DBGPT_PORT:-5670}:5670"
+    volumes:
+      - ${VOLUME_BASE_PATH:-./volumes}/dbgpt:/app/pilot
+      - ./dbgpt:/ppm-config:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ppm-network
+    restart: unless-stopped
+
+  # ponytail: setup runs once to register PPM datasource and create restricted AI user
+  dbgpt-setup:
+    image: alpine:3.19
+    container_name: ppm-dbgpt-setup
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DBGPT_AI_DB_PASS: ${DBGPT_AI_DB_PASS:-ppm_ai_123}
+    command: >
+      sh -c "
+        apk add --no-cache curl postgresql-client >/dev/null 2>&1 &&
+        PG=\"PGPASSWORD=$$POSTGRES_PASSWORD psql -h postgres -U $$POSTGRES_USER -d $$POSTGRES_DB\" &&
+        eval \"$$PG -c \\\"DO LANG plpgsql SET search_path=public;\\\\ BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname='ppm_ai') THEN CREATE USER ppm_ai WITH PASSWORD '$$DBGPT_AI_DB_PASS'; END IF; END;\\\\\"\" || true &&
+        eval \"$$PG -c \\\"GRANT CONNECT ON DATABASE $$POSTGRES_DB TO ppm_ai\\\"\" || true &&
+        eval \"$$PG -c \\\"GRANT USAGE ON SCHEMA core,mart,staging TO ppm_ai\\\"\" || true &&
+        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA core TO ppm_ai\\\"\" || true &&
+        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA mart TO ppm_ai\\\"\" || true &&
+        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA staging TO ppm_ai\\\"\" || true &&
+        eval \"$$PG -c \\\"ALTER ROLE ppm_ai SET search_path = mart,core,staging\\\"\" || true &&
+        echo 'PostgreSQL AI user ready' &&
+        echo 'Waiting for DB-GPT...' &&
+        until curl -sf http://dbgpt:5670/api/health; do sleep 5; done &&
+        EXISTING=$$(curl -s http://dbgpt:5670/api/v1/chat/db/list | grep -c ppm_datawarehouse) &&
+        PAYLOAD=\"{\\\"db_type\\\":\\\"postgresql\\\",\\\"db_name\\\":\\\"$$POSTGRES_DB\\\",\\\"db_host\\\":\\\"postgres\\\",\\\"db_port\\\":5432,\\\"db_user\\\":\\\"ppm_ai\\\",\\\"db_pwd\\\":\\\"$$DBGPT_AI_DB_PASS\\\",\\\"comment\\\":\\\"PPM Data Warehouse\\\"}\" &&
+        if [ \"$$EXISTING\" = \"0\" ]; then
+          curl -sf -X POST http://dbgpt:5670/api/v1/chat/db/add -H 'Content-Type: application/json' -d \"$$PAYLOAD\"
+        else
+          curl -sf -X POST http://dbgpt:5670/api/v1/chat/db/edit -H 'Content-Type: application/json' -d \"$$PAYLOAD\"
+        fi &&
+        echo 'DB-GPT setup complete'
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dbgpt:
+        condition: service_started
+    networks:
+      - ppm-network
+    restart: no
 
   # Central portal - unified UI with role-based access for all services
   portal:
@@ -277,6 +351,10 @@ services:
       CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
       UPLOAD_EXTERNAL_PORT: ${UPLOAD_EXTERNAL_PORT:-8085}
       AGENT_PORT: ${AGENT_PORT:-7860}
+      DBGPT_PORT: ${DBGPT_PORT:-5670}
+      DBGPT_INTERNAL_URL: http://dbgpt:5670
+      LLM_MODEL_NAME: gemini-2.5-flash
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
       METABASE_URL: http://metabase:3000
       MB_ADMIN_EMAIL: ${MB_ADMIN_EMAIL}
       MB_ADMIN_PASSWORD: ${MB_ADMIN_PASSWORD}
@@ -289,6 +367,7 @@ services:
       - "${PORTAL_EXTERNAL_PORT:-9000}:9000"
     volumes:
       - ./portal:/app
+      - ./assets:/app/static/assets:ro
       - ./dbt/models:/dbt/models:ro
       - ./dlt:/dlt:ro
       - /var/run/docker.sock:/var/run/docker.sock
@@ -299,12 +378,6 @@ services:
     networks:
       - ppm-network
     restart: unless-stopped
-
-volumes:
-  postgres_data:
-  dlt_data:
-  cloudbeaver_data:
-  upload_files:
 
 networks:
   ppm-network:

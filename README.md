@@ -1,4 +1,8 @@
-# Jira PPM Data Stack
+# ppmER — Project & Portfolio Management Data Stack
+
+<p align="center">
+  <img src="assets/ppm-data-stack-logo-v2.png" alt="ppmER Logo" width="320"/>
+</p>
 
 > **Open-source Project & Portfolio Management (PPM) intelligence platform** built on Jira data.
 > Self-hosted · Free · Extensible · Production-ready in minutes.
@@ -17,12 +21,15 @@ Enterprise PPM tools (Planview, Clarity, ServiceNow PPM) cost tens of thousands 
 
 This stack gives you the same analytical capabilities using open-source tools, your existing Jira data, and a single `docker-compose up`.
 
-**PPM Data Stack** gives you:
+**ppmER** gives you:
 
 - A **full analytical warehouse** on top of your existing Jira data
 - **SQL access** to every project, issue, worklog, and sprint — forever
-- **Extensible pipelines** to mix in SharePoint lists, Excel uploads, HR data
+- **Extensible pipelines** to mix in SharePoint lists *(optional)*, Excel uploads, HR data
+- **Native Excel/CSV ingestion** — upload your own spreadsheets and cross-analyze with warehouse data via the Upload UI or Metabase's built-in Excel upload feature
 - A **unified portal** for every role in your organization — analyst, developer, manager
+- **Agentic AI & AI Assistants** powered by [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) for natural-language queries and autonomous data exploration
+- **End-to-end Metadata & Data Governance** — full data lineage via dbt, with [OpenMetadata](https://open-metadata.org) integration planned for catalog and governance workflows
 
 No price. No licenses. No vendor lock-in. ***Your data, your infrastructure.***
 
@@ -103,8 +110,8 @@ No price. No licenses. No vendor lock-in. ***Your data, your infrastructure.***
 
 ```bash
 # 1. Clone
-git clone https://github.com/fxerkan/jira-ppm-data-stack.git
-cd jira-ppm-data-stack
+git clone https://github.com/fxerkan/ppmER.git
+cd ppmER
 
 # 2. Configure
 cp .env.example .env
@@ -216,7 +223,7 @@ The warehouse schema is designed to be extended. Each item below maps to a new d
 
 ## Comparison with Enterprise PPM Tools
 
-| Capability          |              PPM Data Stack              | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
+| Capability          |                **ppmER**                | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
 | ------------------- | :---------------------------------------: | :----------------: | :--------------------: | :---------------: |
 | Self-hosted         |                    ✅                    |         ❌         |           ❌           |        ❌        |
 | Open source         |                    ✅                    |         ❌         |           ❌           |        ❌        |
@@ -283,7 +290,9 @@ PORTAL_USER_PASS=Jppm@min123
 | SQL Browser    | [CloudBeaver](https://cloudbeaver.io) Community   | 24.2        |
 | Portal         | FastAPI + Jinja2 + Tailwind CSS                | Python 3.11 |
 | AI Agent       | Gradio + LLM                                   | Python 3.11 |
+| Agentic AI     | [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) (chat, agents, RAG) | latest |
 | Upload API     | FastAPI + openpyxl                             | Python 3.11 |
+| Data Governance | dbt docs + OpenMetadata *(planned)*           | —           |
 
 ---
 
@@ -346,3 +355,7 @@ MIT — use freely, modify freely, contribute back if you can.
 ---
 
 *Built by **FXerkan** & AI for teams that want enterprise PPM analytics without enterprise PPM prices.*
+
+---
+
+> **ppmER** — Project & Portfolio Management Data Stack

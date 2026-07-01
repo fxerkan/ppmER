@@ -1,0 +1,134 @@
+
+# To DO List
+
+
+# Repo
+- Çözümün adını ve ilgili tüm dokümanları da "Project & Portfolio Management Data Stack" kısaca "ppmER" olacak şekilde güncelle.
+- "ppmER" ürün logosu olarak da "assets/ppm-data-stack-logo-v2.png" kullan, favicon için assets/favicon/favicon.ico
+-- Sharepoint'in opsiyonel olduğunu belirt
+-- Kullanıcıların ellerindeki Manual hazırladıkları Excel'leri kolaylıkla yükleyip DWH'daki veriler ile kolaylıkla kesiştirip analiz yapabileceklerini belirt (ister Upload arayüzü isterse de Metabase Excel upload özelliği ile)
+-- Çözümün kendine has Agentic AI ve AI Asistanları olduğunu belirtip db-gpt'ye atıf yap
+-- Metadata ve Data Governance süreçlerini de uçtan uca kapsadığını vurgula (büyük ihtimalle OpenMetadata aracını konumlandıracağız burası için)
+-- Docker Volume'lerinin lokasyonunu ortam/cihaz yada kişiaye göre dışarıdan istendiği gibi ayarlanabilecek şekilde olduğundan emin ol ( şu anda VOLUME_BASE_PATH bu repo içerisinde ki DATA/container_volumes diye bir yeri gösteriyor ama öyle bir dizin vs. ortada yok - container volumeleri nerede şu anda )
+- repoyu içerisinde hiçbir credentials, .env variables, api_key, token, cookie vs. olmadan https://github.com/fxerkan/ppmER adlı github repo'ya pushla.
+
+
+
+
+---------
+# AI Agent System Prompt
+system promtplarını nerede tutuyorsun, versiyonlu olarak onları yönetmek istiyorum.
+- ayrıca farklı agent tipleri tanımlayıp kullanıcıların kendi agentlarını oluşturabilmesini istiyorum. 
+-- örneğin bir agent sadece data quality ile ilgili sorulara cevap verecek, bir diğeri sadece business glossary ile ilgili sorulara cevap verecek gibi. bu agentları portal üzerinden yönetebileceğim bir arayüz istiyorum.
+
+- db-gpt'nin kendisinde bulunan sonuçları Report.html olarak oluşturabilme özelliğini bizim son kullanıcı chat arayüzümüze de ekle
+
+- system prompt ve instruction tanımlarına bak ve neden sürekli tüm içeriklerin table formatında döndüğünü araştırıp düzelt. bazı içerikler tablo olabilir bazıları direkt chart hatta bazıları direkt olarak HTML Dashboard olabilmeli. Hatta Metabase MCP ile aslında metabase'de oluşturulmuş olan dashboard/chart/analysis'ler dahi bu chat arayüzü içerisinde render edilip gösterilebilmeli.
+
+- db-gpt'nin Skills bölümüne PPM'e özgü skiller ekle;
+-- Project Utilization Analyzer, Financial Portfolio Analyzer vs. gibi PPM domainine özgü skiller olsunlar (db-gpt'nin financial-report-analyzer skill i gibi)
+
+- PPM Data Stack üzerinde geliştirme yapacak olan Developer'ların da kullanacağı şekilde Data Agent'lar oluştur.
+-- db-gpt'nin kendi Prompt ekleme özelliğini kullanıp orada hazır Data Engineering Agent, Data Science Agent, Data Platform Agent gibi agentlar oluşturup/oluşturamayacağına bak
+-- amaç temel olarak uçtan uça pipeline geliştirmesi yapabilmesi ( dlt ile veri aktarımı, dbt modellerini oluşturup sonrasında mage.ai ile bunları var olan pipeline'da uygun olan adım ve zamana yerleştirmesi )
+--- repo içerisinde bu süreçleri nasıl yapılacağını anlatan MD formatında skiller mevcut onları baz alabilirsin - ama önemli olan bu Agent'ların db-gpt arayüzünde görünüp kullanılabilmesi ve kullanıcının kendi istediği bir veri setini hiç geliştirme yapmasına gerek kalmadan arkaplan da ilgili agentların tüm repo standartlarına uygun olacak şekilde uygulayıp son kullanıcıya sunması.
+
+- Kullanıcıların önceki chat sessionlarını istediği gibi isimlendirebilme, pin edebilme özelliği olmalı
+
+- sağ üst köşedeki "DB-GPT connected" bölümüne gerek yok, kaldır.
+
+- sol alttaki "DB-GPT Admin UI" butonu da sadece admin kullanıcılarında görünsün şimdilik
+
+- chat mesajları "fit to width" olacak şekilde mümkün olduğunca ekranın genişliğine yakın olsun
+
+- gösterilen tüm rakamlarda dile uygun şekilde formatlama olsun. mesela numeric alanlar virgülden sonra 2-3 basamak göstersin, binlik ayıracı olsun her zaman gibi.
+
+- kullanıcı "selam", "merhaba", "hi", "naber" vs. gibi terimler ile ilk chat oturumunu başlattığında ona ne gibi sorular sorup cevaplar alabileceği, örnek sorular, dashboard ve rapor örnekleri ile veri modelinden kısa bir açıklama göstererek AI Asistan olarak neler yapabileceğini kısaca göstersin.
+
+
+
+
+**as always** use karpathy-guidelines skill.
+
+
+
+---------
+# Metadata Management, Data Governance, Data Quality, Business Glossary ve Data Catalog oluşturmak için bir plan ve çözüm önerisi
+
+PPM Data Warehouse modelini kullanacak olan kullanıcılara veri modelini çok daha iyi ve net anlatıp, her bir
+  metrik, KPI, tablo/kolon, dashboard ve analizin ne anlama geldiğini kolaylıkla görüp öğrenip kullanabilmeleri için
+  bir Data Governance + Data Quality + Data Catalog + Business Glossary oluşturmak istiyorum.
+  - DBT ile tablo/kolonlar için açıklamalar girilmiş ve Data Lineage görünebiliyor olsa dahi bunu daha son kullanıcı
+  dostu bir hale getirip interaktif olarak hızlı şekilde arama yapıp istediği veri, kpi, business glossary, term
+  tanımlarına erişebilmesini istiyorum
+  - özellikle PPM domainine özgü business glossary,  term, data dictionary tanımlarının tümünün bu yapı içerisinde
+  oluşturulmuş olması gerekiyor. PPM_Datawarehouse ile tümüyle ilişkili olmasa dahi PPM domainine özgü bu contexti
+  bulup toparla. daha sonra dwh modeli ile kesişen noktalarını ilişkilendirip, tag'leyip kullanacak hale
+  getirebilelim.
+  - var olan data stack içerisinde ki open-source araçlarla en iyi uyuma sahip, kolaylıkla entegre edilip
+  kullanılabilecek ama çok fazla karışık gereksinimleri olmayan, sade, az kaynak harcayan bir open-source Data
+  Catalog Metadata yönetim ve Data Governance aracını seçip stack içerisine entegre etmeni istiyorum.
+  -- özellikle mage.ai, dbt, metabase, postgre ile entegre olabilmesi önemli
+  -- Kullanabileceğin open-source araç alternatifleri aşağıdaki gibi (eğer senin analiz edip detaylı inceleyip daha
+  iyi entegre olacağını düşündüğün bir araç varsa onu da değerlendirebilirim) ;
+  --- https://github.com/open-metadata/OpenMetadata *openmetadata öncelikli ilk tercihim
+  --- https://github.com/elementary-data/elementary
+  --- https://github.com/amundsen-io/amundsen
+
+  ultrathink seçtiğin araç ve oluşturduğun çözüm Portal uygulaması üzerinde Data Governance, Data Quality, Business
+  Glossary gibi isimlerden birisiyle yada her birisi ayrı ayrı olacak şekilde konumlandırılmalı.
+  - elbette yine bu araç embed modda çalışıyorsa SSO ile portal'e giriş yaptığın kullanıcı bilgileri ile otomatik
+  login olmalı
+
+  seçilen aracı docker container olarak stack içerisine ekle, database discovery süreçlerini başlat, oluşan data
+  dictionary, entity, metadata verilerini kontrol et. sonrasında business glossary ve data stack portal entegrasyonu
+  adımlarını gerçekleştir.
+
+  also look at this "GPT Prompts for Data Governance" section to understand requirements and plan your implementation
+  depends on them - https://notion.castordoc.com/gpt-prompts
+
+  **as always** use karpathy-guidelines skill.
+
+
+
+--------
+
+# HomePage in geliştirilmesi
+
+Portal Homepage şu anda çok anlamsız ve basit görünüyor. HomePage'in daha kullanıcı dostu, kolay kullanılabilir ve kullanıcıların kendilerine göre özelleştirebileceği bir yapıda olması gerekiyor.
+- İstediği gibi Widget ekleyip, layout oluşturabilmeli (Responsive tasarıma uygun olarak grid mantığında)
+-- Web, Mobil, Tablet portrait/landscape görünümü desteklemeli
+- Örnek hazır Widgetlar olmalı (Proje performans metriği, Metabase Chart widget, Todo List, AI Chatbot, Links, Files, Docs, ....)
+- Dark / White tema modunu desteklemeli
+- Kullanıcı bazlı olabildiği için bu layoutları kullanıcı bazlı db de kayıt edip tutmalı ve load render etmeli
+- Farklı kullanıcı profili/türlerine göre hazır Layoutlar olmalı ve kullanıcı isterse bunlardan birini seçip kullanabilmeli yada kendisi sıfırdan oluşturabilmeli.
+-- Project Manager layout, Portfolio Manager, Developer, Data Stack Admin, 
+
+
+- "Browse Code" menü item ve ilgili sayfayı tümüyle kaldır. (zten mage.ai içerisinden bunlara erişebiliyoruz)
+
+
+
+
+---------- 
+
+# Entegrasyonların iyileştirilmesi
+
+- Cloudbeaver embed olarak Portal üzerinden açıldığında halen login olmamuş gibi görünüyor. ve bizim Portal için kullandığımız normal "admin" kullanıcı adını kabul etmiyor. onun yerine "cbadmin"'i kullanıyor bu nedenle arada bir mapping gerekiyor ki portal'e "admin" kullanıcısı ile giriş yaptığında cloudbeaver'a "cbadmin" kullanıcı bilgileri ile otomatik login olmuş olsun.
+
+- "Data Catalog" menüsü altında açılan DBT Docs html sayfasında ki Welcome bölümünü PPM Data Stack'e uygun şekilde revize edebilir miyiz? Önemli: dbt docs her güncellendiğinde maalesef bu html injection işlemi yeniden yapmak gerekebilir belki.
+
+- "Mage.ai" da ki günlük çalışan master_daily_jira da sorunlar var gibi görünüyor, bu problemleri çöz ve pipeline'ı uçtan uca sorunsuz çalışır hale getir.
+
+- repo içerisinde herhangibir kod parçacağında, dokümanda, connection, credential tanımında "dgpays", "ilhan yiğit" gibi terimlerinden geçmediğinden emin ol.
+
+
+--------
+
+# Mock Data Generation & Setup Wizard
+
+Platformu ilk defa lokaline kurup deneyimleyip görmek isteyen ama henüz kendi Jira, Sharepoint, Enxcel vs. gibi veri kaynaklarını bağlamak istemeyenler için tüm Portal, Dashboard, Metabase raporları, AI chat asistanı gibi tüm bileşenleri deneyimleyebilmesi için bir Demo Dataset oluşturulması gerekiyor.
+- Şu anda var olan verilere bakarak benzer pattern ve içeriklerle ama tümüyle farklı müşteri, proje, takım, kişi isimleri olacak şekilde mock bir veri seti oluşturmanı istiyorum.
+-- ppm_dwh_demo olsun DB ismi
+-- platformu ayağa kaldırırken portal arayüzü ilk açılışında bir OnBoarding & Setup ekranı karşılasın kullanıcıyı ve eğer orada Demo Ortam/Dataset seçeneğini seçerse tüm sistemi bu yeni ppm_dwh_demo DB üzerinden çalışacak şekilde kurgulayıp çalıştırsın
+--- eğer kullanıcı Demo Dataset'i seçmezse de adım adım Jira, Sharepoint (opsiyonel), Manual Excel files, LLM Provider ve LLM Engine için gerekli API Key'lerin girilmesi gibi gerekli adımları tek tek tanımlamasını sağlayacak şekilde wizard ile süreci ilerletsin.

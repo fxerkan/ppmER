@@ -1,0 +1,31 @@
+[system]
+language = "${env:DBGPT_LANG:-en}"
+api_keys = []
+encrypt_key = "ppm-stack-secret"
+
+[service.web]
+host = "0.0.0.0"
+port = 5670
+
+[service.web.database]
+type = "sqlite"
+path = "pilot/meta_data/dbgpt.db"
+
+[rag.storage]
+[rag.storage.vector]
+type = "chroma"
+persist_path = "pilot/data"
+
+# ponytail: try configured providers in order; first valid key wins
+[models]
+[[models.llms]]
+name = "${env:LLM_MODEL_NAME:-deepseek-v4-flash}"
+provider = "${env:LLM_MODEL_PROVIDER:-proxy/openai}"
+api_base = "${env:LLM_API_BASE:-https://api.deepseek.com/v1}"
+api_key = "${env:LLM_API_KEY}"
+
+[[models.embeddings]]
+name = "${env:EMBEDDING_MODEL_NAME:-text-embedding-ada-002}"
+provider = "${env:EMBEDDING_MODEL_PROVIDER:-proxy/openai}"
+api_url = "${env:EMBEDDING_API_URL:-https://api.deepseek.com/v1/embeddings}"
+api_key = "${env:LLM_API_KEY}"
