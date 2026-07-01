@@ -5,6 +5,7 @@
 </p>
 
 > **Open-source Project & Portfolio Management (PPM) intelligence platform** built on Jira data.
+>
 > Self-hosted · Free · Extensible · Production-ready in minutes.
 
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
@@ -15,21 +16,25 @@
 
 ---
 
-## Why This Exists
+## What is ppmER and why you need it?
 
-Enterprise PPM tools (Planview, Clarity, ServiceNow PPM) cost tens of thousands per year.and lock your data behind proprietary schemas. Jira Advanced Roadmaps gives you boards, not a data warehouse.
+Enterprise PPM tools (Planview, Clarity, ServiceNow PPM) cost tens of thousands per year and lock your data behind proprietary schemas. 
 
-This stack gives you the same analytical capabilities using open-source tools, your existing Jira data, and a single `docker-compose up`.
+Jira Advanced Roadmaps gives you boards, not a data warehouse.
+
+Project and Portfolio Teams spend days dealing with numerous data quality problems, such as data cleaning, different distribution algorithms, and matching rules, among dozens of different, complex Excel files, in order to collect data from different fields, applications, and suppliers in different schemas and make it possible for them to communicate and match with each other.
+
+**ppmER data stack** offers many of the analytical features provided by enterprise PPM tools under one roof, in a much simpler, more user-focused, end-to-end way, as open-source.
 
 **ppmER** gives you:
 
-- A **full analytical warehouse** on top of your existing Jira data
-- **SQL access** to every project, issue, worklog, and sprint — forever
-- **Extensible pipelines** to mix in SharePoint lists *(optional)*, Excel uploads, HR data
+- A **full analytical PPM data warehouse model** on top of your existing Jira data
+- **SQL access** to every project, issue, worklog, and sprint — forever with historicaly and snapshots
+- **Extensible pipelines** to mix in Jira, SharePoint lists *(optional)*, Excel uploads, HR data etc.
 - **Native Excel/CSV ingestion** — upload your own spreadsheets and cross-analyze with warehouse data via the Upload UI or Metabase's built-in Excel upload feature
 - A **unified portal** for every role in your organization — analyst, developer, manager
-- **Agentic AI & AI Assistants** powered by [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) for natural-language queries and autonomous data exploration
-- **End-to-end Metadata & Data Governance** — full data lineage via dbt, with [OpenMetadata](https://open-metadata.org) integration planned for catalog and governance workflows
+- **Agentic AI platform & AI Assistants** powered by [**DB-GPT**](https://github.com/eosphoros-ai/DB-GPT) for natural-language queries and autonomous data exploration
+- **End-to-end Metadata & Data Governance** — full data lineage via **dbt docs**, with [**OpenMetadata**](https://open-metadata.org) integration planned for catalog and governance workflows
 
 No price. No licenses. No vendor lock-in. ***Your data, your infrastructure.***
 
@@ -45,49 +50,56 @@ No price. No licenses. No vendor lock-in. ***Your data, your infrastructure.***
 | ----------------------------------------------- | --------------------------------------- |
 | ![Pipeline](assets/06_master_daily_jira_tree.png) | ![CloudBeaver](assets/04_cloudbeaver.png) |
 
-| Dashboards (Metabase)                           | Data Upload & Versioning            |
-| ----------------------------------------------- | --------------------------------------- |
+| Dashboards (Metabase)                             | Data Upload & Versioning                       |
+| ------------------------------------------------- | ---------------------------------------------- |
 | ![Dashboards](assets/06_master_daily_jira_tree.png) | ![Excel File Upload](assets/11_upload_excel.png) |
 
-| Monitoring                           | Portal (Single Point of View)            |
-| ----------------------------------------------- | --------------------------------------- |
+| Monitoring                                        | Portal (Single Point of View)            |
+| ------------------------------------------------- | ---------------------------------------- |
 | ![Monitoring](assets/08_master_daily_jira_runs.png) | ![Jira](assets/mage-master_daily_jira.png) |
 
-| Agentic AI & Chatbot                           | ...            |
-| ----------------------------------------------- | --------------------------------------- |
+| Agentic AI & Chatbot                | ...                                     |
+| ----------------------------------- | --------------------------------------- |
 | ![PPM Agent](assets/12_ppm_agent.png) | ![...](assets/mage-master_daily_jira.png) |
 
 ---
 
 ---
 
-
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Data Sources                             │
+│                    **  Data Sources **                          │
 │   Jira Cloud API  ·  SharePoint Lists  ·  Excel / CSV Upload    │
-└──────────┬──────────────────┬───────────────────┬──────────────┘
-           │ dlt (Python)     │ dlt               │ Upload API
+└──────────┬──────────────────┬───────────────────┬───────────────┘
+           │ dlt (Python)     │ dlt               │ Upload API/UI
            ▼                  ▼                   ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                  PostgreSQL  (raw schemas)                       │
-│   raw_jira  ·  raw_sharepoint  ·  uploads  ·  raw_manual        │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │ dbt (SQL transformations)
-          ┌────────────────┼─────────────────┐
-          ▼                ▼                 ▼
-       staging           core              mart
-    (clean views)   (dim + fact)    (business KPIs)
-                           │
-          ┌────────────────┼─────────────────┐
-          ▼                ▼                 ▼
-      Metabase          Portal           AI Agent
-      (BI / charts)  (unified UI)    (natural language)
+│                 ** PostgreSQL Data Warehouse **                 │
+│                                                                 │
+│     raw_jira  ·  raw_sharepoint  ·  raw_manual  ·   uploads     │
+│                             │                                   │
+│                             │ dbt (SQL transformations)         │
+│            ┌─>>>>>>>>>>>>>>─┼─>>>>>>>>>>>>>>──┐                 │
+│            ▼                ▼                 ▼                 │
+│         staging            core              mart               │
+│      (clean views)    (dim + fact)    (business KPIs)           │
+│                             │                                   │
+└─────────────────────────────┬───────────────────────────────────┘
+             ┌────────────────┼─────────────────┐
+             ▼                ▼                 ▼
+         Metabase         OpenMetadata       AI Agent
+    (BI & Dashboards)   (Data Governance)  (Chat w Data)
+                              │
+                              │ Embed / RBAC
+                              ▼
+                           Portal
+                        (Unified UI)
+      
 ```
 
-**Orchestration:** Mage AI schedules every pipeline and dbt run on a cron.
+**Orchestration:** Mage AI schedules every pipeline and dbt run, development & monitoring UI.
 
 ---
 
@@ -134,8 +146,8 @@ open http://localhost:9000
 
 **Demo accounts** (change passwords in `.env`):
 
-| Username      | Password       | Role                                          |
-| ------------- | -------------- | --------------------------------------------- |
+| Username      | Password        | Role                                          |
+| ------------- | --------------- | --------------------------------------------- |
 | `admin`     | `Jppm@min123` | Full access — all tools                      |
 | `developer` | `Jppm@min123` | Developer tools (Mage, CloudBeaver, dbt Docs) |
 | `analyst`   | `Jppm@min123` | Power user (Metabase, Data Files, AI Agent)   |
@@ -223,7 +235,7 @@ The warehouse schema is designed to be extended. Each item below maps to a new d
 
 ## Comparison with Enterprise PPM Tools
 
-| Capability          |                **ppmER**                | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
+| Capability          |              **ppmER**              | Planview / Clarity | Jira Advanced Roadmaps | MS Project Online |
 | ------------------- | :---------------------------------------: | :----------------: | :--------------------: | :---------------: |
 | Self-hosted         |                    ✅                    |         ❌         |           ❌           |        ❌        |
 | Open source         |                    ✅                    |         ❌         |           ❌           |        ❌        |
@@ -280,19 +292,19 @@ PORTAL_USER_PASS=Jppm@min123
 
 ## Tech Stack
 
-| Layer          | Technology                                     | Version     |
-| -------------- | ---------------------------------------------- | ----------- |
-| Ingestion      | [dlt](https://dlthub.com)                         | 0.5.x       |
-| Orchestration  | [Mage AI](https://www.mage.ai)                    | 0.9.x       |
-| Transformation | [dbt-core](https://www.getdbt.com) + dbt-postgres | 1.x         |
-| Warehouse      | PostgreSQL                                     | 16          |
-| BI             | [Metabase](https://www.metabase.com)              | latest      |
-| SQL Browser    | [CloudBeaver](https://cloudbeaver.io) Community   | 24.2        |
-| Portal         | FastAPI + Jinja2 + Tailwind CSS                | Python 3.11 |
-| AI Agent       | Gradio + LLM                                   | Python 3.11 |
-| Agentic AI     | [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) (chat, agents, RAG) | latest |
-| Upload API     | FastAPI + openpyxl                             | Python 3.11 |
-| Data Governance | dbt docs + OpenMetadata *(planned)*           | —           |
+| Layer           | Technology                                                        | Version     |
+| --------------- | ----------------------------------------------------------------- | ----------- |
+| Ingestion       | [dlt](https://dlthub.com)                                            | 0.5.x       |
+| Orchestration   | [Mage AI](https://www.mage.ai)                                       | 0.9.x       |
+| Transformation  | [dbt-core](https://www.getdbt.com) + dbt-postgres                    | 1.x         |
+| Warehouse       | PostgreSQL                                                        | 16          |
+| BI              | [Metabase](https://www.metabase.com)                                 | latest      |
+| SQL Browser     | [CloudBeaver](https://cloudbeaver.io) Community                      | 24.2        |
+| Portal          | FastAPI + Jinja2 + Tailwind CSS                                   | Python 3.11 |
+| AI Agent        | Gradio + LLM                                                      | Python 3.11 |
+| Agentic AI      | [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) (chat, agents, RAG) | latest      |
+| Upload API      | FastAPI + openpyxl                                                | Python 3.11 |
+| Data Governance | dbt docs + OpenMetadata*(planned)*                              | —          |
 
 ---
 
@@ -354,8 +366,6 @@ MIT — use freely, modify freely, contribute back if you can.
 
 ---
 
-*Built by **FXerkan** & AI for teams that want enterprise PPM analytics without enterprise PPM prices.*
+*Built by **[FXerkan](https://www.fxerkan.com)** & AI for teams that want enterprise PPM analytics without enterprise PPM prices.*
 
----
-
-> **ppmER** — Project & Portfolio Management Data Stack
+*"Code more, worry less"*
