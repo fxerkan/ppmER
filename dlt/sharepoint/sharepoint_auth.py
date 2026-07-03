@@ -14,7 +14,7 @@ Authentication Methods:
        - Best for: User context operations (may require MFA handling)
 
 Environment Variables:
-    SHAREPOINT__SITE_URL: SharePoint site URL (e.g., https://firmaxit.sharepoint.com/sites/ProjectInventory)
+    SHAREPOINT__SITE_URL: SharePoint site URL (e.g., https://yourcompany.sharepoint.com/sites/ProjectInventory)
     SHAREPOINT__TENANT_ID: Azure AD tenant ID
     SHAREPOINT__CLIENT_ID: Azure AD application (client) ID
     SHAREPOINT__CLIENT_SECRET: Azure AD client secret
@@ -54,7 +54,7 @@ def get_sharepoint_credentials():
     if not site_url:
         raise SharePointAuthError(
             "SHAREPOINT__SITE_URL is required. "
-            "Example: https://firmaxit.sharepoint.com/sites/ProjectInventory"
+            "Example: https://yourcompany.sharepoint.com/sites/ProjectInventory"
         )
 
     # Check if we have client credentials OR user credentials

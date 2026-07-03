@@ -4,7 +4,70 @@
 {% block content %}
 <div class="flex flex-col" style="height: calc(100vh - 3.5rem);">
   {% if can_embed %}
-  <iframe src="{{ service_url }}" class="flex-1 w-full border-0"></iframe>
+  <iframe id="svc-iframe" src="{{ service_url }}" class="flex-1 w-full border-0"></iframe>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('ppm-theme') || 'light';
+      const iframe = document.getElementById('svc-iframe');
+      const sep = iframe.src.includes('?') ? '&' : '?';
+      iframe.src = iframe.src + sep + 'theme=' + theme;
+    })();
+  </script>
+  {% if cb_auto_login %}
+  <script>
+  (function() {
+    const CB_USER = {{ cb_user | tojson }};
+    const CB_PASS = {{ cb_pass | tojson }};
+    const iframe = document.getElementById('svc-iframe');
+
+    // React requires native setter + events to update internal state
+    function fillInput(el, value) {
+      const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value').set;
+      if (setter) setter.call(el, value); else el.value = value;
+      el.dispatchEvent(new Event('input',  { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new Event('blur',   { bubbles: true }));
+    }
+
+    function tryFillAndLogin(doc) {
+      const textInputs = doc.querySelectorAll('input[type="text"], input:not([type="password"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"])');
+      const passInputs = doc.querySelectorAll('input[type="password"]');
+      if (!textInputs.length || !passInputs.length) return false;
+
+      fillInput(textInputs[0], CB_USER);
+      fillInput(passInputs[0], CB_PASS);
+
+      // Delay click so React processes state updates; find button fresh to avoid stale ref after re-render
+      setTimeout(() => {
+        const btn = Array.from(doc.querySelectorAll('button')).find(
+          b => /login/i.test(b.textContent.trim()) && !b.disabled
+        );
+        if (btn) btn.click();
+      }, 500);
+      return true;
+    }
+
+    function attachObserver() {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!doc || !doc.body) return;
+        let done = false;
+
+        const obs = new MutationObserver(() => {
+          if (done) return;
+          if (tryFillAndLogin(doc)) { done = true; obs.disconnect(); }
+        });
+        obs.observe(doc.documentElement, { childList: true, subtree: true });
+
+        // Also attempt immediately in case form already rendered
+        setTimeout(() => { if (!done && tryFillAndLogin(doc)) { done = true; obs.disconnect(); } }, 600);
+      } catch(e) { /* cross-origin guard */ }
+    }
+
+    iframe.addEventListener('load', attachObserver);
+  })();
+  </script>
+  {% endif %}
   {% else %}
   <div class="flex-1 flex flex-col items-center justify-center gap-6 bg-slate-50">
     <div class="text-6xl">{{ service_icon | default('📊') }}</div>

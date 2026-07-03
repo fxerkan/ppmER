@@ -174,6 +174,7 @@ with
         left join projects p on i.project_id = p.project_id
         left join hr_user hr on w.author_name = hr.user_name
     )
-
 select *
 from final
+where 1=1
+and trx_date <= current_date

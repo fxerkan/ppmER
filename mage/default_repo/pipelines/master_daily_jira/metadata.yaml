@@ -13,7 +13,7 @@ blocks:
   retry_config:
     delay: 30
     retries: 2
-  status: failed
+  status: not_executed
   timeout: 600
   type: data_loader
   upstream_blocks: []
@@ -416,13 +416,11 @@ custom_notifications:
   email_on_failure:
     to:
       - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
     cc: []
     bcc: []
   email_on_success:
     to:
       - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
     cc: []
     bcc: []
 remote_variables_dir: null

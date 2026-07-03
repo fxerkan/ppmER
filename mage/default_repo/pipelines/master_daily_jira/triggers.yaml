@@ -4,26 +4,12 @@ triggers:
   last_enabled_at: 2025-11-22 15:45:50.806986+00:00
   name: trigger daily jira
   pipeline_uuid: master_daily_jira
-  schedule_interval: 0 8,12,16,20,23 * * *
+  schedule_interval: 0 8 * * *
   schedule_type: time
   settings: null
   sla: null
-  start_time: 2025-12-02 15:45:00+00:00
+  start_time: 2026-01-01 12:00:00+00:00
   status: active
   token: c7399a2aabf544ea91155886e15d6997
-  variables:
-    pipeline_type: daily
-- description: null
-  envs: []
-  last_enabled_at: 2026-02-18 10:09:53.397023+00:00
-  name: blue shadow
-  pipeline_uuid: master_daily_jira
-  schedule_interval: '@once'
-  schedule_type: time
-  settings: null
-  sla: null
-  start_time: 2026-02-17 10:09:00+00:00
-  status: inactive
-  token: dfc1087a5175468a93000cdba3564de0
   variables:
     pipeline_type: daily

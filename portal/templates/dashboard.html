@@ -1,146 +1,609 @@
 {% extends "base.html" %}
-{% block title %} — Dashboard{% endblock %}
+{% block title %} — Home{% endblock %}
 {% block active_dashboard %}active{% endblock %}
 
 {% block content %}
-<div id="main-view" class="p-6">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 
-  <!-- Welcome -->
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-slate-800">Welcome, {{ user.name }}</h2>
-    <p class="text-slate-500 text-sm mt-1">Role: <span class="font-medium text-slate-700">{{ role_label }}</span></p>
+<div class="h-full flex flex-col overflow-hidden">
+
+  <!-- Toolbar -->
+  <div class="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+    <h2 class="text-base font-semibold text-slate-800 dark:text-slate-100">Home</h2>
+    <div class="ml-auto flex items-center gap-2">
+
+      <!-- Presets -->
+      <div class="relative" id="preset-wrap">
+        <button onclick="toggleMenu('preset-menu')"
+          class="text-sm px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Presets
+        </button>
+        <div id="preset-menu" class="menu-dropdown hidden">
+          <div class="menu-label">Role Presets</div>
+          <button class="menu-item" onclick="applyPreset('project_manager')">📋 Project Manager</button>
+          <button class="menu-item" onclick="applyPreset('portfolio_manager')">📊 Portfolio Manager</button>
+          <button class="menu-item" onclick="applyPreset('developer')">💻 Developer</button>
+          <button class="menu-item" onclick="applyPreset('data_stack_admin')">🛠️ Data Stack Admin</button>
+          <div class="border-t border-slate-200 dark:border-slate-700 my-1"></div>
+          <button class="menu-item text-red-500 dark:text-red-400" onclick="resetLayout()">↺ Reset to Default</button>
+        </div>
+      </div>
+
+      <!-- Add widget -->
+      <div class="relative" id="add-wrap">
+        <button onclick="toggleMenu('add-menu')"
+          class="text-sm px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Widget
+        </button>
+        <div id="add-menu" class="menu-dropdown hidden" style="min-width:14rem">
+          <div class="menu-label">Choose a widget</div>
+          <div id="add-menu-items"></div>
+        </div>
+      </div>
+
+      <!-- Customize -->
+      <button onclick="toggleEdit()" id="edit-btn"
+        class="text-sm px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <span id="edit-label">Customize</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Total Projects</p>
-      <p id="stat-projects" class="text-3xl font-bold text-slate-800 mt-1">—</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Open Issues</p>
-      <p id="stat-issues" class="text-3xl font-bold text-blue-600 mt-1">—</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Worklog Hours (Month)</p>
-      <p id="stat-worklogs" class="text-3xl font-bold text-slate-800 mt-1">—</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
-      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Data Last Updated</p>
-      <p id="stat-updated" class="text-sm font-semibold text-slate-700 mt-2">—</p>
+  <!-- Grid -->
+  <div class="flex-1 overflow-y-auto p-4 lg:p-5">
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start"></div>
+    <div id="empty-state" class="hidden flex-col items-center justify-center py-24 text-center">
+      <div class="text-5xl mb-4">🧩</div>
+      <p class="text-base font-semibold text-slate-700 dark:text-slate-300 mb-1">No widgets yet</p>
+      <p class="text-sm text-slate-400 mb-5">Click "Add Widget" to start building your homepage.</p>
+      <button onclick="toggleMenu('add-menu')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">+ Add Widget</button>
     </div>
   </div>
 
-  <!-- Tool Cards -->
-  <h3 class="text-lg font-semibold text-slate-700 mb-4">Available Tools</h3>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-    {% if 'metabase' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="window.location='/dashboards'">
-      <div class="text-3xl mb-3">📊</div>
-      <h4 class="font-semibold text-slate-800">Dashboards</h4>
-      <p class="text-sm text-slate-500 mt-1">View reports and analytics in Metabase</p>
-    </div>
-    {% endif %}
-
-    {% if 'upload' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/upload', 'Data Files')">
-      <div class="text-3xl mb-3">📁</div>
-      <h4 class="font-semibold text-slate-800">Data Files</h4>
-      <p class="text-sm text-slate-500 mt-1">Upload and manage data files</p>
-    </div>
-    {% endif %}
-
-    {% if 'dbgpt' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="window.location='/chat'">
-      <div class="text-3xl mb-3">🧠</div>
-      <h4 class="font-semibold text-slate-800">AI Assistant</h4>
-      <p class="text-sm text-slate-500 mt-1">Ask questions about your project data in natural language</p>
-    </div>
-    {% endif %}
-
-    {% if 'dbt_docs' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/dbt_docs', 'Data Dictionary')">
-      <div class="text-3xl mb-3">📐</div>
-      <h4 class="font-semibold text-slate-800">Data Dictionary</h4>
-      <p class="text-sm text-slate-500 mt-1">Explore dbt models and documentation</p>
-    </div>
-    {% endif %}
-
-    {% if 'mage' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/mage', 'Orchestration')">
-       <div class="text-3xl mb-3">🔄</div>
-       <h4 class="font-semibold text-slate-800">Orchestration</h4>
-       <p class="text-sm text-slate-500 mt-1">Manage data pipelines in Mage AI</p>
-    </div>
-    {% endif %}
-
-    {% if 'cloudbeaver' in services %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="openTool('/embed/cloudbeaver', 'Database Browser')">
-      <div class="text-3xl mb-3">🗄️</div>
-      <h4 class="font-semibold text-slate-800">Database</h4>
-      <p class="text-sm text-slate-500 mt-1">Browse and query the database with CloudBeaver</p>
-    </div>
-    {% endif %}
-
-    {% if user.role in ['developer', 'admin'] %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all"
-         onclick="window.location='/files'">
-      <div class="text-3xl mb-3">📂</div>
-      <h4 class="font-semibold text-slate-800">Browse Code</h4>
-      <p class="text-sm text-slate-500 mt-1">Explore dbt models and dlt pipeline scripts</p>
-    </div>
-    {% endif %}
-
-    {% if user.role == 'admin' %}
-    <div class="tool-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 cursor-pointer hover:shadow-md hover:border-red-200 transition-all"
-         onclick="window.location='/admin'">
-      <div class="text-3xl mb-3">⚙️</div>
-      <h4 class="font-semibold text-slate-800">System Admin</h4>
-      <p class="text-sm text-slate-500 mt-1">Docker status, environment variables</p>
-    </div>
-    {% endif %}
-
+  <!-- Save toast -->
+  <div id="save-toast" class="fixed bottom-5 right-5 hidden bg-slate-800 text-white text-sm px-4 py-2 rounded-lg shadow-xl z-50 items-center gap-2">
+    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    Layout saved
   </div>
 </div>
 
-<!-- Iframe Panel (hidden initially) -->
-<div id="iframe-view" class="hidden flex-col" style="height: calc(100vh - 3.5rem);">
-  <iframe id="tool-iframe" src="" class="flex-1 w-full border-0" style="height: 100%;"></iframe>
+<!-- Config modal -->
+<div id="cfg-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+    <h3 id="cfg-title" class="text-base font-semibold text-slate-800 dark:text-slate-100 mb-4"></h3>
+    <div id="cfg-body"></div>
+    <div class="flex justify-end gap-2 mt-5">
+      <button onclick="closeCfg()" class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">Cancel</button>
+      <button onclick="saveCfg()" class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Save</button>
+    </div>
+  </div>
 </div>
+
+<style>
+.menu-dropdown { position:absolute; right:0; top:2.4rem; background:white; border:1px solid #e2e8f0; border-radius:0.75rem; box-shadow:0 10px 25px rgba(0,0,0,.12); z-index:30; padding:0.25rem 0; min-width:12rem; }
+.dark .menu-dropdown { background:#1e293b; border-color:#334155; }
+.menu-label { padding:0.375rem 0.75rem; font-size:0.65rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; }
+.menu-item { display:block; width:100%; text-align:left; padding:0.5rem 1rem; font-size:0.875rem; color:#374151; cursor:pointer; border:none; background:none; }
+.menu-item:hover { background:#f8fafc; }
+.dark .menu-item { color:#e2e8f0; }
+.dark .menu-item:hover { background:#334155; }
+</style>
 
 <script>
-  // Load stats
-  fetch('/api/stats')
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('stat-projects').textContent = d.total_projects ?? '—';
-      document.getElementById('stat-issues').textContent = d.open_issues ?? '—';
-      document.getElementById('stat-worklogs').textContent = d.worklogs_hours_this_month ?? '—';
-      document.getElementById('stat-updated').textContent = d.last_updated ?? 'N/A';
-    })
-    .catch(() => {});
+const USER_ROLE = {{ user.role | tojson }};
+const USER_NAME = {{ user.name | tojson }};
+const USER_KEY  = {{ user.username | tojson }};
+const SERVICES  = {{ services | tojson }};
+const METABASE_URL = {{ metabase_url | tojson }};
+const LS_KEY = 'ppm-layout-' + USER_KEY;
 
-  function openTool(url, name) {
-    document.getElementById('main-view').classList.add('hidden');
-    const iv = document.getElementById('iframe-view');
-    iv.classList.remove('hidden');
-    iv.classList.add('flex');
-    document.getElementById('tool-iframe').src = url;
-  }
+// ── Defs ───────────────────────────────────────────────────────────────────
+const DEFS = {
+  welcome:        { label:'Welcome',           icon:'👋', size:'xl', fields:[] },
+  stats:          { label:'Project Stats',     icon:'📊', size:'xl', fields:[] },
+  quick_links:    { label:'Quick Links',       icon:'🔗', size:'md', fields:[] },
+  todo:           { label:'Todo List',         icon:'✅', size:'md', fields:[] },
+  ai_chat:        { label:'AI Assistant',      icon:'🧠', size:'lg', fields:[] },
+  metabase_chart: { label:'Metabase Chart',    icon:'📈', size:'xl', fields:[
+    { key:'mb_id',  label:'Select Dashboard',  type:'mb-picker' },
+    { key:'height', label:'Height (px)',        type:'number', placeholder:'400' },
+  ]},
+  sql_table: { label:'Data Table',  icon:'📋', size:'xl', fields:[
+    { key:'title', label:'Title',       type:'text',     placeholder:'My Table' },
+    { key:'sql',   label:'SQL Query',   type:'textarea', placeholder:'SELECT * FROM mart.mart_portfolio_dashboard LIMIT 20' },
+  ]},
+  sql_chart: { label:'Data Chart',  icon:'📉', size:'xl', fields:[
+    { key:'title',      label:'Title',       type:'text',     placeholder:'My Chart' },
+    { key:'sql',        label:'SQL Query (first col = label, second col = value)', type:'textarea', placeholder:'SELECT project_name, total_hours FROM mart.agg_project_health ORDER BY total_hours DESC LIMIT 10' },
+    { key:'chart_type', label:'Chart Type',  type:'select',   options:['bar','line','pie','doughnut'] },
+    { key:'height',     label:'Height (px)', type:'number',   placeholder:'280' },
+  ]},
+};
 
-  function closeTool() {
-    document.getElementById('main-view').classList.remove('hidden');
-    const iv = document.getElementById('iframe-view');
-    iv.classList.add('hidden');
-    iv.classList.remove('flex');
-    document.getElementById('tool-iframe').src = '';
+const SIZE_CSS = {
+  sm:'col-span-1',
+  md:'sm:col-span-1 lg:col-span-2',
+  lg:'sm:col-span-2 lg:col-span-3',
+  xl:'col-span-full',
+};
+const SIZE_LABELS = { sm:'Small (1/4)', md:'Medium (1/2)', lg:'Large (3/4)', xl:'Full Width' };
+
+const PRESETS = {
+  project_manager: [
+    {type:'welcome',size:'xl',config:{}},
+    {type:'stats',size:'xl',config:{}},
+    {type:'quick_links',size:'md',config:{}},
+    {type:'todo',size:'md',config:{items:[]}},
+    {type:'ai_chat',size:'lg',config:{}},
+  ],
+  portfolio_manager: [
+    {type:'stats',size:'xl',config:{}},
+    {type:'metabase_chart',size:'xl',config:{title:'Portfolio Dashboard',height:480}},
+    {type:'quick_links',size:'md',config:{}},
+    {type:'ai_chat',size:'lg',config:{}},
+  ],
+  developer: [
+    {type:'stats',size:'xl',config:{}},
+    {type:'quick_links',size:'md',config:{}},
+    {type:'ai_chat',size:'lg',config:{}},
+    {type:'todo',size:'md',config:{items:[]}},
+  ],
+  data_stack_admin: [
+    {type:'stats',size:'xl',config:{}},
+    {type:'quick_links',size:'xl',config:{}},
+    {type:'ai_chat',size:'lg',config:{}},
+    {type:'todo',size:'md',config:{items:[]}},
+  ],
+};
+const ROLE_DEFAULT = {admin:'data_stack_admin',developer:'developer',power_user:'portfolio_manager',end_user:'project_manager'};
+
+// ── Runtime state ──────────────────────────────────────────────────────────
+let widgets = [];
+let editMode = false;
+let dragSrcId = null;
+let cfgEditId = null;
+let statsCache = null;
+const chatState   = new Map(); // widgetId → { msgs:[], streaming:false, sessionId:null }
+const queryCache  = new Map(); // widgetId → { rows:[], columns:[], error:null }
+const chartInst   = new Map(); // widgetId → Chart instance
+
+function uid() { return 'w' + Math.random().toString(36).slice(2,9); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Widget render ──────────────────────────────────────────────────────────
+function renderWidget(w) {
+  const def = DEFS[w.type]; if (!def) return '';
+  return `<div id="widget-${w.id}" class="widget-card ${SIZE_CSS[w.size]||SIZE_CSS.md} bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col overflow-hidden"
+    ondragover="onDragOver(event,'${w.id}')" ondrop="onDrop(event,'${w.id}')" ondragleave="onDragLeave(event)">
+    <div class="wh hidden items-center gap-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 select-none"
+      draggable="true" ondragstart="onDragStart(event,'${w.id}')" ondragend="onDragEnd()">
+      <span class="text-slate-400 cursor-grab">⠿</span>
+      <span class="text-xs font-medium text-slate-500 dark:text-slate-400">${def.icon} ${def.label}</span>
+      <div class="ml-auto flex items-center gap-1">
+        <select onchange="resizeWidget('${w.id}',this.value)"
+          class="text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5">
+          ${Object.entries(SIZE_LABELS).map(([s,l])=>`<option value="${s}"${w.size===s?' selected':''}>${l}</option>`).join('')}
+        </select>
+        ${def.fields.length?`<button onclick="openCfg('${w.id}')" class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Settings">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>`:''}
+        <button onclick="removeWidget('${w.id}')" class="p-1 rounded text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Remove">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="wc flex-1 min-h-0 overflow-hidden">${renderContent(w)}</div>
+  </div>`;
+}
+
+function renderContent(w) {
+  switch(w.type){
+    case 'welcome':        return renderWelcome(w);
+    case 'stats':          return renderStats(w);
+    case 'quick_links':    return renderQuickLinks(w);
+    case 'todo':           return renderTodo(w);
+    case 'ai_chat':        return renderAiChat(w);
+    case 'metabase_chart': return renderMetaChart(w);
+    case 'sql_table':      return renderSqlTable(w);
+    case 'sql_chart':      return renderSqlChart(w);
+    default: return `<div class="p-4 text-sm text-slate-400">Unknown: ${esc(w.type)}</div>`;
   }
+}
+
+function renderWelcome(w) {
+  const h=new Date().getHours(), g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const d=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  return `<div class="p-5 flex items-center gap-4">
+    <div class="text-5xl shrink-0">👋</div>
+    <div>
+      <div class="text-xl font-bold text-slate-800 dark:text-slate-100">${esc(g)}, ${esc(USER_NAME)}!</div>
+      <div class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">${esc(d)}</div>
+    </div>
+  </div>`;
+}
+
+function renderStats(w) {
+  return `<div class="p-4 grid grid-cols-2 xl:grid-cols-4 gap-3">
+    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3"><div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Total Projects</div><div class="stat-projects text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">—</div></div>
+    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3"><div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Open Issues</div><div class="stat-issues text-2xl font-bold text-blue-600 mt-1">—</div></div>
+    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3"><div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Worklog Hrs (Month)</div><div class="stat-worklogs text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">—</div></div>
+    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3"><div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Last Updated</div><div class="stat-updated text-xs font-semibold text-slate-700 dark:text-slate-300 mt-2 break-all">—</div></div>
+  </div>`;
+}
+
+function renderQuickLinks(w) {
+  const links = Object.entries(SERVICES).map(([key,svc])=>{
+    const url=['metabase','dbgpt'].includes(key)?(key==='metabase'?'/dashboards':'/chat'):`/embed/${key}`;
+    return `<a href="${url}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
+      <span class="text-lg shrink-0">${svc.icon}</span>
+      <span class="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${esc(svc.name)}</span>
+      <svg class="ml-auto w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </a>`;
+  }).join('');
+  return `<div class="p-2"><div class="px-2 pt-2 pb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Quick Access</div>${links}</div>`;
+}
+
+function renderTodo(w) {
+  const items = w.config?.items||[];
+  const listHtml = items.map((item,i)=>`
+    <div class="flex items-center gap-2 py-1.5 group">
+      <input type="checkbox" ${item.done?'checked':''} onchange="toggleTodo('${w.id}',${i})"
+        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 shrink-0">
+      <span class="flex-1 text-sm ${item.done?'line-through text-slate-400':'text-slate-700 dark:text-slate-200'}">${esc(item.text)}</span>
+      <button onclick="deleteTodo('${w.id}',${i})" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 hover:text-red-500 transition-all">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>`).join('');
+  return `<div class="p-4 flex flex-col h-full">
+    <div class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">Todo</div>
+    <div class="flex-1 overflow-y-auto min-h-0">${listHtml||'<p class="text-sm text-slate-400">No tasks yet.</p>'}</div>
+    <div class="flex gap-2 pt-3 mt-2 border-t border-slate-100 dark:border-slate-800">
+      <input id="todo-in-${w.id}" type="text" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo('${w.id}')"
+        class="flex-1 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="addTodo('${w.id}')" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">+</button>
+    </div>
+  </div>`;
+}
+
+function renderAiChat(w) {
+  if (!chatState.has(w.id)) chatState.set(w.id, {msgs:[], streaming:false, sessionId:null});
+  const st = chatState.get(w.id);
+  const msgsHtml = st.msgs.map(m=>`
+    <div class="${m.role==='user'?'flex justify-end':'flex'} mb-2">
+      <div class="px-3 py-2 text-sm max-w-[85%] break-words whitespace-pre-wrap rounded-2xl
+        ${m.role==='user'?'bg-blue-600 text-white rounded-br-sm':'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-sm'}">${esc(m.content)}</div>
+    </div>`).join('');
+  return `<div class="flex flex-col" style="min-height:300px;height:100%">
+    <div class="flex items-center justify-between px-4 py-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">🧠 AI Assistant</span>
+      <a href="/chat" class="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Open full chat →</a>
+    </div>
+    <div id="chat-msgs-${w.id}" class="flex-1 overflow-y-auto p-3 min-h-0" style="min-height:200px">
+      ${msgsHtml||'<div class="text-xs text-slate-400 text-center py-8">Ask anything about your project data.</div>'}
+      ${st.streaming?'<div class="flex gap-1 text-slate-400 text-sm pl-1"><span class="animate-bounce">●</span><span class="animate-bounce" style="animation-delay:.1s">●</span><span class="animate-bounce" style="animation-delay:.2s">●</span></div>':''}
+    </div>
+    <div class="flex gap-2 px-3 pb-3 pt-2 border-t border-slate-100 dark:border-slate-800 shrink-0">
+      <input id="chat-in-${w.id}" type="text" placeholder="Ask about your data..."
+        ${st.streaming?'disabled':''} onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat('${w.id}')}"
+        class="flex-1 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="sendChat('${w.id}')" ${st.streaming?'disabled':''}
+        class="px-3 py-1.5 ${st.streaming?'bg-slate-300 dark:bg-slate-700':'bg-blue-600 hover:bg-blue-700'} text-white text-sm rounded-lg transition-colors shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderMetaChart(w) {
+  const uuid = w.config?.public_uuid, title = w.config?.title||'', height = parseInt(w.config?.height)||400;
+  if (!uuid) return `<div class="flex flex-col items-center justify-center p-8 text-center" style="min-height:180px">
+    <div class="text-3xl mb-2">📈</div>
+    <p class="text-sm text-slate-500 dark:text-slate-400">Select a Metabase dashboard in widget settings (✏ Customize).</p>
+  </div>`;
+  const url = `${METABASE_URL}/public/dashboard/${uuid}`;
+  return `${title?`<div class="px-4 pt-3 pb-1 text-sm font-semibold text-slate-700 dark:text-slate-200">${esc(title)}</div>`:''}
+  <div class="flex items-center justify-end px-4 pb-1">
+    <a href="${esc(url)}" target="_blank" class="text-xs text-slate-400 hover:text-blue-500 transition-colors">Open in Metabase ↗</a>
+  </div>
+  <div style="height:${height}px;overflow:hidden;position:relative;">
+    <iframe src="${esc(url)}" style="height:calc(100% + 52px);width:100%;border:0;position:absolute;top:0;left:0;" allowfullscreen loading="lazy"></iframe>
+  </div>`;
+}
+
+function renderSqlTable(w) {
+  const st = queryCache.get(w.id), sql = w.config?.sql||'';
+  if (!st && !sql) return `<div class="flex flex-col items-center justify-center p-8 text-center" style="min-height:140px">
+    <div class="text-2xl mb-2">📋</div><p class="text-sm text-slate-500 dark:text-slate-400">Configure a SQL query in widget settings.</p></div>`;
+  if (!st) { setTimeout(()=>runQuery(w.id),50); return spinner(); }
+  if (st.error) return errBox(w.id, st.error, w.config?.title);
+  const {rows,columns:cols}=st;
+  return `<div class="flex flex-col h-full overflow-hidden">
+    <div class="flex items-center justify-between px-4 pt-3 pb-2 shrink-0">
+      <div class="text-sm font-semibold text-slate-700 dark:text-slate-200">${esc(w.config?.title||'Query Results')}</div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">${rows.length} rows</span>
+        <button onclick="runQuery('${w.id}')" title="Refresh" class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="flex-1 overflow-auto min-h-0">
+      <table class="w-full text-xs border-collapse">
+        <thead class="sticky top-0 bg-slate-50 dark:bg-slate-800">
+          <tr>${cols.map(c=>`<th class="px-3 py-2 text-left text-slate-500 font-semibold border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">${esc(c)}</th>`).join('')}</tr>
+        </thead>
+        <tbody>${rows.map((r,i)=>`<tr class="${i%2?'bg-slate-50/50 dark:bg-slate-800/50':'bg-white dark:bg-slate-900'} hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors">
+          ${cols.map(c=>`<td class="px-3 py-1.5 text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800/50 max-w-xs truncate">${esc(String(r[c]??''))}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderSqlChart(w) {
+  const st = queryCache.get(w.id), sql = w.config?.sql||'';
+  if (!st && !sql) return `<div class="flex flex-col items-center justify-center p-8 text-center" style="min-height:200px">
+    <div class="text-2xl mb-2">📉</div><p class="text-sm text-slate-500 dark:text-slate-400">Configure a SQL query in widget settings.</p></div>`;
+  if (!st) { setTimeout(()=>runQuery(w.id),50); return spinner(200); }
+  if (st.error) return errBox(w.id, st.error, w.config?.title);
+  const height = parseInt(w.config?.height)||280;
+  return `<div class="p-4">
+    <div class="flex items-center justify-between mb-2">
+      <div class="text-sm font-semibold text-slate-700 dark:text-slate-200">${esc(w.config?.title||'Chart')}</div>
+      <button onclick="runQuery('${w.id}')" title="Refresh" class="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+    </div>
+    <canvas id="chart-${w.id}" style="height:${height}px;max-height:${height}px"></canvas>
+  </div>`;
+}
+
+function spinner(h=140) { return `<div class="flex items-center justify-center text-slate-400 text-sm gap-2" style="min-height:${h}px"><svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Loading…</div>`; }
+function errBox(wid,err,title) { return `<div class="p-4"><div class="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">${esc(title||'Error')}</div><div class="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg p-3 break-all">⚠️ ${esc(err)}</div><button onclick="runQuery('${wid}')" class="mt-2 text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">↺ Retry</button></div>`; }
+
+// ── Grid ───────────────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('grid'), empty = document.getElementById('empty-state');
+  if (!widgets.length) {
+    grid.innerHTML=''; empty.classList.remove('hidden'); empty.classList.add('flex'); return;
+  }
+  empty.classList.add('hidden'); empty.classList.remove('flex');
+  grid.innerHTML = widgets.map(renderWidget).join('');
+  applyEditMode();
+  // Post-render tasks
+  widgets.forEach((w,i) => {
+    if ((w.type==='sql_table'||w.type==='sql_chart') && !queryCache.has(w.id)) {
+      setTimeout(()=>runQuery(w.id), i*80);
+    } else if (w.type==='sql_chart' && queryCache.get(w.id)?.rows?.length) {
+      initChart(w.id, queryCache.get(w.id).rows, w.config);
+    }
+  });
+  if (widgets.some(w=>w.type==='stats')) { if(statsCache) applyStats(statsCache); else loadStats(); }
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function loadStats() {
+  fetch('/api/stats').then(r=>r.json()).then(d=>{statsCache=d;applyStats(d);}).catch(()=>{});
+}
+function applyStats(d) {
+  document.querySelectorAll('.stat-projects').forEach(el=>el.textContent=d.total_projects??'—');
+  document.querySelectorAll('.stat-issues').forEach(el=>el.textContent=d.open_issues??'—');
+  document.querySelectorAll('.stat-worklogs').forEach(el=>el.textContent=d.worklogs_hours_this_month??'—');
+  document.querySelectorAll('.stat-updated').forEach(el=>el.textContent=d.last_updated??'N/A');
+}
+
+// ── Edit mode ──────────────────────────────────────────────────────────────
+function toggleEdit() {
+  editMode=!editMode; applyEditMode();
+  document.getElementById('edit-label').textContent=editMode?'Done':'Customize';
+  document.getElementById('edit-btn').className=editMode
+    ?'text-sm px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors flex items-center gap-1.5'
+    :'text-sm px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5';
+}
+function applyEditMode() {
+  document.querySelectorAll('.wh').forEach(el=>{el.classList.toggle('hidden',!editMode);el.classList.toggle('flex',editMode);});
+  document.querySelectorAll('.widget-card').forEach(el=>{el.classList.toggle('ring-2',editMode);el.classList.toggle('ring-blue-200',editMode);});
+}
+
+// ── Menus ──────────────────────────────────────────────────────────────────
+function toggleMenu(id) {
+  const m=document.getElementById(id), open=m.classList.contains('hidden'); closeMenus(); if(open){
+    if(id==='add-menu') {
+      document.getElementById('add-menu-items').innerHTML=Object.entries(DEFS).map(([t,d])=>
+        `<button class="menu-item flex items-center gap-2" onclick="addWidget('${t}')">${d.icon} ${d.label}</button>`).join('');
+    }
+    m.classList.remove('hidden');
+  }
+}
+function closeMenus(){['add-menu','preset-menu'].forEach(id=>document.getElementById(id)?.classList.add('hidden'));}
+document.addEventListener('click',e=>{
+  if(!document.getElementById('add-wrap').contains(e.target)&&!document.getElementById('preset-wrap').contains(e.target)) closeMenus();
+});
+
+// ── Add / Remove / Resize ──────────────────────────────────────────────────
+function addWidget(type) {
+  closeMenus();
+  const def=DEFS[type];
+  const config=type==='todo'?{items:[]}:type==='metabase_chart'?{height:400}:type==='sql_chart'?{chart_type:'bar',height:280}:{};
+  const w={id:uid(),type,size:def.size||'md',config};
+  widgets.push(w); renderGrid(); save();
+  if(def.fields.length) setTimeout(()=>openCfg(w.id),80);
+  if(!editMode) toggleEdit();
+}
+function removeWidget(id){widgets=widgets.filter(w=>w.id!==id);renderGrid();save();}
+function resizeWidget(id,size){const w=widgets.find(w=>w.id===id);if(w){w.size=size;renderGrid();save();}}
+
+// ── Todo ───────────────────────────────────────────────────────────────────
+function addTodo(wid){const inp=document.getElementById(`todo-in-${wid}`),text=inp?.value.trim();if(!text)return;const w=widgets.find(w=>w.id===wid);if(!w)return;if(!w.config.items)w.config.items=[];w.config.items.push({text,done:false});inp.value='';renderGrid();save();}
+function toggleTodo(wid,idx){const w=widgets.find(w=>w.id===wid);if(!w?.config?.items?.[idx])return;w.config.items[idx].done=!w.config.items[idx].done;const el=document.querySelector(`#widget-${wid} .wc`);if(el)el.innerHTML=renderContent(w);save();}
+function deleteTodo(wid,idx){const w=widgets.find(w=>w.id===wid);if(!w?.config?.items)return;w.config.items.splice(idx,1);renderGrid();save();}
+
+// ── AI Chat ────────────────────────────────────────────────────────────────
+async function sendChat(wid) {
+  const w=widgets.find(w=>w.id===wid); if(!w)return;
+  const inp=document.getElementById(`chat-in-${wid}`), text=inp?.value.trim(); if(!text)return;
+  if(!chatState.has(wid)) chatState.set(wid,{msgs:[],streaming:false,sessionId:null});
+  const st=chatState.get(wid); if(st.streaming)return;
+  st.msgs.push({role:'user',content:text}); inp.value=''; st.streaming=true;
+  refreshChat(wid,w);
+  try {
+    if(!st.sessionId){
+      const r=await fetch('/api/dbgpt/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model_name:'gemini-2.5-flash'})});
+      st.sessionId=(await r.json()).id;
+    }
+    const res=await fetch('/api/dbgpt/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user_input:text,session_id:st.sessionId,model_name:'gemini-2.5-flash'})});
+    const reader=res.body.getReader(), dec=new TextDecoder(); let reply='';
+    st.msgs.push({role:'assistant',content:'…'});
+    while(true){
+      const{done,value}=await reader.read(); if(done)break;
+      for(const line of dec.decode(value).split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const raw=line.slice(5).trim(); if(raw==='[DONE]')continue;
+        try{const d=JSON.parse(raw),c=d?.choices?.[0]?.message?.content;
+          if(c&&!c.includes('<chart-view')&&!c.includes('<span')){reply=c;st.msgs[st.msgs.length-1].content=reply;refreshChat(wid,w);}
+        }catch(e){}
+      }
+    }
+    if(!reply)st.msgs[st.msgs.length-1].content='No response received.';
+  } catch(e) {
+    st.msgs.push({role:'assistant',content:'⚠️ '+(e.message||'Connection error')});
+  }
+  st.streaming=false; refreshChat(wid,w);
+  setTimeout(()=>document.getElementById(`chat-in-${wid}`)?.focus(),50);
+}
+function refreshChat(wid,w){
+  const el=document.querySelector(`#widget-${wid} .wc`); if(el)el.innerHTML=renderContent(w);
+  const msgs=document.getElementById(`chat-msgs-${wid}`); if(msgs)msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ── SQL widgets ────────────────────────────────────────────────────────────
+async function runQuery(wid) {
+  const w=widgets.find(w=>w.id===wid); if(!w?.config?.sql)return;
+  const el=document.querySelector(`#widget-${wid} .wc`); if(el)el.innerHTML=spinner();
+  try {
+    const res=await fetch('/api/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sql:w.config.sql})});
+    const data=await res.json();
+    queryCache.set(wid,data.error?{error:data.error,rows:[],columns:[]}:{rows:data.rows,columns:data.columns,error:null});
+  } catch(e){queryCache.set(wid,{error:e.message,rows:[],columns:[]});}
+  const el2=document.querySelector(`#widget-${wid} .wc`); if(el2)el2.innerHTML=renderContent(w);
+  if(w.type==='sql_chart'){const st=queryCache.get(wid);if(st?.rows?.length)initChart(wid,st.rows,w.config);}
+}
+
+function initChart(wid,rows,cfg){
+  const canvas=document.getElementById(`chart-${wid}`); if(!canvas)return;
+  const existing=chartInst.get(wid); if(existing)existing.destroy();
+  const keys=Object.keys(rows[0]||{});
+  const labels=rows.map(r=>String(r[keys[0]]??''));
+  const values=rows.map(r=>parseFloat(r[keys[1]])||0);
+  const type=cfg?.chart_type||'bar';
+  const colors=['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#06b6d4','#84cc16'];
+  chartInst.set(wid, new Chart(canvas,{
+    type,
+    data:{labels,datasets:[{label:cfg?.title||keys[1]||'Value',data:values,
+      backgroundColor:type==='pie'||type==='doughnut'?colors:colors[0],
+      borderColor:type==='pie'||type==='doughnut'?colors:'#2563eb',
+      borderWidth:1}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:type==='pie'||type==='doughnut'}},
+      scales:type==='pie'||type==='doughnut'?{}:{x:{ticks:{font:{size:10}}},y:{ticks:{font:{size:10}}}}}
+  }));
+}
+
+// ── Drag & Drop ────────────────────────────────────────────────────────────
+function onDragStart(e,id){dragSrcId=id;e.dataTransfer.effectAllowed='move';setTimeout(()=>document.getElementById(`widget-${id}`)?.classList.add('opacity-50'),0);}
+function onDragEnd(){if(dragSrcId)document.getElementById(`widget-${dragSrcId}`)?.classList.remove('opacity-50');document.querySelectorAll('.widget-card').forEach(el=>el.classList.remove('ring-4','ring-blue-400'));dragSrcId=null;}
+function onDragOver(e,id){if(dragSrcId&&dragSrcId!==id){e.preventDefault();document.getElementById(`widget-${id}`)?.classList.add('ring-4','ring-blue-400');}}
+function onDragLeave(e){e.currentTarget.classList.remove('ring-4','ring-blue-400');}
+function onDrop(e,tid){e.preventDefault();if(!dragSrcId||dragSrcId===tid)return;const si=widgets.findIndex(w=>w.id===dragSrcId),ti=widgets.findIndex(w=>w.id===tid);if(si<0||ti<0)return;const[m]=widgets.splice(si,1);widgets.splice(ti,0,m);dragSrcId=null;renderGrid();save();}
+
+// ── Config modal ───────────────────────────────────────────────────────────
+let _mbDashboards = [];
+function openCfg(wid) {
+  cfgEditId=wid; const w=widgets.find(w=>w.id===wid), def=DEFS[w.type];
+  document.getElementById('cfg-title').textContent=`${def.icon} ${def.label} Settings`;
+  document.getElementById('cfg-body').innerHTML=def.fields.map(f=>{
+    const val=esc(String(w.config?.[f.key]||''));
+    if(f.type==='textarea') return `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">${esc(f.label)}</label><textarea id="cfgf-${f.key}" rows="4" placeholder="${esc(f.placeholder||'')}" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500">${val}</textarea></div>`;
+    if(f.type==='select') return `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">${esc(f.label)}</label><select id="cfgf-${f.key}" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">${(f.options||[]).map(o=>`<option value="${o}"${w.config?.[f.key]===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
+    if(f.type==='mb-picker') return `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">${esc(f.label)}</label><select id="cfgf-${f.key}" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"><option value="">Loading dashboards…</option></select></div>`;
+    return `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">${esc(f.label)}</label><input type="${f.type||'text'}" id="cfgf-${f.key}" value="${val}" placeholder="${esc(f.placeholder||'')}" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></div>`;
+  }).join('');
+  document.getElementById('cfg-modal').classList.remove('hidden');
+  // Load Metabase dashboards if needed
+  if(def.fields.some(f=>f.type==='mb-picker')) loadMbPicker(w);
+}
+async function loadMbPicker(w) {
+  try{
+    const r=await fetch('/api/metabase-dashboards'), data=await r.json();
+    _mbDashboards=data.dashboards||[];
+    const sel=document.getElementById('cfgf-mb_id'); if(!sel)return;
+    sel.innerHTML='<option value="">— Select a dashboard —</option>'+
+      _mbDashboards.map(d=>`<option value="${d.id}" ${String(w.config?.mb_id)===String(d.id)?'selected':''}>${esc(d.name)}</option>`).join('');
+  }catch(e){const s=document.getElementById('cfgf-mb_id');if(s)s.innerHTML='<option value="">Failed to load</option>';}
+}
+function closeCfg(){document.getElementById('cfg-modal').classList.add('hidden');cfgEditId=null;}
+function saveCfg(){
+  const w=widgets.find(w=>w.id===cfgEditId); if(!w)return;
+  DEFS[w.type].fields.forEach(f=>{
+    const el=document.getElementById(`cfgf-${f.key}`); if(!el)return;
+    if(f.type==='mb-picker'){
+      const v=el.value; w.config[f.key]=v?parseInt(v):null;
+      const d=_mbDashboards.find(d=>String(d.id)===v);
+      if(d){w.config.public_uuid=d.public_uuid;w.config.title=d.name;}
+    } else if(f.type==='number'){w.config[f.key]=parseInt(el.value)||0;
+    } else {w.config[f.key]=el.value;}
+  });
+  // Clear cached data for sql widgets on config change
+  if(w.type==='sql_table'||w.type==='sql_chart'){queryCache.delete(w.id);const c=chartInst.get(w.id);if(c){c.destroy();chartInst.delete(w.id);}}
+  closeCfg(); renderGrid(); save();
+}
+document.getElementById('cfg-modal').addEventListener('click',e=>{if(e.target===document.getElementById('cfg-modal'))closeCfg();});
+
+// ── Presets ────────────────────────────────────────────────────────────────
+function applyPreset(name){closeMenus();if(!confirm(`Apply "${name.replace(/_/g,' ')}" layout? This replaces your current layout.`))return;widgets=PRESETS[name].map(w=>({...w,id:uid(),config:JSON.parse(JSON.stringify(w.config))}));queryCache.clear();chartInst.forEach(c=>c.destroy());chartInst.clear();chatState.clear();renderGrid();save();}
+function resetLayout(){closeMenus();if(!confirm('Reset to default layout for your role?'))return;const k=ROLE_DEFAULT[USER_ROLE]||'project_manager';widgets=PRESETS[k].map(w=>({...w,id:uid(),config:JSON.parse(JSON.stringify(w.config))}));queryCache.clear();chartInst.forEach(c=>c.destroy());chartInst.clear();chatState.clear();renderGrid();save();}
+
+// ── Persistence (localStorage primary, DB secondary) ───────────────────────
+let _saveTimer=null;
+function save(){
+  // Immediate save to localStorage (no widget runtime state)
+  const data=widgets.map(w=>({id:w.id,type:w.type,size:w.size,config:w.config}));
+  try{localStorage.setItem(LS_KEY,JSON.stringify(data));}catch(e){}
+  // Debounced DB save
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(async()=>{
+    try{
+      await fetch('/api/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({widgets:data})});
+      showToast();
+    }catch(e){}
+  },800);
+}
+
+function showToast(){const el=document.getElementById('save-toast');el.classList.remove('hidden');el.classList.add('flex');clearTimeout(el._t);el._t=setTimeout(()=>{el.classList.add('hidden');el.classList.remove('flex');},2000);}
+
+async function loadLayout(){
+  try{
+    const res=await fetch('/api/layout'), data=await res.json();
+    if(data.layout&&Array.isArray(data.layout)&&data.layout.length){
+      widgets=data.layout.map(w=>({id:w.id||uid(),type:w.type,size:w.size||'md',config:w.config||{}}));
+      renderGrid(); return;
+    }
+  }catch(e){}
+  // Fallback: localStorage
+  try{
+    const ls=localStorage.getItem(LS_KEY);
+    if(ls){widgets=JSON.parse(ls).map(w=>({id:w.id||uid(),type:w.type,size:w.size||'md',config:w.config||{}}));renderGrid();return;}
+  }catch(e){}
+  // Final fallback: role default
+  const k=ROLE_DEFAULT[USER_ROLE]||'project_manager';
+  widgets=PRESETS[k].map(w=>({...w,id:uid(),config:JSON.parse(JSON.stringify(w.config))}));
+  renderGrid();
+}
+
+loadLayout();
 </script>
 {% endblock %}

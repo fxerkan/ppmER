@@ -11,7 +11,7 @@ services:
     ports:
       - "${POSTGRES_EXTERNAL_PORT:-15432}:5432"
     volumes:
-      - ${VOLUME_BASE_PATH:-./volumes}/postgres:/var/lib/postgresql/data
+      - ${VOLUME_BASE_PATH}/postgres:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -56,7 +56,7 @@ services:
       SOURCES__JIRA__API_TOKEN: ${JIRA_API_TOKEN}
     volumes:
       - ./dlt:/app
-      - ${VOLUME_BASE_PATH:-./volumes}/dlt:/root/.dlt
+      - ${VOLUME_BASE_PATH}/dlt:/root/.dlt
     depends_on:
       postgres:
         condition: service_healthy
@@ -139,12 +139,14 @@ services:
     environment:
       CB_SERVER_NAME: "ppmER"
       CB_SERVER_URL: "http://localhost:${CLOUDBEAVER_EXTERNAL_PORT:-8978}"
-      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-admin}
-      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-admin}
+      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-cbadmin}
+      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-Jppm@min123}
+      CLOUDBEAVER_ROOT_URI: "/cb/"
     ports:
       - "${CLOUDBEAVER_EXTERNAL_PORT:-8978}:8978"
     volumes:
-      - ${VOLUME_BASE_PATH:-./volumes}/cloudbeaver:/opt/cloudbeaver/workspace
+      - ${VOLUME_BASE_PATH}/cloudbeaver:/opt/cloudbeaver/workspace
+      - ./cloudbeaver/conf/cloudbeaver.conf:/opt/cloudbeaver/conf/cloudbeaver.conf:ro
       - ./cloudbeaver/conf/initial-data-sources.conf:/opt/cloudbeaver/conf/initial-data-sources.conf:ro
       - ./cloudbeaver/conf/initial-data.conf:/opt/cloudbeaver/conf/initial-data.conf:ro
       - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf:ro
@@ -155,9 +157,35 @@ services:
       - ppm-network
     restart: unless-stopped
 
+  # ponytail: creates PG role users + CB teams/users/connection ACLs; runs once
+  cb-setup:
+    image: alpine:3.19
+    container_name: ppm-cb-setup
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-cbadmin}
+      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-Jppm@min123}
+      CB_ANALYST_PASSWORD: ${CB_ANALYST_PASSWORD:-Jppm@min123}
+      CB_POWER_USER_PASSWORD: ${CB_POWER_USER_PASSWORD:-Jppm@min123}
+      PG_ANALYST_PASSWORD: ${PG_ANALYST_PASSWORD:-ppm_analyst_123}
+      PG_POWER_USER_PASSWORD: ${PG_POWER_USER_PASSWORD:-ppm_power_user_123}
+    command: sh /cb-setup.sh
+    volumes:
+      - ./cloudbeaver/setup.sh:/cb-setup.sh:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      cloudbeaver:
+        condition: service_started
+    networks:
+      - ppm-network
+    restart: no
+
   # ponytail: Metabase replaces PowerBI - open-source, Docker-native, zero config needed
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:v0.62.3.3
     container_name: ppm-metabase
     environment:
       MB_DB_TYPE: postgres
@@ -168,6 +196,7 @@ services:
       MB_DB_PASS: ${POSTGRES_PASSWORD}
       MB_ENABLE_EMBEDDING: "true"
       MB_EMBEDDING_SAMEORIGIN: "false"
+      MB_EMBEDDING_APP_ORIGIN: "http://localhost:9000 http://localhost:9001"
     ports:
       - "${METABASE_EXTERNAL_PORT:-3000}:3000"
     depends_on:
@@ -251,7 +280,7 @@ services:
       - "${UPLOAD_EXTERNAL_PORT:-8085}:8080"
     volumes:
       - ./upload:/app
-      - ${VOLUME_BASE_PATH:-./volumes}/upload_files:/app/uploaded_files
+      - ${VOLUME_BASE_PATH}/upload_files:/app/uploaded_files
     depends_on:
       postgres:
         condition: service_healthy
@@ -283,7 +312,7 @@ services:
     ports:
       - "${DBGPT_PORT:-5670}:5670"
     volumes:
-      - ${VOLUME_BASE_PATH:-./volumes}/dbgpt:/app/pilot
+      - ${VOLUME_BASE_PATH}/dbgpt:/app/pilot
       - ./dbgpt:/ppm-config:ro
     depends_on:
       postgres:
@@ -304,20 +333,21 @@ services:
     command: >
       sh -c "
         apk add --no-cache curl postgresql-client >/dev/null 2>&1 &&
-        PG=\"PGPASSWORD=$$POSTGRES_PASSWORD psql -h postgres -U $$POSTGRES_USER -d $$POSTGRES_DB\" &&
-        eval \"$$PG -c \\\"DO LANG plpgsql SET search_path=public;\\\\ BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname='ppm_ai') THEN CREATE USER ppm_ai WITH PASSWORD '$$DBGPT_AI_DB_PASS'; END IF; END;\\\\\"\" || true &&
-        eval \"$$PG -c \\\"GRANT CONNECT ON DATABASE $$POSTGRES_DB TO ppm_ai\\\"\" || true &&
-        eval \"$$PG -c \\\"GRANT USAGE ON SCHEMA core,mart,staging TO ppm_ai\\\"\" || true &&
-        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA core TO ppm_ai\\\"\" || true &&
-        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA mart TO ppm_ai\\\"\" || true &&
-        eval \"$$PG -c \\\"GRANT SELECT ON ALL TABLES IN SCHEMA staging TO ppm_ai\\\"\" || true &&
-        eval \"$$PG -c \\\"ALTER ROLE ppm_ai SET search_path = mart,core,staging\\\"\" || true &&
+        PG='PGPASSWORD=$$POSTGRES_PASSWORD psql -h postgres -U $$POSTGRES_USER -d $$POSTGRES_DB' &&
+        eval \"$$PG -c \\\"SELECT 1 FROM pg_roles WHERE rolname='ppm_ai'\\\"\" | grep -q 1 ||
+          eval \"$$PG -c \\\"CREATE USER ppm_ai WITH PASSWORD '$$DBGPT_AI_DB_PASS'\\\"\" || true &&
+        eval \"$$PG -c 'GRANT CONNECT ON DATABASE $$POSTGRES_DB TO ppm_ai'\" || true &&
+        eval \"$$PG -c 'GRANT USAGE ON SCHEMA core,mart,staging TO ppm_ai'\" || true &&
+        eval \"$$PG -c 'GRANT SELECT ON ALL TABLES IN SCHEMA core TO ppm_ai'\" || true &&
+        eval \"$$PG -c 'GRANT SELECT ON ALL TABLES IN SCHEMA mart TO ppm_ai'\" || true &&
+        eval \"$$PG -c 'GRANT SELECT ON ALL TABLES IN SCHEMA staging TO ppm_ai'\" || true &&
+        eval \"$$PG -c 'ALTER ROLE ppm_ai SET search_path = mart,core,staging'\" || true &&
         echo 'PostgreSQL AI user ready' &&
         echo 'Waiting for DB-GPT...' &&
         until curl -sf http://dbgpt:5670/api/health; do sleep 5; done &&
         EXISTING=$$(curl -s http://dbgpt:5670/api/v1/chat/db/list | grep -c ppm_datawarehouse) &&
         PAYLOAD=\"{\\\"db_type\\\":\\\"postgresql\\\",\\\"db_name\\\":\\\"$$POSTGRES_DB\\\",\\\"db_host\\\":\\\"postgres\\\",\\\"db_port\\\":5432,\\\"db_user\\\":\\\"ppm_ai\\\",\\\"db_pwd\\\":\\\"$$DBGPT_AI_DB_PASS\\\",\\\"comment\\\":\\\"PPM Data Warehouse\\\"}\" &&
-        if [ \"$$EXISTING\" = \"0\" ]; then
+        if [ \\\"$$EXISTING\\\" = \\\"0\\\" ]; then
           curl -sf -X POST http://dbgpt:5670/api/v1/chat/db/add -H 'Content-Type: application/json' -d \"$$PAYLOAD\"
         else
           curl -sf -X POST http://dbgpt:5670/api/v1/chat/db/edit -H 'Content-Type: application/json' -d \"$$PAYLOAD\"
@@ -349,6 +379,8 @@ services:
       DBT_DOCS_EXTERNAL_PORT: ${DBT_DOCS_EXTERNAL_PORT:-8081}
       METABASE_EXTERNAL_PORT: ${METABASE_EXTERNAL_PORT:-3000}
       CLOUDBEAVER_EXTERNAL_PORT: ${CLOUDBEAVER_EXTERNAL_PORT:-8978}
+      CB_ADMIN_NAME: ${CB_ADMIN_NAME:-cbadmin}
+      CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD:-Jppm@min123}
       UPLOAD_EXTERNAL_PORT: ${UPLOAD_EXTERNAL_PORT:-8085}
       AGENT_PORT: ${AGENT_PORT:-7860}
       DBGPT_PORT: ${DBGPT_PORT:-5670}
