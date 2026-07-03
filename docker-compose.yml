@@ -229,41 +229,41 @@ services:
       - ppm-network
     restart: no
 
-  # AI Agent Chat UI - works with any OpenAI-compatible API (Claude, GPT, Gemini, Ollama)
-  agent:
-    image: python:3.11-slim
-    container_name: ppm-agent
-    working_dir: /app
-    env_file: .env
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB}
-      AGENT_DB: ppmdatastack
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      # LLM providers — API keys come from .env; add new keys here as needed
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
-      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
-    ports:
-      - "${AGENT_PORT:-7860}:7860"
-    volumes:
-      - ./agent:/app
-      - ./dbt:/dbt:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - ppm-network
-    restart: unless-stopped
-    command: >
-      sh -c "pip install -r /app/requirements.txt -q && python /app/chat.py"
+  # # AI Agent Chat UI - works with any OpenAI-compatible API (Claude, GPT, Gemini, Ollama)
+  # agent:
+  #   image: python:3.11-slim
+  #   container_name: ppm-agent
+  #   working_dir: /app
+  #   env_file: .env
+  #   environment:
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     AGENT_DB: ppmdatastack
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     # LLM providers — API keys come from .env; add new keys here as needed
+  #     OPENAI_API_KEY: ${OPENAI_API_KEY}
+  #     OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+  #     OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+  #     DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+  #     ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+  #     GEMINI_API_KEY: ${GEMINI_API_KEY}
+  #     HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
+  #   ports:
+  #     - "${AGENT_PORT:-7860}:7860"
+  #   volumes:
+  #     - ./agent:/app
+  #     - ./dbt:/dbt:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - ppm-network
+  #   restart: unless-stopped
+  #   command: >
+  #     sh -c "pip install -r /app/requirements.txt -q && python /app/chat.py"
 
   # Excel/CSV file upload with version management for business users
   upload:

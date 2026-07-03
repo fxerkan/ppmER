@@ -356,7 +356,7 @@ async def list_services(request: Request):
             # Check by container name (PPM prefix)
             any(name.startswith("/ppm") for name in c.get("Names", [])) or
             # Check by compose project label
-            c.get("Labels", {}).get("com.docker.compose.project") == "jira-ppm-data-stack"
+            c.get("Labels", {}).get("com.docker.compose.project") == "ppmer"
         )]
         return JSONResponse(ppm_containers)
     except Exception as e:

@@ -1498,7 +1498,7 @@ ORDER BY worklog_count DESC""",
 # dbt Exposures
 # ---------------------------------------------------------------------------
 def write_dbt_exposures(definitions):
-    exposures_path = "/Users/erkan.ciftci/repo_local/jira-ppm-data-stack/dbt/models/exposures.yml"
+    exposures_path = os.path.join(os.path.dirname(__file__), "..", "dbt", "models", "exposures.yml")
     base_url = BASE_URL
     dash = definitions["dashboards"]
     models = definitions["models"]
