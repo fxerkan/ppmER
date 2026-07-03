@@ -4,53 +4,143 @@
 
 {% block content %}
 <div class="flex" style="height: calc(100vh - 3.5rem);">
-  <div id="dash-list" class="w-72 shrink-0 bg-white border-r border-slate-200 overflow-y-auto flex flex-col">
-    <div class="px-4 py-3 text-sm font-semibold text-slate-500 uppercase tracking-wide border-b border-slate-100">
-      Metabase Reports
+
+  <!-- Sidebar -->
+  <div id="dash-sidebar" class="w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-200">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Reports</span>
+      <button onclick="toggleSidebar()" title="Collapse" class="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+        </svg>
+      </button>
     </div>
-    <div id="dashboard-items" class="flex-1 overflow-y-auto p-2 space-y-1">
-      <div class="text-sm text-slate-400 text-center py-8">Loading dashboards...</div>
+    <div id="dashboard-items" class="flex-1 overflow-y-auto p-2 space-y-0.5">
+      <div class="text-sm text-slate-400 text-center py-8">Loading...</div>
     </div>
   </div>
-  <div id="dash-main" class="flex-1 flex flex-col bg-slate-50">
-    <div id="dash-placeholder" class="flex-1 flex items-center justify-center text-slate-400 text-sm">
-      Select a dashboard from the list
+
+  <!-- Collapsed sidebar button -->
+  <div id="dash-sidebar-btn" class="hidden shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col items-center py-3 px-1.5 gap-2">
+    <button onclick="toggleSidebar()" title="Expand" class="p-1.5 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main area -->
+  <div class="flex-1 flex flex-col bg-slate-50 dark:bg-slate-950 min-w-0">
+    <div id="dash-toolbar" class="hidden items-center justify-between px-4 py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+      <span id="dash-title" class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate"></span>
+      <a id="dash-open-link" href="#" target="_blank"
+        class="text-xs flex items-center gap-1 text-slate-400 hover:text-blue-600 transition-colors ml-3 shrink-0">
+        Open in Metabase ↗
+      </a>
     </div>
-    <iframe id="dash-iframe" src="" class="flex-1 w-full border-0 hidden"></iframe>
+    <div id="dash-placeholder" class="flex-1 flex items-center justify-center text-slate-400 dark:text-slate-600 text-sm">
+      Select a report from the list
+    </div>
+    <!-- wrapper clips Metabase's "Made with Metabase" footer via overflow:hidden -->
+    <div class="flex-1 relative hidden" id="dash-iframe-wrap" style="overflow:hidden;">
+      <iframe id="dash-iframe" src="" class="absolute inset-0 w-full border-0" style="height:calc(100% + 52px);"></iframe>
+    </div>
   </div>
 </div>
 
 <script>
-  fetch('/api/metabase-dashboards')
-    .then(r => r.json())
-    .then(data => {
-      const container = document.getElementById('dashboard-items');
-      if (data.error || !data.dashboards.length) {
-        container.innerHTML = '<div class="text-sm text-slate-400 text-center py-8">No dashboards found.</div>';
-        return;
+const METABASE_URL = {{ metabase_url | tojson }};
+let dashboards = [];
+let sidebarOpen = true;
+
+function shortName(name) {
+  // Strip common PPM prefixes: "PPM - HR - Timesheet" → "Timesheet"
+  const parts = name.split(/\s*[-–|]\s*/);
+  return parts[parts.length - 1].trim() || name;
+}
+
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('dash-sidebar').classList.toggle('hidden', !sidebarOpen);
+  document.getElementById('dash-sidebar-btn').classList.toggle('hidden', sidebarOpen);
+  document.getElementById('dash-sidebar-btn').classList.toggle('flex', !sidebarOpen);
+}
+
+function openDashboard(d) {
+  const url = d.public_uuid
+    ? METABASE_URL + '/public/dashboard/' + d.public_uuid
+    : METABASE_URL + '/dashboard/' + d.id;
+
+  document.querySelectorAll('#dashboard-items .dash-item').forEach(el => {
+    el.classList.remove('bg-blue-50', 'text-blue-700', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'font-semibold');
+  });
+  const item = document.getElementById('dash-item-' + d.id);
+  if (item) item.classList.add('bg-blue-50', 'text-blue-700', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'font-semibold');
+
+  const toolbar = document.getElementById('dash-toolbar');
+  toolbar.classList.remove('hidden');
+  toolbar.classList.add('flex');
+  document.getElementById('dash-title').textContent = d.name;
+  document.getElementById('dash-open-link').href = url;
+
+  const iframe = document.getElementById('dash-iframe');
+  const wrap = document.getElementById('dash-iframe-wrap');
+  iframe.src = url;
+  wrap.classList.remove('hidden');
+  document.getElementById('dash-placeholder').classList.add('hidden');
+}
+
+// Intercept Metabase iframe navigation (e.g. links in PPM Home) and route via sidebar
+window.addEventListener('message', function(e) {
+  if (e.origin !== METABASE_URL) return;
+  try {
+    const msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    const url = msg?.metabase?.url || msg?.url;
+    if (!url) return;
+    const m = url.match(/\/dashboard\/(\d+)/);
+    if (m) {
+      const d = dashboards.find(x => x.id === parseInt(m[1]));
+      if (d) { openDashboard(d); return; }
+    }
+    // fallback: load URL directly in iframe
+    document.getElementById('dash-iframe').src = url.startsWith('http') ? url : METABASE_URL + url;
+  } catch {}
+});
+
+fetch('/api/metabase-dashboards')
+  .then(r => r.json())
+  .then(data => {
+    const container = document.getElementById('dashboard-items');
+    if (data.error || !data.dashboards?.length) {
+      container.innerHTML = '<div class="text-sm text-slate-400 text-center py-8">No reports found.</div>';
+      return;
+    }
+    dashboards = data.dashboards;
+    container.innerHTML = '';
+    let autoOpen = null;
+    dashboards.forEach(d => {
+      const short = shortName(d.name);
+      const item = document.createElement('button');
+      item.id = 'dash-item-' + d.id;
+      item.className = 'dash-item w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-400 transition-colors flex items-center gap-2';
+      item.title = d.name;
+      item.innerHTML = `<svg class="w-3.5 h-3.5 shrink-0 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      <span class="truncate">${short}</span>`;
+      item.addEventListener('click', () => openDashboard(d));
+      container.appendChild(item);
+
+      const ln = d.name.toLowerCase();
+      if (ln === 'executive overview' || ln.includes('executive overview')) {
+        autoOpen = d; // highest priority
+      } else if (!autoOpen && (ln === 'ppm home' || ln.includes('ppm home'))) {
+        autoOpen = d; // fallback
       }
-      container.innerHTML = '';
-      data.dashboards.forEach(d => {
-        const item = document.createElement('div');
-        item.className = 'px-3 py-2 rounded-lg cursor-pointer text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors';
-        item.textContent = d.name;
-        item.title = d.description || d.name;
-        item.addEventListener('click', () => {
-          document.querySelectorAll('#dashboard-items > div').forEach(el => el.classList.remove('bg-blue-50', 'text-blue-700', 'font-semibold'));
-          item.classList.add('bg-blue-50', 'text-blue-700', 'font-semibold');
-          const url = d.public_uuid
-            ? 'http://localhost:3000/public/dashboard/' + d.public_uuid
-            : 'http://localhost:3000/dashboard/' + d.id;
-          const iframe = document.getElementById('dash-iframe');
-          iframe.src = url;
-          iframe.classList.remove('hidden');
-          document.getElementById('dash-placeholder').classList.add('hidden');
-        });
-        container.appendChild(item);
-      });
-    })
-    .catch(() => {
-      document.getElementById('dashboard-items').innerHTML = '<div class="text-sm text-red-500 text-center py-8">Failed to load dashboards.</div>';
     });
+    if (autoOpen) openDashboard(autoOpen);
+    else if (dashboards.length > 0) openDashboard(dashboards[0]);
+  })
+  .catch(() => {
+    document.getElementById('dashboard-items').innerHTML = '<div class="text-sm text-red-500 text-center py-8">Failed to load reports.</div>';
+  });
 </script>
 {% endblock %}

@@ -1,21 +1,8 @@
-
-# To DO List
-
-
-# Repo
-- Çözümün adını ve ilgili tüm dokümanları da "Project & Portfolio Management Data Stack" kısaca "ppmER" olacak şekilde güncelle.
-- "ppmER" ürün logosu olarak da "assets/ppm-data-stack-logo-v2.png" kullan, favicon için assets/favicon/favicon.ico
--- Sharepoint'in opsiyonel olduğunu belirt
--- Kullanıcıların ellerindeki Manual hazırladıkları Excel'leri kolaylıkla yükleyip DWH'daki veriler ile kolaylıkla kesiştirip analiz yapabileceklerini belirt (ister Upload arayüzü isterse de Metabase Excel upload özelliği ile)
--- Çözümün kendine has Agentic AI ve AI Asistanları olduğunu belirtip db-gpt'ye atıf yap
--- Metadata ve Data Governance süreçlerini de uçtan uca kapsadığını vurgula (büyük ihtimalle OpenMetadata aracını konumlandıracağız burası için)
--- Docker Volume'lerinin lokasyonunu ortam/cihaz yada kişiaye göre dışarıdan istendiği gibi ayarlanabilecek şekilde olduğundan emin ol ( şu anda VOLUME_BASE_PATH bu repo içerisinde ki DATA/container_volumes diye bir yeri gösteriyor ama öyle bir dizin vs. ortada yok - container volumeleri nerede şu anda )
-- repoyu içerisinde hiçbir credentials, .env variables, api_key, token, cookie vs. olmadan https://github.com/fxerkan/ppmER adlı github repo'ya pushla.
+# ======== To DO List ========
 
 
 
-
----------
+------------------------------
 # AI Agent System Prompt
 system promtplarını nerede tutuyorsun, versiyonlu olarak onları yönetmek istiyorum.
 - ayrıca farklı agent tipleri tanımlayıp kullanıcıların kendi agentlarını oluşturabilmesini istiyorum. 
@@ -45,14 +32,11 @@ system promtplarını nerede tutuyorsun, versiyonlu olarak onları yönetmek ist
 
 - kullanıcı "selam", "merhaba", "hi", "naber" vs. gibi terimler ile ilk chat oturumunu başlattığında ona ne gibi sorular sorup cevaplar alabileceği, örnek sorular, dashboard ve rapor örnekleri ile veri modelinden kısa bir açıklama göstererek AI Asistan olarak neler yapabileceğini kısaca göstersin.
 
-
-
-
 **as always** use karpathy-guidelines skill.
 
 
 
----------
+------------------------------
 # Metadata Management, Data Governance, Data Quality, Business Glossary ve Data Catalog oluşturmak için bir plan ve çözüm önerisi
 
 PPM Data Warehouse modelini kullanacak olan kullanıcılara veri modelini çok daha iyi ve net anlatıp, her bir
@@ -89,10 +73,46 @@ PPM Data Warehouse modelini kullanacak olan kullanıcılara veri modelini çok d
 
   **as always** use karpathy-guidelines skill.
 
+------------------------------
+
+# Mock Data Generation & Setup Wizard
+
+Platformu ilk defa lokaline kurup deneyimleyip görmek isteyen ama henüz kendi Jira, Sharepoint, Enxcel vs. gibi veri kaynaklarını bağlamak istemeyenler için tüm Portal, Dashboard, Metabase raporları, AI chat asistanı gibi tüm bileşenleri deneyimleyebilmesi için bir Demo Dataset oluşturulması gerekiyor.
+- Şu anda var olan verilere bakarak benzer pattern ve içeriklerle ama tümüyle farklı müşteri, proje, takım, kişi isimleri olacak şekilde mock bir veri seti oluşturmanı istiyorum.
+-- ppm_dwh_demo olsun DB ismi
+-- platformu ayağa kaldırırken portal arayüzü ilk açılışında bir OnBoarding & Setup ekranı karşılasın kullanıcıyı ve eğer orada Demo Ortam/Dataset seçeneğini seçerse tüm sistemi bu yeni ppm_dwh_demo DB üzerinden çalışacak şekilde kurgulayıp çalıştırsın
+--- eğer kullanıcı Demo Dataset'i seçmezse de adım adım Jira, Sharepoint (opsiyonel), Manual Excel files, LLM Provider ve LLM Engine için gerekli API Key'lerin girilmesi gibi gerekli adımları tek tek tanımlamasını sağlayacak şekilde wizard ile süreci ilerletsin.
 
 
---------
 
+
+
+==== DONE ====
+
+# Repo
+- Çözümün adını ve ilgili tüm dokümanları da "Project & Portfolio Management Data Stack" kısaca "ppmER" olacak şekilde güncelle.
+- "ppmER" ürün logosu olarak da "assets/ppm-data-stack-logo-v2.png" kullan, favicon için assets/favicon/favicon.ico
+-- Sharepoint'in opsiyonel olduğunu belirt
+-- Kullanıcıların ellerindeki Manual hazırladıkları Excel'leri kolaylıkla yükleyip DWH'daki veriler ile kolaylıkla kesiştirip analiz yapabileceklerini belirt (ister Upload arayüzü isterse de Metabase Excel upload özelliği ile)
+-- Çözümün kendine has Agentic AI ve AI Asistanları olduğunu belirtip db-gpt'ye atıf yap
+-- Metadata ve Data Governance süreçlerini de uçtan uca kapsadığını vurgula (büyük ihtimalle OpenMetadata aracını konumlandıracağız burası için)
+-- Docker Volume'lerinin lokasyonunu ortam/cihaz yada kişiaye göre dışarıdan istendiği gibi ayarlanabilecek şekilde olduğundan emin ol ( şu anda VOLUME_BASE_PATH bu repo içerisinde ki DATA/container_volumes diye bir yeri gösteriyor ama öyle bir dizin vs. ortada yok - container volumeleri nerede şu anda )
+- repoyu içerisinde hiçbir credentials, .env variables, api_key, token, cookie vs. olmadan https://github.com/fxerkan/ppmER adlı github repo'ya pushla.
+
+---------------
+# Entegrasyonların iyileştirilmesi
+
+- Cloudbeaver embed olarak Portal üzerinden açıldığında halen login olmamuş gibi görünüyor. ve bizim Portal için kullandığımız normal "admin" kullanıcı adını kabul etmiyor. onun yerine "cbadmin"'i kullanıyor bu nedenle arada bir mapping gerekiyor ki portal'e "admin" kullanıcısı ile giriş yaptığında cloudbeaver'a "cbadmin" kullanıcı bilgileri ile otomatik login olmuş olsun.
+
+- "Data Catalog" menüsü altında açılan DBT Docs html sayfasında ki Welcome bölümünü PPM Data Stack'e uygun şekilde revize edebilir miyiz? Önemli: dbt docs her güncellendiğinde maalesef bu html injection işlemi yeniden yapmak gerekebilir belki.
+
+- "Mage.ai" da ki günlük çalışan master_daily_jira da sorunlar var gibi görünüyor, bu problemleri çöz ve pipeline'ı uçtan uca sorunsuz çalışır hale getir.
+
+- repo içerisinde herhangibir kod parçacağında, dokümanda, connection, credential tanımında "dgpays", "ilhan yiğit" gibi terimlerinden geçmediğinden emin ol.
+
+- Dashboards sayfasında açılan Metabase raporlarının altındaki "embedding-footer" bölümünü tümüyle gizle, görünmesin hiç 
+
+----------------
 # HomePage in geliştirilmesi
 
 Portal Homepage şu anda çok anlamsız ve basit görünüyor. HomePage'in daha kullanıcı dostu, kolay kullanılabilir ve kullanıcıların kendilerine göre özelleştirebileceği bir yapıda olması gerekiyor.
@@ -104,31 +124,6 @@ Portal Homepage şu anda çok anlamsız ve basit görünüyor. HomePage'in daha 
 - Farklı kullanıcı profili/türlerine göre hazır Layoutlar olmalı ve kullanıcı isterse bunlardan birini seçip kullanabilmeli yada kendisi sıfırdan oluşturabilmeli.
 -- Project Manager layout, Portfolio Manager, Developer, Data Stack Admin, 
 
-
 - "Browse Code" menü item ve ilgili sayfayı tümüyle kaldır. (zten mage.ai içerisinden bunlara erişebiliyoruz)
 
-
-
-
----------- 
-
-# Entegrasyonların iyileştirilmesi
-
-- Cloudbeaver embed olarak Portal üzerinden açıldığında halen login olmamuş gibi görünüyor. ve bizim Portal için kullandığımız normal "admin" kullanıcı adını kabul etmiyor. onun yerine "cbadmin"'i kullanıyor bu nedenle arada bir mapping gerekiyor ki portal'e "admin" kullanıcısı ile giriş yaptığında cloudbeaver'a "cbadmin" kullanıcı bilgileri ile otomatik login olmuş olsun.
-
-- "Data Catalog" menüsü altında açılan DBT Docs html sayfasında ki Welcome bölümünü PPM Data Stack'e uygun şekilde revize edebilir miyiz? Önemli: dbt docs her güncellendiğinde maalesef bu html injection işlemi yeniden yapmak gerekebilir belki.
-
-- "Mage.ai" da ki günlük çalışan master_daily_jira da sorunlar var gibi görünüyor, bu problemleri çöz ve pipeline'ı uçtan uca sorunsuz çalışır hale getir.
-
-- repo içerisinde herhangibir kod parçacağında, dokümanda, connection, credential tanımında "dgpays", "ilhan yiğit" gibi terimlerinden geçmediğinden emin ol.
-
-
---------
-
-# Mock Data Generation & Setup Wizard
-
-Platformu ilk defa lokaline kurup deneyimleyip görmek isteyen ama henüz kendi Jira, Sharepoint, Enxcel vs. gibi veri kaynaklarını bağlamak istemeyenler için tüm Portal, Dashboard, Metabase raporları, AI chat asistanı gibi tüm bileşenleri deneyimleyebilmesi için bir Demo Dataset oluşturulması gerekiyor.
-- Şu anda var olan verilere bakarak benzer pattern ve içeriklerle ama tümüyle farklı müşteri, proje, takım, kişi isimleri olacak şekilde mock bir veri seti oluşturmanı istiyorum.
--- ppm_dwh_demo olsun DB ismi
--- platformu ayağa kaldırırken portal arayüzü ilk açılışında bir OnBoarding & Setup ekranı karşılasın kullanıcıyı ve eğer orada Demo Ortam/Dataset seçeneğini seçerse tüm sistemi bu yeni ppm_dwh_demo DB üzerinden çalışacak şekilde kurgulayıp çalıştırsın
---- eğer kullanıcı Demo Dataset'i seçmezse de adım adım Jira, Sharepoint (opsiyonel), Manual Excel files, LLM Provider ve LLM Engine için gerekli API Key'lerin girilmesi gibi gerekli adımları tek tek tanımlamasını sağlayacak şekilde wizard ile süreci ilerletsin.
+  **as always** use ponytail skill and karpathy-guidelines skill.

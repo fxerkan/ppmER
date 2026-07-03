@@ -40,7 +40,10 @@ def get_service_url(key: str) -> str:
         "dbgpt": int(os.getenv("DBGPT_PORT", 5670)),
     }
     port = port_map.get(key, 8000)
-    return f"http://localhost:{port}"
+    host = os.getenv("PUBLIC_HOST", "localhost")
+    # ponytail: cloudbeaver rootURI is /cb/ per cloudbeaver.conf
+    path = "/cb" if key == "cloudbeaver" else ""
+    return f"http://{host}:{port}{path}"
 
 
 SERVICES = {

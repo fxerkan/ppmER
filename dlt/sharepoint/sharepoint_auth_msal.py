@@ -50,9 +50,9 @@ def get_sharepoint_credentials():
         )
 
     # Extract site details from URL
-    # Format: https://firmaxit.sharepoint.com/sites/ProjectInventory
+    # Format: https://yourcompany.sharepoint.com/sites/ProjectInventory
     parts = site_url.replace("https://", "").split("/")
-    tenant_name = parts[0].split(".")[0]  # firmaxit
+    tenant_name = parts[0].split(".")[0]  # e.g. yourcompany
     site_path = "/".join(parts[1:]) if len(parts) > 1 else ""  # sites/ProjectInventory
 
     return {
@@ -103,7 +103,7 @@ def get_sharepoint_site_id(tenant_name: str, site_path: str, access_token: str) 
     Get SharePoint site ID using Microsoft Graph API.
 
     Args:
-        tenant_name: SharePoint tenant name (e.g., 'firmaxit')
+        tenant_name: SharePoint tenant name (e.g., 'yourcompany')
         site_path: Site path (e.g., 'sites/ProjectInventory')
         access_token: Access token for Graph API
 

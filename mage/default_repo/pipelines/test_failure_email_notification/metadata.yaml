@@ -39,13 +39,11 @@ custom_notifications:
   email_on_failure:
     to:
       - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
     cc: []
     bcc: []
   email_on_success:
     to:
       - erkan.ciftci@nexteralabs.com
-      - ilhan.yigit@firmaxit.com
     cc: []
     bcc: []
 remote_variables_dir: null

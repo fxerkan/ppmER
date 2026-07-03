@@ -21,7 +21,6 @@ dlt/.dlt/secrets.toml
 
 # Volumes (VOLUME_BASE_PATH default; users may set a custom path in .env)
 volumes/
-DATA_Volumes/
 DATA/
 mage/mage_data/
 
@@ -38,6 +37,7 @@ Thumbs.db
 # Claude Code
 .claude/
 .serena/
+.headroom
 
 # Notebook checkpoints
 .ipynb_checkpoints/

@@ -25,7 +25,7 @@ sources:
             description: Creation timestamp
 
       - name: proje_inv
-        description: Project Inventory - detailed project tracking with status, timeline, and risk information - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Proje%20Inv/AllItems.aspx
+        description: Project Inventory - detailed project tracking with status, timeline, and risk information - 
         columns:
           - name: id
             description: SharePoint item ID (unique within list)
@@ -87,7 +87,7 @@ sources:
             description: Creation timestamp
 
       - name: proje_risks
-        description: Project Risks - risk tracking for projects - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Proje%20Risks/AllItems.aspx
+        description: Project Risks - risk tracking for projects - 
         columns:
           - name: id
             description: SharePoint item ID (unique within list)
@@ -105,7 +105,7 @@ sources:
             description: Creation timestamp
 
       - name: issue_type
-        description: Issue Type master data - Jira issue type classifications - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Issue%20Type/AllItems.aspx
+        description: Issue Type master data - Jira issue type classifications - 
         columns:
           - name: id
             description: SharePoint item ID (unique within list)
@@ -125,7 +125,7 @@ sources:
             description: Creation timestamp
 
       - name: issue_type_inventory
-        description: Issue Type Inventory - task type definitions with descriptions - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/Issue%20Type%20Inventory/AllItems.aspx
+        description: Issue Type Inventory - task type definitions with descriptions - 
         columns:
           - name: id
             description: SharePoint item ID (unique within list)
@@ -145,7 +145,7 @@ sources:
             description: Creation timestamp
 
       - name: pbi_info
-        description: PBI Info - Power BI project/team mapping information - https://firmaxit.sharepoint.com/sites/ProjectInventory/Lists/PBI%20Info/AllItems.aspx
+        description: PBI Info - Power BI project/team mapping information - 
         columns:
           - name: id
             description: SharePoint item ID (unique within list)
@@ -159,7 +159,7 @@ sources:
             description: Creation timestamp
 
       - name: financial_adjustment
-        description: Financial Adjustment - Monthly financial adjustments per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/financial_adjustment.xlsx
+        description: Financial Adjustment - Monthly financial adjustments per project from Excel file - 
         columns:
           - name: year
             description: Year for the financial adjustments
@@ -193,7 +193,7 @@ sources:
             description: ETL load timestamp
 
       - name: capex_opex_adjustment
-        description: CAPEX/OPEX Adjustment - Monthly CAPEX/OPEX ratio adjustments per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/capex_opex_adjustment.xlsx
+        description: CAPEX/OPEX Adjustment - Monthly CAPEX/OPEX ratio adjustments per project from Excel file - 
         columns:
           - name: project
             description: Project name
@@ -253,7 +253,7 @@ sources:
             description: ETL load timestamp
             
       - name: operation_efforts
-        description: Operation Efforts - Monthly planned and actual effort hours per project from Excel file - https://firmaxit.sharepoint.com/sites/ProjectInventory/Belgeler/operation_efforts.xlsx
+        description: Operation Efforts - Monthly planned and actual effort hours per project from Excel file - 
         columns:
           - name: year
             description: Year for the operation efforts

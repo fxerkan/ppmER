@@ -9,7 +9,7 @@ from psycopg2.extras import RealDictCursor
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
@@ -22,10 +22,41 @@ from auth import create_token, get_current_user, LoginRequired
 app = FastAPI(title="ppmER Portal")
 
 BASE_DIR = Path(__file__).parent
-app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static", follow_symlink=True), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 DOCKER_SOCK = "/var/run/docker.sock"
+
+
+# ── CloudBeaver proxy config ─────────────────────────────────────────────────
+_CB_URL = os.getenv("CLOUDBEAVER_INTERNAL_URL", "http://cloudbeaver:8978")
+_CB_ROOT = "/cb"  # matches CLOUDBEAVER_ROOT_URI in docker-compose
+_CB_GQL = f"{_CB_URL}{_CB_ROOT}/api/gql"
+
+# Portal role → CB user credentials
+_CB_CREDS: dict[str, tuple[str, str]] = {
+    "admin":      (os.getenv("CB_ADMIN_NAME", "cbadmin"),  os.getenv("CB_ADMIN_PASSWORD", "Jppm@min123")),
+    "developer":  (os.getenv("CB_ADMIN_NAME", "cbadmin"),  os.getenv("CB_ADMIN_PASSWORD", "Jppm@min123")),
+    "power_user": ("cb_power_user", os.getenv("CB_POWER_USER_PASSWORD", "Jppm@min123")),
+    "end_user":   ("cb_analyst",    os.getenv("CB_ANALYST_PASSWORD", "Jppm@min123")),
+}
+
+_CB_SESSION_COOKIE = "cb-session-id"  # actual cookie name used by CB 24.x
+
+async def _cb_login(role: str) -> str | None:
+    """Open a CB session for the given portal role; return cb-session-id value."""
+    username, password = _CB_CREDS.get(role, _CB_CREDS["end_user"])
+    try:
+        async with httpx.AsyncClient(timeout=10) as c:
+            await c.post(_CB_GQL, json={"query": "mutation { openSession { valid } }"})
+            await c.post(_CB_GQL, json={"query": f'{{authLogin(provider:"local",credentials:{{user:"{username}",password:"{password}"}},linkUser:false){{authStatus}}}}'})
+            return c.cookies.get(_CB_SESSION_COOKIE)
+    except Exception:
+        return None
+
+_CB_HOP_HEADERS = {"connection", "keep-alive", "transfer-encoding", "te", "trailers", "upgrade",
+                   "content-encoding", "x-frame-options", "content-security-policy",
+                   "content-security-policy-report-only"}
 ENV_FILE = Path("/run/stack.env")  # mounted .env from host (outside /app to avoid volume conflict)
 
 
@@ -113,8 +144,49 @@ async def home(request: Request):
     role_label = config.ROLE_LABELS.get(user["role"], user["role"])
     return templates.TemplateResponse(
         "dashboard.html",
-        {"request": request, "user": user, "services": services, "role_label": role_label},
+        {
+            "request": request,
+            "user": user,
+            "services": services,
+            "role_label": role_label,
+            "metabase_url": config.get_service_url("metabase"),
+        },
     )
+
+
+@app.get("/embed/cloudbeaver", response_class=HTMLResponse)
+async def embed_cloudbeaver(request: Request):
+    user = get_current_user(request)
+    if "cloudbeaver" not in config.SERVICES or user["role"] not in config.SERVICES["cloudbeaver"]["roles"]:
+        return HTMLResponse("<h1>Access Denied</h1>", status_code=403)
+    cb_user, cb_pass = _CB_CREDS.get(user["role"], _CB_CREDS["end_user"])
+    session_id = await _cb_login(user["role"])
+    resp = templates.TemplateResponse(
+        "embed.html",
+        {"request": request, "user": user, "service_name": "Database & Query",
+         "service_url": "/cb/", "can_embed": True, "service_icon": "🗄️",
+         "cb_auto_login": True, "cb_user": cb_user, "cb_pass": cb_pass},
+    )
+    if session_id:
+        resp.set_cookie(_CB_SESSION_COOKIE, session_id, path="/cb/", httponly=True, samesite="lax")
+    return resp
+
+
+@app.api_route("/cb/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
+async def cb_proxy(request: Request, path: str):
+    get_current_user(request)  # require portal session for all CB access
+    url = f"{_CB_URL}{_CB_ROOT}/{path}"
+    fwd_headers = {k: v for k, v in request.headers.items()
+                   if k.lower() not in ("host", "content-length", "transfer-encoding")}
+    async with httpx.AsyncClient(timeout=60) as c:
+        resp = await c.request(
+            method=request.method, url=url, headers=fwd_headers,
+            content=await request.body(),
+            params=dict(request.query_params),
+            follow_redirects=False,
+        )
+    out_headers = {k: v for k, v in resp.headers.items() if k.lower() not in _CB_HOP_HEADERS}
+    return Response(content=resp.content, status_code=resp.status_code, headers=out_headers)
 
 
 @app.get("/embed/{service}", response_class=HTMLResponse)
@@ -126,7 +198,6 @@ async def embed_service(request: Request, service: str):
     url = config.get_service_url(service)
     # Pass authenticated user context to agent via URL param (agent trusts this, portal already verified)
     if service == "agent":
-        # Pass the username (dict key) so agent can look up user in PORTAL_USERS
         url = f"{url}/?ppm_user={user.get('username', user.get('name','guest')).lower()}"
     can_embed = svc_meta.get("embed", True)
     return templates.TemplateResponse(
@@ -203,7 +274,8 @@ async def dashboards_page(request: Request):
     role_label = config.ROLE_LABELS.get(user["role"], user["role"])
     return templates.TemplateResponse(
         "dashboards.html",
-        {"request": request, "user": user, "services": services, "role_label": role_label},
+        {"request": request, "user": user, "services": services, "role_label": role_label,
+         "metabase_url": config.get_service_url("metabase")},
     )
 
 
@@ -248,12 +320,12 @@ async def get_stats(request: Request):
                 conn.rollback()
                 return default
 
-        stats["total_projects"] = safe_query("SELECT COUNT(*) FROM staging.stg_jira__projects")
-        stats["open_issues"] = safe_query("SELECT COUNT(*) FROM staging.stg_jira__issues WHERE resolution IS NULL")
+        stats["total_projects"] = safe_query("SELECT COUNT(*) FROM core.dim_projects")
+        stats["open_issues"] = safe_query("select count(*) from dim_issues di where di.resolution is NULL")
         stats["worklogs_hours_this_month"] = int(safe_query(
-            "SELECT ROUND(SUM(time_spent_seconds)/3600.0) FROM core.fact_worklogs WHERE date_trunc('month', started_at) = date_trunc('month', NOW())"
+            "select SUM(time_spent_person_days) FROM core.fact_worklogs WHERE date_trunc('month', trx_date) >= date_trunc('month', NOW())"
         ))
-        last_updated = safe_query("SELECT MAX(loaded_at) FROM raw_jira.issues", default=None)
+        last_updated = safe_query("select max(_etl_date) as last_refresh from core.fact_worklogs", default=None)
         stats["last_updated"] = str(last_updated) if last_updated else "N/A"
         cur.close()
         conn.close()
@@ -443,6 +515,11 @@ def _ensure_dbgpt_tables():
                     chart_data JSONB,
                     insights TEXT,
                     created_at TIMESTAMPTZ DEFAULT NOW()
+                );
+                CREATE TABLE IF NOT EXISTS user_layouts (
+                    username TEXT PRIMARY KEY,
+                    layout JSONB NOT NULL DEFAULT '[]',
+                    updated_at TIMESTAMPTZ DEFAULT NOW()
                 );
             """)
         conn.commit()
@@ -849,42 +926,57 @@ async def dbgpt_init_datasource(request: Request):
         return JSONResponse({"error": str(e)}, status_code=503)
 
 
-@app.get("/files", response_class=HTMLResponse)
-async def browse_files(request: Request):
+@app.post("/api/query")
+async def run_db_query(request: Request):
+    """Execute a SELECT query against the data warehouse (read-only)."""
     user = get_current_user(request)
-    if user["role"] not in ("admin", "developer"):
-        return RedirectResponse("/dashboard", status_code=302)
+    body = await request.json()
+    sql = body.get("sql", "").strip()
+    if not sql.upper().startswith("SELECT"):
+        return JSONResponse({"error": "Only SELECT queries are allowed"}, status_code=400)
+    try:
+        conn = psycopg2.connect(config.DB_DSN)
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(sql)
+            rows = [dict(r) for r in cur.fetchmany(500)]
+        conn.close()
+        cols = list(rows[0].keys()) if rows else []
+        return Response(
+            content=json.dumps({"rows": rows, "columns": cols}, default=str),
+            media_type="application/json",
+        )
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
 
-    root = Path(__file__).parent.parent
-    dirs = {"dbt/models": [], "dlt": []}
-    for rel_dir in dirs:
-        p = root / rel_dir
-        if p.exists():
-            dirs[rel_dir] = sorted(
-                str(f.relative_to(root))
-                for f in p.rglob("*")
-                if f.is_file() and f.suffix in (".sql", ".py", ".yml", ".yaml", ".toml")
+
+@app.get("/api/layout")
+async def get_layout(request: Request):
+    user = get_current_user(request)
+    try:
+        conn = _agent_conn()
+        with conn.cursor() as cur:
+            cur.execute("SELECT layout FROM user_layouts WHERE username=%s", (user["username"],))
+            row = cur.fetchone()
+        conn.close()
+        return JSONResponse({"layout": row[0] if row else None})
+    except Exception as e:
+        return JSONResponse({"layout": None, "error": str(e)})
+
+
+@app.post("/api/layout")
+async def save_layout(request: Request):
+    user = get_current_user(request)
+    body = await request.json()
+    widgets = body.get("widgets", [])
+    try:
+        conn = _agent_conn()
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO user_layouts (username, layout) VALUES (%s, %s) ON CONFLICT (username) DO UPDATE SET layout=%s, updated_at=NOW()",
+                (user["username"], json.dumps(widgets), json.dumps(widgets)),
             )
-
-    role_label = config.ROLE_LABELS.get(user["role"], user["role"])
-    return templates.TemplateResponse(
-        "files.html",
-        {"request": request, "user": user, "dirs": dirs, "role_label": role_label},
-    )
-
-
-@app.get("/file-content")
-async def file_content(request: Request, path: str):
-    user = get_current_user(request)
-    if user["role"] not in ("admin", "developer"):
-        return JSONResponse({"error": "forbidden"}, status_code=403)
-
-    root = Path(__file__).parent.parent
-    target = (root / path).resolve()
-    if not str(target).startswith(str(root.resolve())):
-        return JSONResponse({"error": "path traversal denied"}, status_code=400)
-    if not target.exists() or not target.is_file():
-        return JSONResponse({"error": "not found"}, status_code=404)
-
-    content = target.read_text(errors="replace")
-    return JSONResponse({"path": path, "content": content})
+        conn.commit()
+        conn.close()
+        return JSONResponse({"ok": True})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)

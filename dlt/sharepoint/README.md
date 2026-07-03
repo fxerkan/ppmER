@@ -46,7 +46,7 @@ Configure the following Microsoft Graph API permissions (Application type):
 Configure the following environment variables in `.env`:
 
 ```bash
-SHAREPOINT__SITE_URL="https://firmaxit.sharepoint.com/sites/ProjectInventory"
+SHAREPOINT__SITE_URL="https://yourcompany.sharepoint.com/sites/ProjectInventory"
 SHAREPOINT__TENANT_ID="your-tenant-id"
 SHAREPOINT__CLIENT_ID="your-client-id"
 SHAREPOINT__CLIENT_SECRET="your-client-secret"

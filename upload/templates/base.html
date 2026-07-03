@@ -1,26 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="upload-root">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Data File Manager{% endblock %}</title>
+  <script>
+    // Apply theme from URL param or localStorage (for embed mode)
+    (function() {
+      const p = new URLSearchParams(window.location.search).get('theme');
+      const t = p || (window.self !== window.top ? 'light' : (localStorage.getItem('ppm-theme') || 'light'));
+      if (t === 'dark') document.getElementById('upload-root').classList.add('dark');
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen transition-colors">
 
-<!-- Nav -->
-<nav class="bg-indigo-700 text-white px-6 py-3 flex items-center gap-4 shadow">
-  <a href="/" class="font-bold text-lg tracking-tight">Data File Manager</a>
-  <span class="text-indigo-300 text-sm">/ PPM Data Stack</span>
+<!-- Nav (hidden when embedded) -->
+<nav id="upload-nav" class="bg-slate-800 dark:bg-slate-900 text-white px-6 py-3 flex items-center gap-4 shadow border-b border-slate-700/50">
+  <a href="/" class="font-bold text-base tracking-tight text-white">Data Files</a>
+  <span class="text-slate-400 text-sm">/ PPM Data Stack</span>
   <div class="ml-auto flex gap-3 text-sm items-center">
-    <a href="/" class="hover:text-indigo-200">Files</a>
-    <a href="/load-examples" class="hover:text-indigo-200">Load Examples</a>
+    <a href="/" class="text-slate-300 hover:text-white transition-colors">Files</a>
+    <a href="/load-examples" class="text-slate-300 hover:text-white transition-colors">Load Examples</a>
     {% if user is defined %}
-    <span id="nav-user-info" class="flex gap-3 items-center">
-      <span class="text-indigo-300">|</span>
-      <span class="text-indigo-200">{{ user.name }}</span>
-      <span class="bg-indigo-900 text-indigo-300 text-xs px-2 py-0.5 rounded">{{ user.role }}</span>
-      <a href="/logout" class="hover:text-red-300 text-indigo-300">Logout</a>
+    <span class="flex gap-3 items-center">
+      <span class="text-slate-500">|</span>
+      <span class="text-slate-300">{{ user.name }}</span>
+      <span class="bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded">{{ user.role }}</span>
+      <a href="/logout" class="hover:text-red-400 text-slate-400 transition-colors">Logout</a>
     </span>
     {% endif %}
   </div>
@@ -31,10 +40,17 @@
 </div>
 
 <script>
+  // Hide nav when in iframe
   if (window.self !== window.top) {
-    const el = document.getElementById('nav-user-info');
-    if (el) el.style.display = 'none';
+    document.getElementById('upload-nav').style.display = 'none';
   }
+
+  // Listen for theme changes from parent portal
+  window.addEventListener('message', e => {
+    if (e.data?.type === 'ppm-theme') {
+      document.getElementById('upload-root').classList.toggle('dark', e.data.theme === 'dark');
+    }
+  });
 </script>
 </body>
 </html>

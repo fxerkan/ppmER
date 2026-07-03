@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ppmER{% block title %}{% endblock %}</title>
-  <link rel="icon" type="image/x-icon" href="/static/assets/favicon/favicon.ico" />
-  <link rel="icon" type="image/svg+xml" href="/static/assets/favicon/favicon.svg" />
-  <link rel="apple-touch-icon" href="/static/assets/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/x-icon" href="/static/assets/favicon/favicon-dark.ico" />
+  <link rel="icon" type="image/svg+xml" href="/static/assets/favicon/favicon-dark.svg" />
+  <link rel="apple-touch-icon" href="/static/assets/favicon/apple-touch-icon-dark.png" />
   <script>
     // Apply saved theme before paint to avoid flash
     (function() {
@@ -28,8 +28,16 @@
       </svg>
     </button>
     <div class="flex items-center gap-2">
-      <img src="/static/assets/ppm-data-stack-logo-v2.png" alt="ppmER" class="h-8 w-auto" />
-      <span class="font-bold text-base tracking-wide text-blue-400">ppm</span><span class="font-bold text-base text-white">ER</span>
+      <img src="/static/assets/favicon/favicon-96x96-dark.png" alt="ppmER" class="h-8 w-auto"/>
+      <span title="Project &amp; Portfolio Management Data Stack"
+            class="font-black text-xl tracking-wider cursor-default select-none"
+            style="font-family:'Arial Black',Arial,sans-serif;letter-spacing:0.05em">
+        <span style="color:#22d3ee;text-shadow:0 0 6px #22d3ee,0 0 18px #22d3ee">P</span><!--
+        --><span style="color:#f472b6;text-shadow:0 0 6px #f472b6,0 0 18px #f472b6">P</span><!--
+        --><span style="color:#a78bfa;text-shadow:0 0 6px #a78bfa,0 0 18px #a78bfa">M</span><!--
+        --><span style="color:#fb923c;text-shadow:0 0 6px #fb923c,0 0 18px #fb923c">E</span><!--
+        --><span style="color:#fb923c;text-shadow:0 0 6px #fb923c,0 0 18px #fb923c">R</span>
+      </span>
     </div>
     <div class="ml-auto flex items-center gap-2">
       <!-- Theme Toggle -->
@@ -130,17 +138,6 @@
       </a>
       {% endif %}
 
-      {% if user.role in ['developer', 'admin'] %}
-      <a href="/files" class="nav-item {% block active_files %}{% endblock %}" data-url="/files" data-name="Browse Code">
-        <span class="nav-icon">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-          </svg>
-        </span>
-        <span class="nav-label">Browse Code</span>
-      </a>
-      {% endif %}
-
       {% if user.role == 'admin' %}
       <div class="px-4 pt-5 pb-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">Administration</div>
       <a href="/admin" class="nav-item {% block active_admin %}{% endblock %}" data-url="/admin" data-name="Settings">
@@ -193,6 +190,10 @@
       const isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('ppm-theme', isDark ? 'dark' : 'light');
       applyThemeIcons(isDark);
+      // Propagate theme to embedded iframes
+      document.querySelectorAll('iframe').forEach(f => {
+        try { f.contentWindow.postMessage({ type: 'ppm-theme', theme: isDark ? 'dark' : 'light' }, '*'); } catch(e) {}
+      });
     }
 
     // Init icons on load
